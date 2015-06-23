@@ -1,11 +1,12 @@
 #include "stdio.h"
 #ifdef linux
-#include "wchar.h"
+#	include "wchar.h"
+#	define ロ(...) printf(__VA_ARGS__); fflush(0);
 #endif
 #include "jsutil.h"
 #include "jsstr.h"
-//#define ロ(...) printf(__VA_ARGS__); fflush(0);
-
+#define constructor
+//#ifdef NONE
 //Итак, мы почти доделали класс Chr который будет обеспечивать String.
 //Теперь надо к нему ещё slice и прочие няшки.
 //Потом надо для Array и Object сделать функционал.
@@ -14,7 +15,7 @@
 //Потом когда всё заработает, подумать над сборщиком-мусора.
 //Да, и подумать над функциями, возможно их легко сделать!
 
-struct var;void logVar(var a);
+//struct var;void logVar(var &a);
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4 };
 enum varSyntax { argIgnore, undefined, arr, obj, NaN };
 
@@ -27,22 +28,29 @@ struct Ref {
 };
 
 void *newLst();
+void *newObj();
 
+int _id = 0;
 struct var;// void log(var a);
 struct var {
+	int id;
 	varType type;
 	union {
 		double n;
 		Ref* ref;
 	};
-	var () { type = varNull; ref = 0; }
+	constructor var () {
+		id=_id++; type = varNull; ref = 0;
+	}
   ~var () { unref(); }
-	var (const var& a) {
+	constructor var (const var& a) {
+		id=_id++; 
 		type = varNull; ref = 0;
 		copy(a);
 	}
 
-	var (const varSyntax syntax) {
+	constructor var (const varSyntax syntax) {
+		id=_id++; 
 		//type = varNull; //not needed because ref=0 means no unref()
 		ref = 0;
 		self = syntax;
@@ -53,6 +61,10 @@ struct var {
 			type = varArr;
 			ref = new Ref;
 			ref->data = newLst();
+		} else if (syntax == obj) {
+			type = varObj;
+			ref = new Ref;
+			ref->data = newObj();
 		} else if (syntax == argIgnore) {
 			type = varIgnore;
 		} else {
@@ -65,19 +77,27 @@ struct var {
 		unref();
 		copy(a);
 	}
-	var (int a) { self = (double) a; }
+	
+	constructor var (int a) {
+		id=_id++; 
+		self = (double) a;
+	}
 	void operator = (int a) { self = (double)a;}
 	
 	void operator = (double a) {
 		n = a;
 		type = varNum;
 	}
-	var (char* a) {
+	constructor var (char* a) {
+		id=_id++; 
 		ref = 0;
 		self = a;
 	}
 	chr & _chr() { return *((chr*)(ref->data)); }
-	var (double a) { self = a; }
+	constructor var (double a) {
+		id = _id++;
+		self = a;
+	}
 	
 	void makeStringToSet() {
 		// use to set some value from wchar_t* to a new var
@@ -93,15 +113,8 @@ struct var {
 		//_chr().setAscii(a);
 	}
 	
-	void copy(const var &a) {
-		if (a.type == varNull) { ref = 0; return; }
-		type = a.type;
-		if (type == varNum) n = a.n;
-		else {
-			ref = a.ref;
-			if (ref) ref->uses++;
-		}
-	}
+	void copy(const var &a);
+	
 	void unref() {
 		if (type == varNull || type == varNum) return;
 		else if (type == varStr) {
@@ -116,12 +129,20 @@ struct var {
 				deleteLst();
 			}
 		}
+		else if (type == varObj) {
+			ref->uses--;
+			if (ref->uses == 0) {
+				deleteObj();
+			}
+		}
 		type = varNull;
 	}
+	
 	double toDouble() {
 		if (type == varNum) return n;
 		return NaN;
 	}
+	
 	var toString() {
 		if (type == varNull) {
 			return (var)"undefined";
@@ -142,16 +163,20 @@ struct var {
 		if (type == varArr) {
 			return join(", ");
 		}
+		if (type == varObj) {
+			return "[object]";
+		}
 		return (var)"undefined";
 	}
-	var operator [] (int i) {
-		var a = i;
-		return self[a];
-	}
-	var operator [] (var a) {
-		if (type == varNull || type == varNum) { var R; return R; }
+	
+	var &operator [] (var a) {
+		if (type == varNull || type == varNum) { 
+			static var R; 
+			return R;
+		}
 		if (type == varStr) {
-			var R = "1";
+			static var R;
+			R = "1";
 			int n = a.toDouble();
 			wchar_t c = _chr().s[n];
 			R._chr().s[0] = c;
@@ -161,10 +186,16 @@ struct var {
 			int n = a.toDouble();
 			return getArrElement(n);
 		}
-		return (var)"undefined";
+		if (type == varObj) {
+			return getObjElement(a);
+		}
+		static var R;
+		R = undefined;
+		return R;
 	}
+	var indexOf(var a);
 	// decls:
-	var getArrElement(int n);
+	var &getArrElement(int n);
 	var push(var a);
 	var pop();
 	var length();
@@ -172,6 +203,9 @@ struct var {
 	var slice(var start, var end);
 	var join(var separator);
 	void deleteLst();
+	// obj
+	var &getObjElement(const var &n);
+	void deleteObj();
 };
 
 bool operator == (var a, varSyntax b) {
@@ -379,7 +413,7 @@ var var::length() {
 	return undefined;
 }
 
-var var::getArrElement(int n) {
+var& var::getArrElement(int n) {
 	lst *L = (lst*) ref->data;
 	return (*L)[n];
 }
@@ -435,7 +469,100 @@ tset &set(var &a) {
 	return R;
 }
 
-int main(int argc, char* argv[]) {
-	return 0;
+var typeName(varType a) {
+	if (a == varNum) return "number";
+	if (a == varStr) return "string";
+	if (a == varArr) return "array";
+	if (a == varNull) return "undefined";
 }
 
+bool operator == (var a, var b) {
+	if (a.type == varNum && b.type == varNum) {
+		return a.n == b.n;
+	}
+	if (a.type == varStr && b.type == varStr) {
+		chr &A = a._chr();
+		chr &B = b._chr();
+		return a._chr().cmp(b._chr()) == 0;
+	}
+	return false;
+}
+
+var var::indexOf(var a) {
+	if (type == varArr) {
+		int cnt = length().toDouble();
+		for (int i = 0; i < cnt; i++) {
+			if (self[i] == a) return i;
+		}
+	}
+	return -1;
+}
+//-- deo.bg.on j #ffe --
+	void var::copy(const var &a) {
+		// at this point this object is empty
+		if (a.type == varNull) { ref = 0; return; }
+		type = a.type;
+		if (type == varNum) n = a.n;
+		else {
+			ref = a.ref;
+			chr &c = (*(var*)&a)._chr();
+			if (ref) ref->uses++;
+		}
+	}
+//-- deo.bg.off j
+
+struct keyval {
+	var keys, vals;
+	keyval () {
+		keys = arr;
+		vals = arr;
+	}
+	void set(var key, var val) {
+		key = key.toString();
+		int k = keys.indexOf(key).toDouble();
+		if (k < 0) {
+			keys.push(key);
+			vals.push(val);
+		} else {
+			vals[k] = val;
+		}
+	}
+	var &get(var key) {
+		key = key.toString();
+		int k = keys.indexOf(key).toDouble();
+		if (k < 0) {
+			k = keys.length().toDouble();
+			keys[k] = key;
+		}
+		return vals[k];
+	}
+};
+
+/////////// VAR OBJECT FUCNTIONS
+
+void *newObj() {
+	return new keyval;
+}
+
+var & var::getObjElement(const var &n) {
+	keyval *u = (keyval*) ref->data;
+	var &R = u->get(n);
+	return R;
+}
+
+void var::deleteObj() {
+	delete (keyval*)ref->data, delete ref;
+}
+
+/////////// --------------------
+
+int main(int argc, char* argv[]) {
+	var a = obj;
+	a["hello"] = "world";
+	a["1"] = "one";
+	a["2"] = "two";
+	log("a[\"hello\"]", a["hello"]);
+	log("result must be \"one\":", a[1]);
+	log("a[\"1\"]", a["1"]);
+	log("a[2]:", a[2]);
+}

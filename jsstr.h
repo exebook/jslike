@@ -140,10 +140,10 @@ int cmp (const chr &other, bool caseInsensetive = false) {
 			if (A < B) return -1;
 			return 1;
 		}
-		if (a == ea) break;
-		if (b == eb) break;
 		a++;
 		b++;
+		if (a == ea) break;
+		if (b == eb) break;
 	}
 	if (size < size) return -1;
 	if (size > size) return 1;
