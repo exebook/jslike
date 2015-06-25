@@ -3,18 +3,18 @@
 C++ has it's own powerful ways of doing things, but when it comes to quick prototyping it sucks. jslike let's you create objects, assign properties, use arrays and strings a JavaScript way right in your C++ code by exposing the single `var` class.
 
 
+The library is included by source, so you simply add these two lines:
 ```cpp
-	// The library is included by source, so you simply add these two lines:
 	#include "jslike.h"
 	using namespace jslike;
-	// jslike tries not to pollute your namespace as much as possible, so
-	// everything is inside the "namespace jslike"
-	// But it exposes two macros ARR and OBJ. If you think those macros
-	// could cause you trouble, please undefine them or redefine them.
 ```
+ jslike tries not to pollute your namespace as much as possible, so
+ everything is inside the "namespace jslike"
+ But it exposes two macros ARR and OBJ. If you think those macros
+ could cause you trouble, please undefine them or redefine them.
 
 	
-	/* Undefined variables and numbers */
+#Undefined variables and numbers
 
 ```cpp
 	var x; // define "empty" variable (x == undefined)
