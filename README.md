@@ -4,8 +4,19 @@ C++ has it's own powerful ways of doing things, but when it comes to quick proto
 
 
 ```cpp
+	// The library is included by source, so you simply add these two lines:
+	#include "jslike.h"
+	using namespace jslike;
+	// jslike tries not to pollute your namespace as much as possible, so
+	// everything is inside the "namespace jslike"
+	// But it exposes two macros ARR and OBJ. If you think those macros
+	// could cause you trouble, please undefine them or redefine them.
+```cpp
+
+	
 	/* Undefined variables and numbers */
 
+```cpp
 	var x; // define "empty" variable (x == undefined)
 	var y = 2; // define a number variable
 	log(x, x.typeOf()); // -> undefined undefined
