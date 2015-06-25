@@ -1,7 +1,11 @@
 struct arrset {
-	var *ref;
+	var *ref, *tmp;
 	arrset (var &a) {
 		ref = &a;
+		tmp = 0;
+	}
+	~arrset() {
+		if (tmp) delete tmp;
 	}
 	arrset &operator , (var b) {
 		if (ref->type == varArr) ref->push(b);
@@ -12,20 +16,27 @@ struct arrset {
 		ref->push(b);
 		return self;
 	}
+	operator var& (){
+		return *ref;
+	}
 };
 
 arrset Arr() {
-	static arrset R(self);
+	arrset R(self);
 	return R;
 }
 
 struct objset {
-	var *ref;
+	var *ref, *tmp;
 	chr *key;
 	stk <void*> stack;
 	objset (var &a) {
 		ref = &a;
+		tmp = 0;
 		key = 0;
+	}
+	~objset() {
+		if (tmp) delete tmp;
 	}
 	objset &operator , (varSyntax b) {
 		if (b == obj) {
@@ -71,7 +82,7 @@ struct objset {
 };
 
 objset Obj() {
-	static objset R(self);
+	objset R(self);
 	return R;
 }
 

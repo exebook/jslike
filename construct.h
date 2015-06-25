@@ -1,7 +1,9 @@
 constructor var () {
 	id=_id++; type = varNull; ref = 0;
 }
-  ~var () { unref(); }
+
+~var () { unref(); }
+
 constructor var (const var& a) {
 	id=_id++; 
 	type = varNull; ref = 0;
@@ -41,7 +43,16 @@ constructor var (int a) {
 	id=_id++; 
 	self = (double) a;
 }
-void operator = (int a) { self = (double)a;}
+
+constructor var (bool a) {
+	id=_id++; 
+	type = varBool;
+	n = (double)a;
+}
+
+void operator = (int a) { self = (var)a;}
+
+void operator = (bool a) { self = (var)a;}
 
 void operator = (double a) {
 	n = a;

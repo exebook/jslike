@@ -1,7 +1,8 @@
 //--on [] eef
 var &var::operator [] (var a) {
 	if (type == varNull || type == varNum) { 
-		log((var)"FATAL ERROR: Cannot access property \"" + a +"\" of non-Array \"" +self + "\"");
+		log((var)"FATAL ERROR: Cannot access property \""
+			+ a +"\" of non-Array \"" + self + "\"");
 //		log("The program will now terminate.");
 		exit(0);
 		static var R; 

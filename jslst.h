@@ -63,6 +63,8 @@ var var::slice(var start, var end = undefined) {
 	if (end == undefined) b = size;
 		else if (b < 0) b += size;
 		else if (b > size) b = size;
+		
+	if (a < 0) a += size;
 
 	if (type == varStr) {
 		var R;
@@ -89,6 +91,19 @@ var var::push(var a) {
 var var::pop() {
 	lst *L = (lst*) ref->data;
 	return L->pop();
+}
+
+var var::Push(var a) {
+	lst *L = (lst*) ref->data;
+	L->delIns(0, 0, &a, 1);
+	return a;
+}
+
+var var::Pop() {
+	lst *L = (lst*) ref->data;
+	var R = (*L)[0];
+	L->delIns(0, 1, 0, 0);
+	return R;
 }
 
 var var::length() {
