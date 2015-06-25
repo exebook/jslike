@@ -90,18 +90,16 @@ A.push("planet");
 A.push("LV");
 A.push(426);
 log(A); // Array toString() is called before output
-// -> 
+// -> planet, LV, 426
 
 /* log() analog of console.log() in JavaScript */
 // log can print any var or anything that a var constructor accepts.
-{
-	var a = 1;
-	var b = "hello";
-	var c = arr;
-	c.push(100);
-	c.push(200);
-	log(a, b, c, 500, "world");
-}
+var a = 1;
+var b = "hello";
+var c = arr;
+c.push(100);
+c.push(200);
+log(a, b, c, 500, "world");
 ```
 	
 ###Array.slice()
@@ -125,48 +123,42 @@ log(fruits);
 
 ###Array indexOf() and String indexOf()
 ```cpp
-{
-	var q;
-	q.Arr() = 0,1,2,3,4,5,6; // Array literal notation
-	var j = q.indexOf(3);
-	log(q);
-	log(j);
-	var a = "hello world";
-	log(a.indexOf("wo"));
-}
+var q;
+q.Arr() = 0,1,2,3,4,5,6; // Array literal notation
+var j = q.indexOf(3);
+log(q);
+log(j);
+var a = "hello world";
+log(a.indexOf("wo"));
 ```	
 
 ###Array literal notation
 
 ```cpp
-{
-	var planets;
-	// literal setter:
-	planets.Arr() = "Earth", "Venus", "Mars", "Jupiter";
-	// static literal returner, useful for passing as an argument.
-	var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
-	// if you are OK with using macros, there is a macro-shortcut for the above:
-	stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
-	log("Stars:", stars);
-	//This syntax is achieved with overloading operator= and operator, for a
-	// temporary class "arrset".
-}
+var planets;
+// literal setter:
+planets.Arr() = "Earth", "Venus", "Mars", "Jupiter";
+// static literal returner, useful for passing as an argument.
+var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
+// if you are OK with using macros, there is a macro-shortcut for the above:
+stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
+log("Stars:", stars);
+//This syntax is achieved with overloading operator= and operator, for a
+// temporary class "arrset".
 ```
 
 ###Object variables
 
 ```cpp
 // Object literal notation:
-{
-	var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 } 
-	log(JSON.stringify(o));
-	o["x"]++;
-	o["y"] = o["x"] * 2;
-	log(JSON.stringify(o)); // -> { x: 101, y: 202 }
-	// unfortunately there is no way to enable "o.x" style notation in C++ 
-	o.del("x"); // delete existing propery specified by the key name
-	log(JSON.stringify(o)); // -> { y: 202 }
-}
+var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 } 
+log(JSON.stringify(o));
+o["x"]++;
+o["y"] = o["x"] * 2;
+log(JSON.stringify(o)); // -> { x: 101, y: 202 }
+// unfortunately there is no way to enable "o.x" style notation in C++ 
+o.del("x"); // delete existing propery specified by the key name
+log(JSON.stringify(o)); // -> { y: 202 }
 
 ```
 
