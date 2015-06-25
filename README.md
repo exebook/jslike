@@ -8,10 +8,8 @@ The library is included by source, so you simply add these two lines:
 	#include "jslike.h"
 	using namespace jslike;
 ```
- jslike tries not to pollute your namespace as much as possible, so
- everything is inside the "namespace jslike"
- But it exposes two macros ARR and OBJ. If you think those macros
- could cause you trouble, please undefine them or redefine them.
+**jslike** tries not to pollute your namespace as much as possible, so
+ everything is inside the "namespace jslike".
 
 	
 #Undefined variables and numbers
@@ -25,9 +23,11 @@ The library is included by source, so you simply add these two lines:
 	log(x + y);
 	// Basic math operations:
 	log(x - 4, x + 5, x / y, x * y); // -> -1 8 0.75 12
-	
-	/* Strings */
+```
 
+
+#Strings
+```cpp
 	var hello = "hello"; // define a string variable
 	var world;
 	world = "world";
@@ -46,14 +46,18 @@ The library is included by source, so you simply add these two lines:
 		k 107 
 		e 101 
 	*/
-	
-	/* Mix numbers and strings */
+```
+
+#Mix numbers and strings
+```cpp	
 	var a = "A", b = 1; // 'string + number' implies conversion to string
 	log(a + b); // -> A1
 	log((var)"Received #" + 12 + " from " + 2 + " planets");
 	// -> Received #12 from 2 planets
+```
 	
-	/* Arrays */
+#Arrays
+```cpp
 	var A = arr; // declare empty array
 	A.push("planet");
 	A.push("LV");
@@ -71,22 +75,29 @@ The library is included by source, so you simply add these two lines:
 		c.push(200);
 		log(a, b, c, 500, "world");
 	}
+```
 	
-	/* w3shools Array.slice() example */	
+#Array.slice()
+```cpp
 	var fruits;
 	fruits.Arr() = "Banana", "Orange", "Lemon", "Apple", "Mango";
 	var citrus = fruits.slice(1, 3);
 	//The result of citrus will be:
 	log(citrus);
 	//Orange,Lemon
+```
 
-	/* Array splice() */
+#Array splice()
+
+```cpp
 	fruits.Arr() = "Banana", "Orange", "Apple", "Mango";
 	fruits.splice(2, 0, "Kiwi"); // unlike JavaScript you cannot insert more than one item here.
 	fruits.splice(2, 0, "Lemon");
 	log(fruits);
+```
 	
-	/* Array indexOf() and String indexOf() */
+#Array indexOf() and String indexOf()
+```cpp
 	{
 		var q;
 		q.Arr() = 0,1,2,3,4,5,6; // Array literal notation
@@ -96,8 +107,11 @@ The library is included by source, so you simply add these two lines:
 		var a = "hello world";
 		log(a.indexOf("wo"));
 	}
-	
-	/* Array literal notation */
+```	
+
+#Array literal notation
+
+```cpp
 	{
 		var planets;
 		// literal setter:
@@ -110,8 +124,11 @@ The library is included by source, so you simply add these two lines:
 		//This syntax is achieved with overloading operator= and operator, for a
 		// temporary class "arrset".
 	}
+```
 	
-	/* Object variables */
+#Object variables
+
+```cpp
 	// Object literal notation:
 	{
 		var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 } 
