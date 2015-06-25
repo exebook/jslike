@@ -12,7 +12,7 @@ The library is included by source, so you simply add these two lines:
  everything is inside the "namespace jslike".
 
 	
-#Undefined variables and numbers
+###Undefined variables and numbers
 
 ```cpp
 	var x; // define "empty" variable (x == undefined)
@@ -26,7 +26,7 @@ The library is included by source, so you simply add these two lines:
 ```
 
 
-#Strings
+###Strings
 ```cpp
 	var hello = "hello"; // define a string variable
 	var world;
@@ -48,7 +48,7 @@ The library is included by source, so you simply add these two lines:
 	*/
 ```
 
-#Mix numbers and strings
+###Mix numbers and strings
 ```cpp	
 	var a = "A", b = 1; // 'string + number' implies conversion to string
 	log(a + b); // -> A1
@@ -56,7 +56,7 @@ The library is included by source, so you simply add these two lines:
 	// -> Received #12 from 2 planets
 ```
 	
-#Arrays
+###Arrays
 ```cpp
 	var A = arr; // declare empty array
 	A.push("planet");
@@ -77,7 +77,7 @@ The library is included by source, so you simply add these two lines:
 	}
 ```
 	
-#Array.slice()
+###Array.slice()
 ```cpp
 	var fruits;
 	fruits.Arr() = "Banana", "Orange", "Lemon", "Apple", "Mango";
@@ -87,7 +87,7 @@ The library is included by source, so you simply add these two lines:
 	//Orange,Lemon
 ```
 
-#Array splice()
+###Array splice()
 
 ```cpp
 	fruits.Arr() = "Banana", "Orange", "Apple", "Mango";
@@ -96,7 +96,7 @@ The library is included by source, so you simply add these two lines:
 	log(fruits);
 ```
 	
-#Array indexOf() and String indexOf()
+###Array indexOf() and String indexOf()
 ```cpp
 	{
 		var q;
@@ -109,7 +109,7 @@ The library is included by source, so you simply add these two lines:
 	}
 ```	
 
-#Array literal notation
+###Array literal notation
 
 ```cpp
 	{
@@ -126,7 +126,7 @@ The library is included by source, so you simply add these two lines:
 	}
 ```
 	
-#Object variables
+###Object variables
 
 ```cpp
 	// Object literal notation:
