@@ -11,7 +11,7 @@ C++ has it's own powerful ways of doing things, but when it comes to quick proto
 	// everything is inside the "namespace jslike"
 	// But it exposes two macros ARR and OBJ. If you think those macros
 	// could cause you trouble, please undefine them or redefine them.
-```cpp
+```
 
 	
 	/* Undefined variables and numbers */
