@@ -56,7 +56,7 @@ log((var)"Received #" + 12 + " from " + 2 + " planets");
 // -> Received #12 from 2 planets
 ```
 
-#Converting between var and basic types
+##Converting between var and basic types
 ```cpp
 var a = 123;
 int i = a.toInt();
