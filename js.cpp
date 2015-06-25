@@ -1,5 +1,6 @@
 #include "stdio.h"
 #ifdef linux
+#	include "wchar.h"
 #	define ロ(...) printf(__VA_ARGS__); fflush(0);
 #endif
 
@@ -239,6 +240,28 @@ void readme() {
 		// unfortunately there is no way to enable "o.x" style notation in C++ 
 		o.del("x"); // delete existing propery specified by the key name
 		log(JSON.stringify(o)); // -> { y: 202 }
+	}
+	
+	/* Converting between var and basic types */
+	{
+		var a = 123;
+		int i = a.toInt();
+		double d = a.toDouble();
+		printf("Basic types: %i %f\n", i, d);
+		var hello = "world";
+		char *str = hello.getStringCopyUtf(); // ..Copy() means you are responsible for deallocation of the returned data. Use `delete`.
+		printf("char* = %s\n", str);
+		delete str; // you must delete what you got with ...Copy().
+
+		str = hello.getStringCopyAscii(); // Ascii is faster that Utf.
+		printf("char* = %s\n", str);
+		delete str;
+
+		// Internally strings are stored as UTF16/32 AKA wchar_t.
+		wchar_t *w = hello.getStringPointer();
+		for (int i = 0; i < hello.length().toInt(); i++) {
+			printf("char code: %i, char: %c\n", w[i], w[i]);
+		}
 	}
 }
 

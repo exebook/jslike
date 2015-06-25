@@ -45,6 +45,18 @@ struct var {
 		ref->data = new chr;
 	}
 	
+	wchar_t* getStringPointer() {
+		return _chr().s;
+	}
+
+	char* getStringCopyUtf() {
+		return _chr().getUtf();
+	}
+
+	char* getStringCopyAscii() {
+		return _chr().getAscii();
+	}
+
 	double toDouble() {
 		if (type == varNum) return n;
 		return 0;
