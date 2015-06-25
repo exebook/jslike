@@ -63,7 +63,9 @@ int i = a.toInt();
 double d = a.toDouble();
 printf("Basic types: %i %f\n", i, d);
 var hello = "world";
-char *str = hello.getStringCopyUtf(); // ..Copy() means you are responsible for deallocation of the returned data. Use `delete`.
+
+char *str = hello.getStringCopyUtf(); // ..Copy() means you are
+// responsible for deallocation of the returned data. Use `delete`.
 printf("char* = %s\n", str);
 delete str; // you must delete what you got with ...Copy().
 
@@ -76,6 +78,8 @@ wchar_t *w = hello.getStringPointer();
 for (int i = 0; i < hello.length().toInt(); i++) {
 	printf("char code: %i, char: %c\n", w[i], w[i]);
 }
+// getStringPointer returns a pointer to an internal data, it 
+// is valid until the var exists. Do not delete the returned pointer.
 ```
 
 ###Arrays
