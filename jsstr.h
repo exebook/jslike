@@ -195,14 +195,14 @@ void lower() {
 	for (int x = 0; x < size; x++) s[x] = low_char(s[x]);
 }
 
-int _strcount(chr substring) {
+int _strcount(const chr &substring) {
 	int i = 0;
 	int result = 0;
 	while (true) {
-		i = find(i, substring.s, !substring);
+		i = find(i, substring.s, substring.size);
 		if (i < 0) return result;
 		result ++;
-		i += !substring;
+		i += substring.size;
 	}
 }
 
@@ -218,7 +218,7 @@ chr clone() {
 	return R;
 }
 
-chr replace(chr A, chr B) {
+chr replace(chr &A, chr &B) {
 	chr R;
 	int subcount, len, si=0, di, x;
 	if (size == 0) return R;
@@ -241,6 +241,7 @@ chr replace(chr A, chr B) {
 		di += B.size;
 	}
 }
+
 
 }; // struct chr {}
 
