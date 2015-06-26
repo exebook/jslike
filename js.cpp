@@ -325,9 +325,13 @@ _main();
 
 	var b;
 	b.Arr() = 100,200,300;
+	b.push(true);
+	b.push(false);
 	log(b);
 	b.Obj() = 100,200,300,400;
 	log(JSON.stringify(b));
+	var s = L"asd";
+	log(s);
 //}
 }
 

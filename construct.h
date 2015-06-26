@@ -47,6 +47,7 @@ constructor var (int a) {
 constructor var (bool a) {
 	id=_id++; 
 	type = varBool;
+	ref = 0;
 	n = (double)a;
 }
 
@@ -64,6 +65,12 @@ constructor var (char* a) {
 	self = a;
 }
 
+constructor var (wchar_t* a) {
+	id=_id++; 
+	ref = 0;
+	self = a;
+}
+
 constructor var (double a) {
 	id = _id++;
 	self = a;
@@ -76,10 +83,16 @@ void operator = (char* a) {
 	//_chr().setAscii(a);
 }
 
+void operator = (wchar_t* a) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().set(a);
+}
+
 void copy(const var &a);
 
 void unref() {
-	if (type == varNull || type == varNum) return;
+	if (type == varNull || type == varNum || type == varBool) return;
 	else if (type == varStr) {
 		ref->uses--;
 		if (ref->uses == 0) {

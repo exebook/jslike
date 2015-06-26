@@ -67,6 +67,11 @@ struct var {
 		return 0;
 	}
 
+	bool toBool() {
+		if (type == varBool) return n;
+		return false;
+	}
+	
 	var toString() {
 		if (type == varNull) {
 			return (var)"undefined";
@@ -79,6 +84,10 @@ struct var {
 			c->set(n);
 			R.ref->data = c;
 			return R;
+		}
+		if (type == varBool) {
+			if (n) return "true";
+			return "false";
 		}
 		if (type == varStr) {
 			var R = self;
@@ -152,7 +161,6 @@ bool operator != (varSyntax b) {
 	}
 
 	void del(var key);
-
 //--on class 8fa
 };
 //--off class
@@ -211,7 +219,7 @@ void var::copy(const var &a) {
 	// at this point this object is empty
 	if (a.type == varNull) { ref = 0; return; }
 	type = a.type;
-	if (type == varNum) n = a.n;
+	if (type == varNum || type == varBool) n = a.n;
 	else {
 		ref = a.ref;
 		chr &c = (*(var*)&a)._chr();

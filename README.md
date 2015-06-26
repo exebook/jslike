@@ -3,6 +3,54 @@
 C++ has it's own powerful ways of doing things, but when it comes to quick prototyping it sucks. jslike let's you create objects, assign properties, use arrays and strings a JavaScript way right in your C++ code by exposing the single `var` class.
 
 
+###Currently implemented
+
+Number, String, Array, Object, Boolean.
+operator =(int, bool, double, char*, wchar_t*)
+operator = obj/arr to create empty Array/Object.
+JSON.stringify() recursive stringify for Objects, Arrays and basic types.
+Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
+
+Conversion to basic types:
+
+wchar_t* getStringPointer()
+char* getStringCopyUtf()
+char* getStringCopyAscii()
+int toDouble()
+int toInt()
+
+var toString()
+subscript:
+operator[int/String] for Array index/Object property access
+operator++ (int)
+Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
+var round() for Number
+charAt() for String
+charCodeAt() for String
+split() for String
+objectKeys() get list of keys for Objects
+indexOf() for String/Array
+push() for Array
+pop()
+Push() unshift/shift are Push/Pop, because "shitf" is a reserved word in C++.
+Pop()
+length() for String/Array
+splice() Array
+slice() Array/String
+join() Array
+typeOf()
+var::initArr() = <a,b,c,d,....>
+var::initObj() = <a,b,c,d,....>
+ARR(...)
+OBJ(...)
+del(key) to delete key/value pairs from Object
+compare vars with Undefined() or undefined
+log(...) function to conveniently output to console
+operator < compare Numbers or Strings (alphabetically)
+operator >
+
+##Examples
+
 The library is included by source, so you simply add these two lines:
 ```cpp
 	#include "jslike.h"
@@ -150,12 +198,20 @@ log("Stars:", stars);
 ###Object variables
 
 ```cpp
+var xy = obj; // Declare empty object
+xy["x"] = 100;
+xy["y"] = 200;
+log(JSON.stringify(xy)); // -> { x: 100, y: 200 } 
+
 // Object literal notation:
 var o = OBJ("x", 100, "y", 400);
 log(JSON.stringify(o)); // -> { x: 100, y: 400 } 
+
+//Property access
 o["x"]++;
 o["y"] = o["x"] * 2;
 log(JSON.stringify(o)); // -> { x: 101, y: 202 }
+
 // unfortunately there is no way to enable "o.x" style notation in C++ 
 o.del("x"); // delete existing propery specified by the key name
 log(JSON.stringify(o)); // -> { y: 202 }
@@ -163,6 +219,7 @@ log(JSON.stringify(o)); // -> { y: 202 }
 ```
 
 ###Converting between var and basic types
+
 ```cpp
 var a = 123;
 int i = a.toInt();
