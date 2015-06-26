@@ -5,19 +5,19 @@ C++ has it's own powerful ways of doing things, but when it comes to quick proto
 
 ###Currently implemented
 
-Number, String, Array, Object, Boolean.
-operator =(int, bool, double, char*, wchar_t*)
-operator = obj/arr to create empty Array/Object.
-JSON.stringify() recursive stringify for Objects, Arrays and basic types.
-Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
+-Number, String, Array, Object, Boolean.
+-operator =(int, bool, double, char*, wchar_t*)
+-operator = obj/arr to create empty Array/Object.
+-JSON.stringify() recursive stringify for Objects, Arrays and basic types.
+-Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
 
 Conversion to basic types:
 
-wchar_t* getStringPointer()
-char* getStringCopyUtf()
-char* getStringCopyAscii()
-int toDouble()
-int toInt()
+-wchar_t* getStringPointer()
+-char* getStringCopyUtf()
+-char* getStringCopyAscii()
+-int toDouble()
+-int toInt()
 
 var toString()
 subscript:
