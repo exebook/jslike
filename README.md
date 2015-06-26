@@ -18,10 +18,8 @@ Conversion to basic types:
 - char* getStringCopyAscii()
 - int toDouble()
 - int toInt()
-
 - var toString()
-- subscript:
-- operator[int/String] for Array index/Object property access
+- subscript operator[int/String] for Array index/Object property access
 - operator++ (int)
 - Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
 - var round() for Number
