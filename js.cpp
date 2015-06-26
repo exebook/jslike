@@ -309,7 +309,7 @@ int main(int argc, char* argv[]) {
 //	testIndexOf();
 //	readme();
 _main(); 
-return 0;
+//return 0;
 //for (int i = 0; i < 1000000; i++) {
 	var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
 	log(stars);

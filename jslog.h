@@ -14,6 +14,7 @@ void __Log(var a) {
 }
 
 #ifdef __BORLANDC__
+// Borland C++ Buider 6.0 does not support __VA_ARGS__
 void log(var a,
 	var b = argIgnore, var c = argIgnore, var d = argIgnore,
 	var e = argIgnore, var f = argIgnore, var g = argIgnore,

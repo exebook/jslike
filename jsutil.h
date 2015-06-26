@@ -1,14 +1,4 @@
 #define self (*this)
-//typedef char i8;
-//typedef short i16;
-//typedef int i32;
-//typedef unsigned char byte;
-//typedef unsigned char u8;
-//typedef unsigned int u32;
-//typedef unsigned short u16;
-//typedef unsigned short word;
-//typedef float f32;
-//typedef double f64;
 
 int len(char *c) {
 	int R = 0;
