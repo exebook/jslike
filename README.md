@@ -163,6 +163,7 @@ log(JSON.stringify(o)); // -> { y: 202 }
 ```
 
 ###Converting between var and basic types
+```cpp
 var a = 123;
 int i = a.toInt();
 double d = a.toDouble();
@@ -181,4 +182,5 @@ wchar_t *w = hello.getStringPointer();
 for (int i = 0; i < hello.length().toInt(); i++) {
 	printf("char code: %i, char: %c\n", w[i], w[i]);
 }
-	
+```
+
