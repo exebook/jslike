@@ -264,6 +264,31 @@ void readme() {
 			printf("char code: %i, char: %c\n", w[i], w[i]);
 		}
 	}
+	
+}
+
+/* Passing var as an argument */
+
+var sum10(var a, var b) {
+	a = a * 10;
+	b = b * 10;
+	return a + b;
+}
+
+void popAndPrint(var a) {
+	log(a.pop());
+}
+
+void _main() {
+	var x = 400, y = 500;
+	log(sum10(x, y)); // 9000
+	log(x, y); // 400, 500 are left unmodified, because x,y were passed by values
+	var b;
+	b.Arr() = 100,200,300;
+	popAndPrint(b);
+	popAndPrint(b);
+	log("What remains of b:", b); // prints 100
+	// because arrays and objects are passed by reference
 }
 
 var fu (var a) {
@@ -283,6 +308,8 @@ int main(int argc, char* argv[]) {
 //	testChain();
 //	testIndexOf();
 //	readme();
+_main(); 
+return 0;
 //for (int i = 0; i < 1000000; i++) {
 	var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
 	log(stars);
