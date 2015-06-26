@@ -151,8 +151,8 @@ log("Stars:", stars);
 
 ```cpp
 // Object literal notation:
-var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 } 
-log(JSON.stringify(o));
+var o = OBJ("x", 100, "y", 400);
+log(JSON.stringify(o)); // -> { x: 100, y: 400 } 
 o["x"]++;
 o["y"] = o["x"] * 2;
 log(JSON.stringify(o)); // -> { x: 101, y: 202 }
@@ -162,3 +162,23 @@ log(JSON.stringify(o)); // -> { y: 202 }
 
 ```
 
+###Converting between var and basic types
+var a = 123;
+int i = a.toInt();
+double d = a.toDouble();
+printf("Basic types: %i %f\n", i, d);
+var hello = "world";
+char *str = hello.getStringCopyUtf(); // ..Copy() means you are responsible for deallocation of the returned data. Use `delete`.
+printf("char* = %s\n", str);
+delete str; // you must delete what you got with ...Copy().
+
+str = hello.getStringCopyAscii(); // Ascii is faster that Utf.
+printf("char* = %s\n", str);
+delete str;
+
+// Internally strings are stored as UTF16/32 AKA wchar_t.
+wchar_t *w = hello.getStringPointer();
+for (int i = 0; i < hello.length().toInt(); i++) {
+	printf("char code: %i, char: %c\n", w[i], w[i]);
+}
+	
