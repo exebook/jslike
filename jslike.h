@@ -141,36 +141,21 @@ bool operator != (varSyntax b) {
 	var typeOf();
 #include "jsset.h"
 
-//	static objset set(var &a) {
-//		//static 
-//		objset R(a);
-//		return R;
-//	}
-	
 	static objset initObj() {
-		var *a = new var;
-		objset R(*a);
-		R.tmp = a;
+		objset R;
 		return R;
 	}
-	
+
 	static arrset initArr() {
-		var *a = new var;
-		arrset R(*a);
-		R.tmp = a;
+		arrset R;
 		return R;
 	}
-	
+
 	void del(var key);
-	
+
 //--on class 8fa
 };
 //--off class
-
-//objset objLit() {
-//	static objset R(self);
-//	return R;
-//}
 
 extern "C" void exit(int);
 

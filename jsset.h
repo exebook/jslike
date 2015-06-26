@@ -1,88 +1,142 @@
+struct Rc {
+	var *ref;
+	int count;
+};
+
 struct arrset {
-	var *ref, *tmp;
-	arrset (var &a) {
-		ref = &a;
-		tmp = 0;
+	Rc *rc;
+	var *vr;
+
+	arrset () {
+		rc = new Rc;
+		rc->ref = new var;
+		rc->count = 1;
+	}
+	arrset (var *a, int dummy) {
+		//dummy is to remove "ambiguous" conflict
+		rc = 0;
+		vr = a;
+	}
+	arrset(arrset &a) {
+		if (a.rc) {
+			rc = a.rc;
+			rc->count++;
+		}
+		else vr = a.vr, rc = 0;
 	}
 	~arrset() {
-		if (tmp) delete tmp;
+		if (rc && rc->ref && --rc->count == 0) {
+			delete rc->ref;
+			delete rc;
+		}
+	}
+	var *get() {
+		if (rc) return rc->ref;
+		return vr;
+	}
+	operator var& (){
+		return *get();
 	}
 	arrset &operator , (var b) {
-		if (ref->type == varArr) ref->push(b);
+		if (get()->type == varArr) get()->push(b);
 		return self;
 	}
 	arrset &operator = (var b) {
-		(*ref) = arr;
-		ref->push(b);
+		(*get()) = arr;
+		get()->push(b);
 		return self;
-	}
-	operator var& (){
-		return *ref;
 	}
 };
 
 arrset Arr() {
-	arrset R(self);
+	arrset R(this, 1);
 	return R;
 }
 
 struct objset {
-	var *ref, *tmp;
-	chr *key;
-	stk <void*> stack;
-	objset (var &a) {
-		ref = &a;
-		tmp = 0;
-		key = 0;
+	Rc *rc;
+	var *vr;
+
+	objset () {
+		rc = new Rc;
+		rc->ref = new var;
+		rc->count = 1;
+	}
+	objset (var *a) {
+		rc = 0;
+		vr = a;
+	}
+	objset(objset &a) {
+		if (a.rc) {
+			rc = a.rc;
+			rc->count++;
+		}
+		else vr = a.vr, rc = 0;
 	}
 	~objset() {
-		if (tmp) delete tmp;
-	}
-	objset &operator , (varSyntax b) {
-		if (b == obj) {
-			value() = obj;
-			stack.push(ref);
-			ref = & value();
-			delete key;
-			key = 0;
-		} else if (b == end) {
-			ref = (var*) stack.pop();
+		if (rc && rc->ref && --rc->count == 0) {
+			delete rc->ref;
+			delete rc;
 		}
-		return self;
 	}
-	var& value() {
+	var *get() {
+		if (rc) return rc->ref;
+		return vr;
+	}
+	void set(var *a) {
+		if (rc) rc->ref = a;
+		vr = a;
+	}
+	operator var& (){
+		return *get();
+	}
+
+	chr *key;
+	stk <void*> stack;
+
+	var& __value() {
 		var t;
 		t.makeStringToSet();
 		t._chr().set(key->s, key->size);
-		return (*ref)[t];
+		return (*get())[t];
+	}
+	objset &operator , (varSyntax b) {
+		if (b == obj) {
+			__value() = obj;
+			stack.push(get());
+			set(& __value());
+			delete key;
+			key = 0;
+		} else if (b == end) {
+			set((var*) stack.pop());
+		}
+		return self;
 	}
 	objset &operator , (var b) {
-		if (ref->type == varObj) {
+		if (get()->type == varObj) {
 			if (key) {
-				value() = b;
+				__value() = b;
 				delete key;
 				key = 0;
 			} else {
-				key - &b._chr();
 				key = new chr;
+				b = b.toString();
 				key->set(b._chr().s, b._chr().size);
 			}
 		}
 		return self;
 	}
 	objset &operator = (var b) {
-		(*ref) = obj;
+		(*get()) = obj;
 		key = new chr;
+		b = b.toString();
 		key->set(b._chr().s, b._chr().size);
 		return self;
-	}
-	operator var& (){
-		return *ref;
 	}
 };
 
 objset Obj() {
-	objset R(self);
+	objset R(this);
 	return R;
 }
 

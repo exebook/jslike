@@ -223,7 +223,7 @@ void readme() {
 		// static literal returner, useful for passing as an argument.
 		var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
 		// if you are OK with using macros, there is a macro-shortcut for the above:
-		stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
+//		stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
 		log("Stars:", stars);
 		//This syntax is achieved with overloading operator= and operator, for a
 		// temporary class "arrset".
@@ -232,7 +232,8 @@ void readme() {
 	/* Object variables */
 	// Object literal notation:
 	{
-		var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 } 
+		var o = (var::initObj() = "x", 100, "y", 400); // -> { x: 100, y: 400 } 
+//		var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 }
 		log(JSON.stringify(o));
 		o["x"]++;
 		o["y"] = o["x"] * 2;
@@ -270,12 +271,36 @@ var fu (var a) {
 	return R;
 }
 
+var f(var b) {
+	b = b.toString();
+	return b;
+}
+
 int main(int argc, char* argv[]) {
 //	testNumbers();
 //	testArrayLiteral();
 //	testObjectLiteral();
 //	testChain();
 //	testIndexOf();
-	readme();
+//	readme();
+//for (int i = 0; i < 1000000; i++) {
+	var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
+	log(stars);
+	var o = (var::initObj() = "x", 100, "y", 400); // -> { x: 100, y: 400 }
+	log(JSON.stringify(o));
+	var a;
+	a = (var::initObj() = "a", 1, "b", 2, "c", obj, "d", 3, end, "e", obj,
+		"f", 4, "g", obj,
+			"h", 5,
+		end,
+	end);
+	log(JSON.stringify(a));
+
+	var b;
+	b.Arr() = 100,200,300;
+	log(b);
+	b.Obj() = 100,200,300,400;
+	log(JSON.stringify(b));
+//}
 }
 
