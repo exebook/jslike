@@ -169,7 +169,8 @@ int i = a.toInt();
 double d = a.toDouble();
 printf("Basic types: %i %f\n", i, d);
 var hello = "world";
-char *str = hello.getStringCopyUtf(); // ..Copy() means you are responsible for deallocation of the returned data. Use `delete`.
+char *str = hello.getStringCopyUtf(); // ..Copy() means you are
+	// responsible the for deallocation of the returned data. Use `delete`.
 printf("char* = %s\n", str);
 delete str; // you must delete what you got with ...Copy().
 
