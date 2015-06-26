@@ -47,6 +47,11 @@ Conversion to basic types:
 - operator < compare Numbers or Strings (alphabetically)
 - operator >
 
+###Not yet implemented
+- JSON.parse()
+- mark&sweep GC
+- functions, lambdas, closures
+
 ##Examples
 
 The library is included by source, so you simply add these two lines:
