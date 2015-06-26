@@ -19,35 +19,35 @@ Conversion to basic types:
 - int toDouble()
 - int toInt()
 
-var toString()
-subscript:
-operator[int/String] for Array index/Object property access
-operator++ (int)
-Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
-var round() for Number
-charAt() for String
-charCodeAt() for String
-split() for String
-objectKeys() get list of keys for Objects
-indexOf() for String/Array
-push() for Array
-pop()
-Push() unshift/shift are Push/Pop, because "shitf" is a reserved word in C++.
-Pop()
-length() for String/Array
-splice() Array
-slice() Array/String
-join() Array
-typeOf()
-var::initArr() = <a,b,c,d,....>
-var::initObj() = <a,b,c,d,....>
-ARR(...)
-OBJ(...)
-del(key) to delete key/value pairs from Object
-compare vars with Undefined() or undefined
-log(...) function to conveniently output to console
-operator < compare Numbers or Strings (alphabetically)
-operator >
+- var toString()
+- subscript:
+- operator[int/String] for Array index/Object property access
+- operator++ (int)
+- Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
+- var round() for Number
+- charAt() for String
+- charCodeAt() for String
+- split() for String
+- objectKeys() get list of keys for Objects
+- indexOf() for String/Array
+- push() for Array
+- pop()
+- Push() unshift/shift are Push/Pop, because "shitf" is a reserved word in C++.
+- Pop()
+- length() for String/Array
+- splice() Array
+- slice() Array/String
+- join() Array
+- typeOf()
+- var::initArr() = <a,b,c,d,....>
+- var::initObj() = <a,b,c,d,....>
+- ARR(...) overloaded operator, (comma) to simulate JavaScript array literal notations
+- OBJ(...) an attempt to have some Object literal syntax
+- del(key) to delete key/value pairs from Object
+- compare vars with Undefined() or undefined
+- log(...) function to conveniently output to console
+- operator < compare Numbers or Strings (alphabetically)
+- operator >
 
 ##Examples
 
