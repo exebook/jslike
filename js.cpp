@@ -242,7 +242,6 @@ void readme() {
 		o.del("x"); // delete existing propery specified by the key name
 		log(JSON.stringify(o)); // -> { y: 202 }
 	}
-	
 	/* Converting between var and basic types */
 	{
 		var a = 123;
@@ -323,12 +322,12 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-//	testNumbers();
-//	testArrayLiteral();
-//	testObjectLiteral();
-//	testChain();
-//	testIndexOf();
-//	readme();
-	var R = testJSON();
+	testNumbers();
+	testArrayLiteral();
+	testObjectLiteral();
+	testChain();
+	testIndexOf();
+	readme();
+	testJSON();
 }
 

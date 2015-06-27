@@ -109,13 +109,13 @@ double toNumber () {
 }
 
 char * getAscii() { // basic 0-128 range only
-	static char* u = new char[size];
+	char* u = new char[size];
 	for (int i = 0; i < size; i++) u[i] = s[i];
 	return u;
 }
 
 char * getUtf() {
-	static char* u = 0;
+	char* u = 0;
 	if (u != 0) delete u;
 	u = new char[size*4];
 	w2utf(u, size*4, s, size);
