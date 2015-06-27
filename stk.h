@@ -1,5 +1,5 @@
-
-template <typename T> struct stk {
+struct stk {
+	typedef void *T;
 	T* p;
 	int size, cap;
 	stk() { zero(); }

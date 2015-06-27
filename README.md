@@ -1,4 +1,4 @@
-#jslike - JavaScript-like var/Array/Object/function for C++
+#jslike - JavaScript-like "var" (Number/String/Array/Object/function) for C++
 
 jslike let's you create objects, assign properties, use arrays and strings a JavaScript way right in your C++ code by exposing the single `var` class.
 
@@ -9,15 +9,19 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 - operator =(int, bool, double, char*, wchar_t*)
 - operator = obj/arr to create empty Array/Object.
 - JSON.stringify() recursive stringify for Objects, Arrays and basic types.
+- JSON.parse()
 - Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
 
-Conversion to basic types:
+Conversion to basic C++ types:
 
 - wchar_t* getStringPointer()
-- char* getStringCopyUtf()
-- char* getStringCopyAscii()
+- char* getStringAllocUtf()
+- char* getStringAllocAscii()
 - int toDouble()
 - int toInt()
+
+Functions and properties:
+
 - var toString()
 - subscript operator[int/String] for Array index/Object property access
 - operator++ (int)
@@ -25,12 +29,14 @@ Conversion to basic types:
 - var round() for Number
 - charAt() for String
 - charCodeAt() for String
+- toNumber()
+- var var::fromCharCode(var)
 - split() for String
 - objectKeys() get list of keys for Objects
 - indexOf() for String/Array
 - push() for Array
 - pop()
-- Push() unshift/shift are Push/Pop, because "shitf" is a reserved word in C++.
+- Push() unshift/shift are Push/Pop, because "shift" is a reserved word in C++.
 - Pop()
 - length() for String/Array
 - splice() Array
@@ -48,7 +54,6 @@ Conversion to basic types:
 - operator >
 
 ###Not yet implemented
-- JSON.parse()
 - mark&sweep GC
 - functions, lambdas, closures
 
@@ -75,7 +80,6 @@ log(x + y); // -> 7
 // Basic math operations:
 log(x - 4, x + 5, x / y, x * y); // -> -1 8 0.75 12
 ```
-
 
 ###Strings
 ```cpp
@@ -105,32 +109,6 @@ var a = "A", b = 1; // 'string + number' implies conversion to string
 log(a + b); // -> A1
 log((var)"Received #" + 12 + " from " + 2 + " planets");
 // -> Received #12 from 2 planets
-```
-
-##Converting between var and basic types
-```cpp
-var a = 123;
-int i = a.toInt();
-double d = a.toDouble();
-printf("Basic types: %i %f\n", i, d);
-var hello = "world";
-
-char *str = hello.getStringCopyUtf(); // ..Copy() means you are
-// responsible for deallocation of the returned data. Use `delete`.
-printf("char* = %s\n", str);
-delete str; // you must delete what you got with ...Copy().
-
-str = hello.getStringCopyAscii(); // Ascii is faster that Utf.
-printf("char* = %s\n", str);
-delete str;
-
-// Internally strings are stored as UTF16/32 AKA wchar_t.
-wchar_t *w = hello.getStringPointer();
-for (int i = 0; i < hello.length().toInt(); i++) {
-	printf("char code: %i, char: %c\n", w[i], w[i]);
-}
-// getStringPointer returns a pointer to an internal data, it 
-// is valid until the var exists. Do not delete the returned pointer.
 ```
 
 ###Arrays
@@ -221,20 +199,21 @@ log(JSON.stringify(o)); // -> { y: 202 }
 
 ```
 
-###Converting between var and basic types
 
+##Converting between var and basic types
 ```cpp
 var a = 123;
 int i = a.toInt();
 double d = a.toDouble();
 printf("Basic types: %i %f\n", i, d);
 var hello = "world";
-char *str = hello.getStringCopyUtf(); // ..Copy() means you are
-	// responsible the for deallocation of the returned data. Use `delete`.
-printf("char* = %s\n", str);
-delete str; // you must delete what you got with ...Copy().
 
-str = hello.getStringCopyAscii(); // Ascii is faster that Utf.
+char *str = hello.getStringAllocUtf(); // ..Alloc() means you are
+// responsible for deallocation of the returned data. Use `delete`.
+printf("char* = %s\n", str);
+delete str; // you must delete what you got with ...Alloc().
+
+str = hello.getStringAllocAscii(); // Ascii is faster that Utf.
 printf("char* = %s\n", str);
 delete str;
 
@@ -243,6 +222,8 @@ wchar_t *w = hello.getStringPointer();
 for (int i = 0; i < hello.length().toInt(); i++) {
 	printf("char code: %i, char: %c\n", w[i], w[i]);
 }
+// getStringPointer returns a pointer to an internal data, it 
+// is valid until the var exists. Do not delete the returned pointer.
 ```
 
 ###Passing var as an argument

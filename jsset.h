@@ -92,7 +92,7 @@ struct objset {
 	}
 
 	chr *key;
-	stk <void*> stack;
+	stk stack;
 
 	var& __value() {
 		var t;

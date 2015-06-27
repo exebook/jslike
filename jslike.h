@@ -25,10 +25,8 @@ struct Ref {
 void *newLst();
 void *newObj();
 
-int _id = 0;
 struct var;// void log(var a);
 struct var {
-	int id;
 	varType type;
 	union {
 		double n;
@@ -49,14 +47,14 @@ struct var {
 		return _chr().s;
 	}
 
-	char* getStringCopyUtf() {
+	char* getStringAllocUtf() {
 		return _chr().getUtf();
 	}
 
-	char* getStringCopyAscii() {
+	char* getStringAllocAscii() {
 		return _chr().getAscii();
 	}
-
+	
 	double toDouble() {
 		if (type == varNum) return n;
 		return 0;
@@ -72,6 +70,16 @@ struct var {
 		return false;
 	}
 	
+	var toNumber() {
+		return _chr().toNumber();
+	}
+
+	static var fromCharCode(var a) {
+		var R = "1";
+		R.getStringPointer()[0] = (wchar_t)a.toInt();
+		return R;
+	}
+
 	var toString() {
 		if (type == varNull) {
 			return (var)"undefined";
@@ -217,10 +225,10 @@ var var::indexOf(var a) {
 
 void var::copy(const var &a) {
 	// at this point this object is empty
-	if (a.type == varNull) { ref = 0; return; }
 	type = a.type;
 	if (type == varNum || type == varBool) n = a.n;
 	else {
+		if (a.type == varNull) { ref = 0; return; }
 		ref = a.ref;
 		chr &c = (*(var*)&a)._chr();
 		if (ref) ref->uses++;

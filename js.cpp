@@ -250,11 +250,11 @@ void readme() {
 		double d = a.toDouble();
 		printf("Basic types: %i %f\n", i, d);
 		var hello = "world";
-		char *str = hello.getStringCopyUtf(); // ..Copy() means you are responsible for deallocation of the returned data. Use `delete`.
+		char *str = hello.getStringAllocUtf(); // ..Alloc() means you are responsible for deallocation of the returned data. Use `delete`.
 		printf("char* = %s\n", str);
-		delete str; // you must delete what you got with ...Copy().
+		delete str; // you must delete what you got with ...Alloc().
 
-		str = hello.getStringCopyAscii(); // Ascii is faster that Utf.
+		str = hello.getStringAllocAscii(); // Ascii is faster that Utf.
 		printf("char* = %s\n", str);
 		delete str;
 
@@ -301,6 +301,27 @@ var f(var b) {
 	return b;
 }
 
+var testJSON() {
+	var s = "[null,undefined,,[{o:{a:1}, 'a+a':123, b:'hey', c: [1,2,3], d: "
+	"{x:100, y:200,opt:"
+	"{\"fname\":\"readme.txt\"}, "
+	"b1: true, a2: [1,2,[3,4,[5,6,{}, "
+	"{ deep : true } ], \"ab\\\"c'd\\\\e\"]] }}],[,,5]]";
+//	s = "'a\\'sd'";
+	//test for:
+	// Numbers, Strings, Booleans, Arrays, Objects
+	// - alphanumeric unquoted keys, empty objects, empty arrays
+	// - empty comma separated values in array
+	// - single and double quoted Strings
+	// - backslash escapes
+	// - parse 'null' and 'undefined'
+	int i = 0;
+	var R;
+	R = parseJsonObject(s, i);
+	log("JSON parsed", R.typeOf() + ":", JSON.stringify(R));
+	return R;
+}
+
 int main(int argc, char* argv[]) {
 //	testNumbers();
 //	testArrayLiteral();
@@ -308,30 +329,6 @@ int main(int argc, char* argv[]) {
 //	testChain();
 //	testIndexOf();
 //	readme();
-_main(); 
-//return 0;
-//for (int i = 0; i < 1000000; i++) {
-	var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
-	log(stars);
-	var o = (var::initObj() = "x", 100, "y", 400); // -> { x: 100, y: 400 }
-	log(JSON.stringify(o));
-	var a;
-	a = (var::initObj() = "a", 1, "b", 2, "c", obj, "d", 3, end, "e", obj,
-		"f", 4, "g", obj,
-			"h", 5,
-		end,
-	end);
-	log(JSON.stringify(a));
-
-	var b;
-	b.Arr() = 100,200,300;
-	b.push(true);
-	b.push(false);
-	log(b);
-	b.Obj() = 100,200,300,400;
-	log(JSON.stringify(b));
-	var s = L"asd";
-	log(s);
-//}
+	var R = testJSON();
 }
 
