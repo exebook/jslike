@@ -224,15 +224,9 @@ var var::concatAll() {
 var var::replace(var find, var repl) {
 	find = find.toString();
 	repl = repl.toString();
-//	self = "hello";
-//	find = "ll";
-//	repl = "LL";
-//	chr c;
 	var R ;
 	R.makeStringToSet();
 	_chr().replace(find._chr(), repl._chr(), R._chr());
-	
-	ロ ("replace: %s\n", R._chr().getUtf());
 	return R;
 }
 

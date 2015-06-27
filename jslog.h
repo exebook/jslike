@@ -66,11 +66,11 @@ void log(var a,
 
 #else
 
-#define ARR(...) (var::arr() = __VA_ARGS__)
-#define Arr var::arr() =
-#define OBJ(...) (var::obj() = __VA_ARGS__)
-#define Obj var::obj() =
-#define log(...) __Log((var::arr() = __VA_ARGS__));
+#define ARR(...) (jslike::var::arr() = __VA_ARGS__)
+#define Arr jslike::var::arr() =
+#define OBJ(...) (jslike::var::obj() = __VA_ARGS__)
+#define Obj jslike::var::obj() =
+#define log(...) __Log((jslike::var::arr() = __VA_ARGS__));
 
 #endif
 

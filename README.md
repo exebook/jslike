@@ -71,7 +71,24 @@ The library is included by source, so you simply add these two lines:
 **jslike** tries not to pollute your namespace as much as possible, so
  everything is inside the "namespace jslike".
 
-	
+
+###Minimal program
+```js
+// hello.cpp
+#include "stdio.h"
+#include "jslike.h"
+using namespace jslike;
+
+int main() {
+	var hello = "hello world привет мир 你好世界";
+	log(hello)
+}```
+
+*output:*
+
+```console
+hello world привет мир 你好世界
+```
 ###Undefined variables and numbers
 
 ```js
@@ -360,10 +377,10 @@ Basic types, integer=123, double=123.456000
 
 ###Getting a pointer to a character buffer of a String.
 Internally strings are stored as UTF16/32 AKA wchar_t.
-You can either get a pointer to a internal `wchar_t*` buffer, or get a pointer to a `char*` copy of that buffer, allocated and copied for you.
+You can either get a pointer to a internal `wchar_t*` buffer, or get a pointer to a `char*` copy of that buffer, allocated and copied for you in either ascii or utf8.
 
-`whar_t* var::getStringPointer()` returns a pointer to an internal data, it 
-is valid until the var exists. Do not delete the pointer returned from this function.
+`wchar_t* var::getStringPointer()` returns a pointer to an internal data, it 
+is valid until the `var` exists. Do not delete the pointer returned from this function.
 
 When function name has **Alloc**() in it, it means you are responsible for the deallocation of the returned data. Use C++ `delete` operator when you are done.
 
@@ -419,7 +436,7 @@ void popAndPrint(var a) {
 	log(a.pop());
 }
 
-void _main() {
+void main() {
 	var x = 400, y = 500;
 	log(sum10(x, y)); // 9000
 	log(x, y); // 400, 500 are left unmodified, because x,y were passed by values
