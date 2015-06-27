@@ -332,13 +332,11 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-	var a = Array;
-	a.push((Arr 1,2,3));
-	a.push((Arr 4,5,6));
-	a.push((Arr 7,8,9));
-	log(JSON.stringify(a));
-	var b = a.concatAll();
-	log(JSON.stringify(b));
+var a = 123.456;
+int i = a.toInt();
+double d = a.toDouble();
+printf("Basic types, integer=%i, double=%f\n", i, d);
+
 //	return 0;
 //	testNumbers();
 //	testArrayLiteral();

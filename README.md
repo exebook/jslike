@@ -269,43 +269,70 @@ Unfortunately there is no way use varargs/stdargs with class constructors, so we
 
 ```
 
-###Object variables
+###Objects
 
 ```js
-var xy = obj; // Declare empty object
+var xy = Object; // Declare empty object
 xy["x"] = 100;
 xy["y"] = 200;
 log(JSON.stringify(xy));
+log(xy["z"]);
 ```
 
 ```console
-{ x: 100, y: 200 } 
+{x:100,y:200} 
+undefined 
 ```
 
 Object literal notation:
 
 ```js
-var o = OBJ("x", 100, "y", 400);
-log(JSON.stringify(o)); // -> { x: 100, y: 400 } 
-
-//Property access
-o["x"]++;
-o["y"] = o["x"] * 2;
-log(JSON.stringify(o)); // -> { x: 101, y: 202 }
-
-// unfortunately there is no way to enable "o.x" style notation in C++ 
-o.del("x"); // delete existing propery specified by the key name
-log(JSON.stringify(o)); // -> { y: 202 }
-
+var o = (Obj "x", 100, "y", 400);
+log(JSON.stringify(o));
 ```
 
+```console
+{x:100,y:400} 
+```
+
+Property access. Unfortunately there is no way to enable "o.x" style notation in C++. So we have to use `var[key]` syntax.
+
+```js
+o["x"]++;
+o["y"] = o["x"] * 2;
+log(JSON.stringify(o));
+```
+
+```console
+{x:101,y:202} 
+```
+
+Delete existing propery specified by the key name:
+
+
+```js
+if (o.has("x")) o.del("x");
+log(JSON.stringify(o));
+```
+
+```console
+{ y: 202 }
+```
 
 ##Converting between var and basic types
 ```js
-var a = 123;
+var a = 123.456;
 int i = a.toInt();
 double d = a.toDouble();
-printf("Basic types: %i %f\n", i, d);
+printf("Basic types, integer=%i, double=%f\n", i, d);
+```
+
+-
+
+```console
+Basic types, integer=123, double=123.456000
+```
+
 var hello = "world";
 
 char *str = hello.getStringAllocUtf(); // ..Alloc() means you are
