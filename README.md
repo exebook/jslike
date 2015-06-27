@@ -73,7 +73,7 @@ The library is included by source, so you simply add these two lines:
 
 
 ###Minimal program
-```js
+```cpp
 // hello.cpp
 #include "stdio.h"
 #include "jslike.h"
