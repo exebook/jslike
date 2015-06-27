@@ -23,7 +23,9 @@ Conversion to basic C++ types:
 Functions and properties:
 
 - var toString()
-- subscript operator[int/String] for Array index/Object property access
+- operator[int] Array index access
+- operator[String] Object property access
+- operator[int] String character access
 - operator++ (int)
 - Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
 - var round() for Number
