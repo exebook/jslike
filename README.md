@@ -63,31 +63,30 @@ Experimental complex literals:
 - map, sort, filter etc...
 
 ##Examples
-[Minimal program][101]
-[Undefined variables and numbers][102]
-[Strings][103]
-[Mix numbers and strings][104]
-[Arrays][105]
-[log()][106]
-[Array.slice()][107]
-[Array splice()][108]
-[Array indexOf() and String indexOf()][109]
-[Array literal notation][110]
-[concatAll()][111]
-[Objects][112]
-[Converting between var and basic types][113]
-[Getting a pointer to a character buffer of a String.][114]
-[Passing var as an argument][115]
-
+ - [Minimal program][101]
+ - [Undefined variables and numbers][102]
+ - [Strings][103]
+ - [Mix numbers and strings][104]
+ - [Arrays][105]
+ - [log()][106]
+ - [Array.slice()][107]
+ - [Array splice()][108]
+ - [Array indexOf() and String indexOf()][109]
+ - [Array literal notation][110]
+ - [concatAll()][111]
+ - [Objects][112]
+ - [Converting between var and basic types][113]
+ - [Getting a pointer to a character buffer of a String.][114]
+ - [Passing var as an argument][115]
 
 [101]: https://github.com/exebook/jslike#minimal-program
-[102]: https://github.com/exebook/jslike#undefined-variables-and-numbers
+[102]: https://github.com/exebook/jslike#undefined-variables-number-variables
 [103]: https://github.com/exebook/jslike#strings
 [104]: https://github.com/exebook/jslike#mix-numbers-and-strings
 [105]: https://github.com/exebook/jslike#arrays
 [106]: https://github.com/exebook/jslike#log
 [107]: https://github.com/exebook/jslike#arrayslice
-[108]: https://github.com/exebook/jslike#arraysplice
+[108]: https://github.com/exebook/jslike#array-splice
 [109]: https://github.com/exebook/jslike#array-indexof-and-string-indexof
 [110]: https://github.com/exebook/jslike#array-literal-notation
 [111]: https://github.com/exebook/jslike#concatall
@@ -99,8 +98,8 @@ Experimental complex literals:
 
 The library is included by source, so you simply add these two lines:
 ```js
-	#include "jslike.h"
-	using namespace jslike;
+#include "jslike.h"
+using namespace jslike;
 ```
 **jslike** tries not to pollute your namespace as much as possible, so
  everything is inside the "namespace jslike".
