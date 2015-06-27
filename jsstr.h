@@ -218,25 +218,25 @@ chr clone() {
 	return R;
 }
 
-chr replace(chr &A, chr &B) {
-	chr R;
+void replace(chr &A, chr &B, chr &dest) {
+//	chr dest;
 	int subcount, len, si=0, di, x;
-	if (size == 0) return R;
-	R.size = size + _strcount(A) * (B.size - A.size);
-	R.s = new wchar_t [R.size];
+	if (size == 0) return;
+	dest.size = size + _strcount(A) * (B.size - A.size);
+	dest.s = new wchar_t [dest.size];
 	di = si;
-	_cpto(0, R, 0, si);
+	_cpto(0, dest, 0, si);
 	while (true) {
 		x = find(si, A.s, A.size);
 		if (x < 0) {
 			len = size - si;
-			if (len > 0) _cpto(si, R, di, len);
-			return R;
+			if (len > 0) _cpto(si, dest, di, len);
+			return;
 		}
 		else len = x - si;
-		if (len > 0) _cpto(si, R, di, len);
+		if (len > 0) _cpto(si, dest, di, len);
 		di += len;
-		if (B.size > 0) B._cpto(0, R, di, B.size);
+		if (B.size > 0) B._cpto(0, dest, di, B.size);
 		si = x + A.size;
 		di += B.size;
 	}

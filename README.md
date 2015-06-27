@@ -22,42 +22,47 @@ Conversion to basic C++ types:
 
 Functions and properties:
 
-- var toString()
-- operator[int] Array index access
-- operator[String] Object property access
-- operator[int] String character access
-- operator++ (int)
-- Arithmetic/logic operators +,-,/,*,%,&,|,&&,||,==,!=
-- var round() for Number
-- charAt() for String
-- charCodeAt() for String
-- toNumber()
-- var var::fromCharCode(var)
-- split() for String
-- objectKeys() get list of keys for Objects
-- indexOf() for String/Array
-- push() for Array
-- pop()
-- Push() unshift/shift are Push/Pop, because "shift" is a reserved word in C++.
-- Pop()
-- length() for String/Array
-- splice() Array
-- slice() Array/String
-- join() Array
-- typeOf()
-- var::initArr() = <a,b,c,d,....>
-- var::initObj() = <a,b,c,d,....>
-- ARR(...) overloaded operator, (comma) to simulate JavaScript array literal notations
-- OBJ(...) an attempt to have some Object literal syntax
-- del(key) to delete key/value pairs from Object
-- compare vars with Undefined() or undefined
+- var.toString()
+- var[#] -- Array index access
+- var[key] -- Object property access
+- var[#] -- String character access
+- var + var -- Arithmetic/logic operators ++ -- + - / * % & | && || == != < >
+- var + var -- String concatenation, comparison < > ==
+- var.round()
+- var.charAt()
+- var.charCodeAt()
+- var.toNumber()
+- var.fromCharCode()
+- var.split()
+- var.objectKeys() -- JavaScript's Object.keys()
+- var.indexOf() Array/String
+- var.push()
+- var.pop()
+- var.Push() -- JavaScript unshift ("shift" is a reserved word in C++).
+- var.Pop() -- JavaScript shift()
+- var.length()
+- var.splice()
+- var.slice()
+- var.join()
+- var.typeOf()
+- var.del() -- delete key/value pairs from Object
+- var.has() -- check if key is set in the Object
+- undefined -- set and compare vars with Undefined(), undefined
+- JSON.stringify()
+- JSON.parse()
+
+Experimental complex literals:
+
+- var::arr() = <a,b,c,d,....>
+- var::obj() = <a,b,c,d,....>
+- ARR(1,2,3,4)
+- OBJ("a", 2, "b", 4)
 - log(...) function to conveniently output to console
-- operator < compare Numbers or Strings (alphabetically)
-- operator >
 
 ###Not yet implemented
 - mark&sweep GC
 - functions, lambdas, closures
+- map, sort, filter etc...
 
 ##Examples
 
@@ -73,36 +78,50 @@ The library is included by source, so you simply add these two lines:
 ###Undefined variables and numbers
 
 ```cpp
-var x; // define "empty" variable (x == undefined)
-var y = 2; // define a number variable
-log(x, x.typeOf()); // -> undefined undefined
-log(y, y.typeOf()); // -> 2 number
+var x;
+var y = 42;
+log(x, x.typeOf());
+log(y, y.typeOf());
 x = 3, y = 4;
-log(x + y); // -> 7
-// Basic math operations:
-log(x - 4, x + 5, x / y, x * y); // -> -1 8 0.75 12
+log(x + y);
+log(x - 4, x + 5, x / y, x * y);
+```
+
+```
+undefined undefined
+42 number
+7
+-1 8 0.75 12
 ```
 
 ###Strings
 ```cpp
-var hello = "hello"; // define a string variable
+var hello = "hello";
 var world;
 world = "world";
-log(hello + " " + world); // string concatenation
+log(hello + "-" + world + "!"); // string concatenation
 log(hello, world); // log can accept unlimited number or arguments
-log(hello.indexOf("ll")); // -> 2
+log(hello.indexOf("ll"));
 
 var s = "Nuke the entire site from orbit";
-log("Sentence length:", s.length()); // -> 31
-log(s.slice(0, 4), s.slice(-10)); // -> Nuke from orbit
+log("Sentence length:", s.length());
+log(s.slice(0, 4), s.slice(-10));
 
 for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
-/* output:
-	N 78 
-	u 117 
-	k 107 
-	e 101 
-*/
+log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
+```
+
+```
+hello-world!
+hello world
+2
+Sentence length: 31
+Nuke from orbit
+N 78
+u 117
+k 107
+e 101
+2 + 2 = 4
 ```
 
 ###Mix numbers and strings

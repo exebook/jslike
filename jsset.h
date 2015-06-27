@@ -96,8 +96,8 @@ struct objset {
 		return (*get())[t];
 	}
 	objset &operator , (varSyntax b) {
-		if (b == obj) {
-			__value() = obj;
+		if (b == Object) {
+			__value() = Object;
 			stack.push(get());
 			set(& __value());
 			delete key;
@@ -122,7 +122,7 @@ struct objset {
 		return self;
 	}
 	objset &operator = (var b) {
-		(*get()) = obj;
+		(*get()) = Object;
 		key = new chr;
 		b = b.toString();
 		key->set(b._chr().s, b._chr().size);
@@ -130,12 +130,12 @@ struct objset {
 	}
 };
 
-objset var::initObj() {
+objset var::obj() {
 	objset R;
 	return R;
 }
 
-arrset var::initArr() {
+arrset var::arr() {
 	arrset R;
 	return R;
 }

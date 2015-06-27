@@ -66,9 +66,11 @@ void log(var a,
 
 #else
 
-#define ARR(...) (var::initArr() = __VA_ARGS__)
-#define OBJ(...) (var::initObj() = __VA_ARGS__)
-#define log(...) __Log((var::initArr() = __VA_ARGS__));
+#define ARR(...) (var::arr() = __VA_ARGS__)
+#define Arr var::arr() =
+#define OBJ(...) (var::obj() = __VA_ARGS__)
+#define Obj var::obj() =
+#define log(...) __Log((var::arr() = __VA_ARGS__));
 
 #endif
 

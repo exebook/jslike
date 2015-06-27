@@ -24,24 +24,34 @@ void testObjectLiteral() {
 	// both examples create an object like this:
 	// { a: 1, b: 2, c: { d: 3 }, e: { f: 4, g: { h: 5 } } } 
 
-	var o = obj;
+	var o = Object;
 	o["a"] = 1;
 	o["b"] = 2;
-	o["c"] = obj;
+	o["c"] = Object;
 	o["c"]["d"] = 3;
-	o["e"] = obj;
+	o["e"] = Object;
 	o["e"]["f"] = 4;
-	o["e"]["g"] = obj;
+	o["e"]["g"] = Object;
 	o["e"]["g"]["h"] = 5;
 	
 	var a;
-	a = OBJ("a", 1, "b", 2, "c", obj, "d", 3, end, "e", obj,
-		"f", 4, "g", obj, 
+	a = OBJ("a", 1, "b", 2, "c", Object, "d", 3, end, "e", Object,
+		"f", 4, "g", Object, 
 			"h", 5,
 		end,
 	end);
 	log(JSON.stringify(o));
 	log(JSON.stringify(a));
+	
+	var c = JSON.parse((var)"{a:"+(5*5)+",b:"+2+",c:{d:"+3+"},e:{f:"+4+",g:{h:"+5+"}}}");
+	log(JSON.stringify(c));
+	c = JSON.parse(((var)"{a:^a,b:^b,c:{d:^d},e:{f:4,g:{h:5}}}")
+		.replace("^a", 100+11)
+		.replace("^b", 200+22)
+		.replace("^d", 300+33)
+		);
+	log(JSON.stringify(c));
+
 }
 
 void testNumbers() {
@@ -62,7 +72,7 @@ var chainPrev(var a) {
 }
 
 var chainBegin() {
-	var R = obj;
+	var R = Object;
 	R["next"] = undefined;
 	R["prev"] = undefined;
 	return R;
@@ -283,7 +293,7 @@ void _main() {
 	log(sum10(x, y)); // 9000
 	log(x, y); // 400, 500 are left unmodified, because x,y were passed by values
 	var b;
-	b.initArr() = 100,200,300;
+	b.arr() = 100,200,300;
 	popAndPrint(b);
 	popAndPrint(b);
 	log("What remains of b:", b); // prints 100
@@ -322,12 +332,26 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-	testNumbers();
-	testArrayLiteral();
-	testObjectLiteral();
-	testChain();
-	testIndexOf();
-	readme();
-	testJSON();
+var hello = "hello";
+var world;
+world = "world";
+log(hello + "-" + world + "!"); // string concatenation
+log(hello, world); // log can accept unlimited number or arguments
+log(hello.indexOf("ll"));
+
+var s = "Nuke the entire site from orbit";
+log("Sentence length:", s.length());
+log(s.slice(0, 4), s.slice(-10));
+
+for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
+log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
+//	return 0;
+//	testNumbers();
+//	testArrayLiteral();
+//	testObjectLiteral();
+//	testChain();
+//	testIndexOf();
+//	readme();
+//	testJSON();
 }
 

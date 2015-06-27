@@ -12,7 +12,7 @@ namespace jslike {
 //functions
 
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
-enum varSyntax { argIgnore, undefined, Array, obj, NaN, end };
+enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
 
 struct Ref {
 	int uses;
@@ -142,6 +142,7 @@ bool operator != (varSyntax b) {
 
 
 	// decls:
+	var replace(var find, var repl);
 	var charAt(int n);
 	var charCodeAt(int n);
 	var split(var separator);
@@ -162,8 +163,8 @@ bool operator != (varSyntax b) {
 
 //	arrset Arr();
 //	objset Obj();
-	static objset initObj();
-	static arrset initArr();
+	static objset obj();
+	static arrset arr();
 
 	void del(var key);
 //--on class 8fa
@@ -198,6 +199,21 @@ var typeName(varType a) {
 	if (a == varNull) return "undefined";
 	if (a == varObj) return "object";
 	return "unsure";
+}
+
+var var::replace(var find, var repl) {
+	find = find.toString();
+	repl = repl.toString();
+//	self = "hello";
+//	find = "ll";
+//	repl = "LL";
+//	chr c;
+	var R ;
+	R.makeStringToSet();
+	_chr().replace(find._chr(), repl._chr(), R._chr());
+	
+	ロ ("replace: %s\n", R._chr().getUtf());
+	return R;
 }
 
 var var::typeOf() {

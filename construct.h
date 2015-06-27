@@ -20,7 +20,7 @@ void operator = (const varSyntax syntax) {
 		type = varArr;
 		ref = new Ref;
 		ref->data = newLst();
-	} else if (syntax == obj) {
+	} else if (syntax == Object) {
 		type = varObj;
 		ref = new Ref;
 		ref->data = newObj();

@@ -113,7 +113,7 @@ var parseArray(var &s, int &i) {
 }
 
 var parseObject(var &s, int &i) {
-	var R = obj;
+	var R = Object;
 	int size = s.length().toInt();
 	i++;
 	int max = 10;
@@ -169,7 +169,7 @@ var parseJsonObject(var &s, int &i) {
 			return parseArray(s, i);
 		}
 		if (q == "{") {
-			R = obj;
+			R = Object;
 			return parseObject(s, i);
 		}
 		if (q == "\"" || q == "'") { 
