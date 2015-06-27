@@ -84,7 +84,7 @@ log(x + y);
 log(x - 4, x + 5, x / y, x * y);
 ```
 
-```
+```console
 undefined undefined
 42 number
 7
