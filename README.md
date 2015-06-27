@@ -8,26 +8,27 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 - Number, String, Array, Object, Boolean.
 - Pass by value for Numbers/Boolean, pass by reference for Array/Object.
 
-Functions and properties:
+####Functions and properties:
+
 - `var = var, int, double, char*, wchar_t*, bool` -- construct var from basic types
 - `var.toString()`
 - `var[#]` -- Array index access
 - `var[key]` -- Object property access
 - `var[#]` -- String character access
-- `var + var` -- Arithmetic/logic operators ++ -- + - / * % & | && || == != < >
-- `var + var` -- String concatenation, comparison < > ==
+- `var + var` -- Arithmetic/logic operators `++` `--` `+` `-` `/` `*` `%` `&` `|` `&&` `||` `==` `!=` `<` `>`
+- `var + var` -- String concatenation, comparison `<` `>` `==`
 - `var.round()`
 - `var.charAt()`
 - `var.charCodeAt()`
 - `var.toNumber()`
 - `var.fromCharCode()`
 - `var.split()`
-- `var.objectKeys()` -- JavaScript's Object.keys()
+- `var.objectKeys()` -- JavaScript's `Object.keys()`
 - `var.indexOf()` -- Array/String
 - `var.push()`
 - `var.pop()`
-- `var.Push()` -- JavaScript unshift ("shift" is a reserved word in C++).
-- `var.Pop()` -- JavaScript shift()
+- `var.Push()` -- JavaScript `unshift()` (**shift** is a reserved word in C++).
+- `var.Pop()` -- JavaScript `shift()`
 - `var.length()`
 - `var.splice()`
 - `var.slice()`
