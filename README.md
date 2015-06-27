@@ -84,6 +84,8 @@ log(x + y);
 log(x - 4, x + 5, x / y, x * y);
 ```
 
+Output:
+
 ```console
 undefined undefined
 42 number
@@ -101,6 +103,8 @@ log(hello, world); // log can accept unlimited number or arguments
 log(hello.indexOf("ll"));
 ```
 
+Output:
+
 ```console
 hello-world!
 hello world
@@ -114,6 +118,8 @@ log(s.slice(0, 4), s.slice(-10));
 
 for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
 ```
+
+Output:
 
 ```console
 Sentence length: 31
@@ -132,6 +138,7 @@ log((var)"Received #" + 12 + " from " + 2 + " planets");
 log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
 ```
 
+Output:
 
 ```console
 A1
@@ -153,6 +160,8 @@ log(A);
 
 Array `toString()` is called before output.
 
+Output:
+
 ```console
 planet, LV, 426
 ```
@@ -170,6 +179,8 @@ c.push(100);
 c.push(200);
 log(a, b, c, 500, "world");
 ```
+
+Output:
 
 ```console
 1 hello 100, 200 500 world
@@ -200,6 +211,8 @@ fruits.splice(2, 0, "Lemon");
 log(fruits);
 ```
 
+Output:
+
 ```console
 Banana, Orange, Lemon, Kiwi, Apple, Mango 
 ```
@@ -214,6 +227,8 @@ log(j);
 var a = "hello world";
 log(a.indexOf("wo"));
 ```	
+
+Output:
 
 ```console
 0, 1, 2, 3, 4, 5, 6 
@@ -236,6 +251,8 @@ for (var i = 0; i < planets.length(); i++)
 log("Stars:", stars);
 log("Space objects:", planets.concat(stars));
 ```
+
+Output:
 
 ```console
 Planet #1 Earth 
@@ -261,7 +278,7 @@ Unfortunately there is no way use varargs/stdargs with class constructors, so we
 	log(JSON.stringify(b));
 ```
 
--
+Output:
 
 ```console
 [[1,2,3],[4,5,6],[7,8,9]] 
@@ -279,6 +296,8 @@ log(JSON.stringify(xy));
 log(xy["z"]);
 ```
 
+Output:
+
 ```console
 {x:100,y:200} 
 undefined 
@@ -290,6 +309,8 @@ Object literal notation:
 var o = (Obj "x", 100, "y", 400);
 log(JSON.stringify(o));
 ```
+
+Output:
 
 ```console
 {x:100,y:400} 
@@ -303,6 +324,8 @@ o["y"] = o["x"] * 2;
 log(JSON.stringify(o));
 ```
 
+Output:
+
 ```console
 {x:101,y:202} 
 ```
@@ -314,6 +337,8 @@ Delete existing propery specified by the key name:
 if (o.has("x")) o.del("x");
 log(JSON.stringify(o));
 ```
+
+Output:
 
 ```console
 { y: 202 }
@@ -327,7 +352,7 @@ double d = a.toDouble();
 printf("Basic types, integer=%i, double=%f\n", i, d);
 ```
 
--
+Output:
 
 ```console
 Basic types, integer=123, double=123.456000
