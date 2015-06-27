@@ -1,5 +1,5 @@
 #jslike
-##JavaScript-like "var" (Number/String/Array/Object/function) for C++
+*JavaScript-like "var" (Number/String/Array/Object/function) for C++*
 
 jslike let's you create objects, assign properties, use arrays and strings a JavaScript way right in your C++ code by exposing the single `var` class.
 
