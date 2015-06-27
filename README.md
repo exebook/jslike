@@ -108,7 +108,7 @@ for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
 log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
 ```
 
-```
+```terminal
 hello-world!
 hello world
 2
