@@ -1,8 +1,8 @@
 struct keyval {
 	var keys, vals;
 	keyval () {
-		keys = arr;
-		vals = arr;
+		keys = Array;
+		vals = Array;
 	}
 	void set(var key, var val) {
 		key = key.toString();

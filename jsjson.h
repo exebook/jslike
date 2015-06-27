@@ -92,7 +92,7 @@ bool parseSingleCharOp(wchar_t op, var &s, int &i) {
 var parseJsonObject(var &s, int &i);
 
 var parseArray(var &s, int &i) {
-	var R = arr;
+	var R = Array;
 	int size = s.length().toInt();
 	i++;
 	while (i < size) {
@@ -165,7 +165,7 @@ var parseJsonObject(var &s, int &i) {
 			return parseNum(s, i);
 		}
 		if (q == "[") { 
-			R = arr; 
+			R = Array; 
 			return parseArray(s, i);
 		}
 		if (q == "{") {
@@ -207,7 +207,7 @@ struct classJSON {
 
 	var stringifyObj(var a) {
 		var keys = a.objectKeys();
-		var R = arr;
+		var R = Array;
 		for (var i = 0; i < keys.length(); i++) {
 			var &ref = a[keys[i]];
 			var q = "";
@@ -220,7 +220,7 @@ struct classJSON {
 	
 	var stringifyArr(var a) {
 		int cnt = a.length().toDouble();
-		var R = arr;
+		var R = Array;
 		for (var i = 0; i < cnt; i++) {
 			var &ref = a[i];
 			var q = "";

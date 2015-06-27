@@ -9,7 +9,7 @@ using namespace jslike;
 
 void testArrayLiteral() {
 	var c;
-	c.Arr() = 1,2,3,4,5;
+	c = ARR(1,2,3,4,5);
 	log(c.pop());
 	log(c.pop());
 	c.push(6);
@@ -35,11 +35,11 @@ void testObjectLiteral() {
 	o["e"]["g"]["h"] = 5;
 	
 	var a;
-	a.Obj() = "a", 1, "b", 2, "c", obj, "d", 3, end, "e", obj,
+	a = OBJ("a", 1, "b", 2, "c", obj, "d", 3, end, "e", obj,
 		"f", 4, "g", obj, 
 			"h", 5,
 		end,
-	end;
+	end);
 	log(JSON.stringify(o));
 	log(JSON.stringify(a));
 }
@@ -101,30 +101,30 @@ void testChain() {
 	earth["name"] = "Earth";
 	earth["radius"] = 1;
 	var last = earth, moon, sun;
-	last = chainAdd(last, (var::initObj() = "name", "Moon", "radius", 0.27, "moonOf", earth));
+	last = chainAdd(last, (OBJ("name", "Moon", "radius", 0.27, "moonOf", earth)));
 	moon = last;
-	last = chainAdd(last, (var::initObj() = "name", "Venus", "radius", 0.95));
-	last = chainAdd(last, (var::initObj() = "name", "Sun", "radius", 109));
+	last = chainAdd(last, (OBJ("name", "Venus", "radius", 0.95)));
+	last = chainAdd(last, (OBJ("name", "Sun", "radius", 109)));
 	sun = last;
-	last = chainAdd(last, (var::initObj() = "name", "Mars", "radius", 0.5));
-	last = chainAdd(last, (var::initObj() = "name", "Mercury", "radius", 0.4));
+	last = chainAdd(last, (OBJ("name", "Mars", "radius", 0.5)));
+	last = chainAdd(last, (OBJ("name", "Mercury", "radius", 0.4)));
 
-	last = chainAdd(last, (var::initObj() = "name", "Jupiter", "radius", 10.9));
-	last = chainAdd(last, (var::initObj() = "name", "Ganymede", "radius", 0.4, "moonOf", last));
+	last = chainAdd(last, (OBJ("name", "Jupiter", "radius", 10.9)));
+	last = chainAdd(last, (OBJ("name", "Ganymede", "radius", 0.4, "moonOf", last)));
 
-	last = chainAdd(last, (var::initObj() = "name", "Saturn", "radius", 9.1));
-	last = chainAdd(last, (var::initObj() = "name", "Titan", "radius", 0.4, "moonOf", last));
+	last = chainAdd(last, (OBJ("name", "Saturn", "radius", 9.1)));
+	last = chainAdd(last, (OBJ("name", "Titan", "radius", 0.4, "moonOf", last)));
 
-	last = chainAdd(last, (var::initObj() = "name", "Uranus", "radius", 3.9));
-	last = chainAdd(last, (var::initObj() = "name", "Neptune", "radius", 3.8));
-//	last = chainAdd(last, (var::initObj() = "name", "", "radius", ));
+	last = chainAdd(last, (OBJ("name", "Uranus", "radius", 3.9)));
+	last = chainAdd(last, (OBJ("name", "Neptune", "radius", 3.8)));
+//	last = chainAdd(last, (OBJ("name", "", "radius", ));
 	showSolarObjects(earth, "Object\t radius(earths)", false);
 	showSolarObjects(earth, "\nMoons only:", true);
 }
 
 void testIndexOf() {
 	var A;
-	A.Arr() = 0,1,2,3,4,5,6;
+	A = ARR(0,1,2,3,4,5,6);
 	var j = A.indexOf(3);
 	log(A);
 	log(j);
@@ -172,7 +172,7 @@ void readme() {
 	// -> Received #12 from 2 planets
 	
 	/* Arrays */
-	var A = arr; // declare empty array
+	var A = Array; // declare empty array
 	A.push("planet");
 	A.push("LV");
 	A.push(426);
@@ -184,7 +184,7 @@ void readme() {
 	{
 		var a = 1;
 		var b = "hello";
-		var c = arr;
+		var c = Array;
 		c.push(100);
 		c.push(200);
 		log(a, b, c, 500, "world");
@@ -192,14 +192,14 @@ void readme() {
 	
 	/* w3shools Array.slice() example */	
 	var fruits;
-	fruits.Arr() = "Banana", "Orange", "Lemon", "Apple", "Mango";
+	fruits = ARR("Banana", "Orange", "Lemon", "Apple", "Mango");
 	var citrus = fruits.slice(1, 3);
 	//The result of citrus will be:
 	log(citrus);
 	//Orange,Lemon
 
 	/* Array splice() */
-	fruits.Arr() = "Banana", "Orange", "Apple", "Mango";
+	fruits = ARR("Banana", "Orange", "Apple", "Mango");
 	fruits.splice(2, 0, "Kiwi"); // unlike JavaScript you cannot insert more than one item here.
 	fruits.splice(2, 0, "Lemon");
 	log(fruits);
@@ -207,7 +207,7 @@ void readme() {
 	/* Array indexOf() and String indexOf() */
 	{
 		var q;
-		q.Arr() = 0,1,2,3,4,5,6; // Array literal notation
+		q = ARR(0,1,2,3,4,5,6); // Array literal notation
 		var j = q.indexOf(3);
 		log(q);
 		log(j);
@@ -219,9 +219,9 @@ void readme() {
 	{
 		var planets;
 		// literal setter:
-		planets.Arr() = "Earth", "Venus", "Mars", "Jupiter";
+		planets = ARR("Earth", "Venus", "Mars", "Jupiter");
 		// static literal returner, useful for passing as an argument.
-		var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
+		var stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
 		// if you are OK with using macros, there is a macro-shortcut for the above:
 //		stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
 		log("Stars:", stars);
@@ -232,7 +232,7 @@ void readme() {
 	/* Object variables */
 	// Object literal notation:
 	{
-		var o = (var::initObj() = "x", 100, "y", 400); // -> { x: 100, y: 400 } 
+		var o = (OBJ("x", 100, "y", 400)); // -> { x: 100, y: 400 } 
 //		var o = OBJ("x", 100, "y", 400); // -> { x: 100, y: 400 }
 		log(JSON.stringify(o));
 		o["x"]++;
@@ -283,7 +283,7 @@ void _main() {
 	log(sum10(x, y)); // 9000
 	log(x, y); // 400, 500 are left unmodified, because x,y were passed by values
 	var b;
-	b.Arr() = 100,200,300;
+	b.initArr() = 100,200,300;
 	popAndPrint(b);
 	popAndPrint(b);
 	log("What remains of b:", b); // prints 100
@@ -317,7 +317,7 @@ var testJSON() {
 	int i = 0;
 	var R;
 	R = parseJsonObject(s, i);
-	log("JSON parsed", R.typeOf() + ":", JSON.stringify(R));
+	console.log("JSON parsed", R.typeOf() + ":", JSON.stringify(R));
 	return R;
 }
 

@@ -13,6 +13,10 @@ void __Log(var a) {
 	fflush(0);
 }
 
+void __Log1(var a) {
+	__Log(a);
+}
+
 #ifdef __BORLANDC__
 // Borland C++ Buider 6.0 does not support __VA_ARGS__
 void log(var a,
@@ -67,3 +71,9 @@ void log(var a,
 #define log(...) __Log((var::initArr() = __VA_ARGS__));
 
 #endif
+
+struct __console {
+	void __Log(var a) {
+		__Log1(a);
+	}
+} console;

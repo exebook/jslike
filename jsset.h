@@ -42,16 +42,11 @@ struct arrset {
 		return self;
 	}
 	arrset &operator = (var b) {
-		(*get()) = arr;
+		(*get()) = Array;
 		get()->push(b);
 		return self;
 	}
 };
-
-arrset Arr() {
-	arrset R(this, 1);
-	return R;
-}
 
 struct objset {
 	Rc *rc;
@@ -135,9 +130,31 @@ struct objset {
 	}
 };
 
-objset Obj() {
-	objset R(this);
+objset var::initObj() {
+	objset R;
 	return R;
 }
 
+arrset var::initArr() {
+	arrset R;
+	return R;
+}
 
+//arrset var::Arr() {
+//	arrset R(this, 1);
+//	return R;
+//}
+//
+//objset var::Obj() {
+//	objset R(this);
+//	return R;
+//}
+
+//objset (varSyntax) {
+	
+//}
+
+
+//maybe that would be better than var::initObj() = 1,2,3,4
+//                              var a = lit(arr) = 1,2,3,4;
+//var a = lit(obj) = "a",1,"b",2,"c",3,"d",4;

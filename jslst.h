@@ -7,7 +7,7 @@ void var::deleteLst() {
 }
 
 var var::splice(var start, var deleteCount, var item = argIgnore) {
-	var R = arr;
+	var R = Array;
 	lst &L = *(lst*) ref->data;
 	int
 		x = start.toDouble(),
@@ -73,7 +73,7 @@ var var::slice(var start, var end = undefined) {
 		return R;
 	}
 	if (type != varArr) return undefined;
-	var R = arr;
+	var R = Array;
 	if (b <= a) { return R; }
 	lst &L = * (lst*) R.ref->data;
 	

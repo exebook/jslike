@@ -7,7 +7,7 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 
 - Number, String, Array, Object, Boolean.
 - operator =(int, bool, double, char*, wchar_t*)
-- operator = obj/arr to create empty Array/Object.
+- operator = obj/Array to create empty Array/Object.
 - JSON.stringify() recursive stringify for Objects, Arrays and basic types.
 - JSON.parse()
 - Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
@@ -116,7 +116,7 @@ log((var)"Received #" + 12 + " from " + 2 + " planets");
 ###Arrays
 
 ```cpp
-var A = arr; // declare empty array
+var A = Array; // declare empty array
 A.push("planet");
 A.push("LV");
 A.push(426);
@@ -127,7 +127,7 @@ log(A); // Array toString() is called before output
 // log can print any var or anything that a var constructor accepts.
 var a = 1;
 var b = "hello";
-var c = arr;
+var c = Array;
 c.push(100);
 c.push(200);
 log(a, b, c, 500, "world");

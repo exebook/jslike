@@ -16,7 +16,7 @@ constructor var (const varSyntax syntax) {
 }
 void operator = (const varSyntax syntax) {
 	if (ref) unref();
-	if (syntax == arr) {
+	if (syntax == Array) {
 		type = varArr;
 		ref = new Ref;
 		ref->data = newLst();

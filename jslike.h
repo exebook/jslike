@@ -12,7 +12,7 @@ namespace jslike {
 //functions
 
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
-enum varSyntax { argIgnore, undefined, arr, obj, NaN, end };
+enum varSyntax { argIgnore, undefined, Array, obj, NaN, end };
 
 struct Ref {
 	int uses;
@@ -26,6 +26,9 @@ void *newLst();
 void *newObj();
 
 struct var;// void log(var a);
+struct arrset;
+struct objset;
+
 struct var {
 	varType type;
 	union {
@@ -156,22 +159,18 @@ bool operator != (varSyntax b) {
 	var& getObjElement(const var &n);
 	void deleteObj();
 	var typeOf();
-#include "jsset.h"
 
-	static objset initObj() {
-		objset R;
-		return R;
-	}
-
-	static arrset initArr() {
-		arrset R;
-		return R;
-	}
+//	arrset Arr();
+//	objset Obj();
+	static objset initObj();
+	static arrset initArr();
 
 	void del(var key);
 //--on class 8fa
 };
 //--off class
+
+#include "jsset.h"
 
 extern "C" void exit(int);
 
@@ -236,7 +235,7 @@ void var::copy(const var &a) {
 }
 
 var splitEveryChar(var a) {
-	var R = arr;
+	var R = Array;
 	int len = a.length().toDouble();
 	for (int i = 0; i < len; i++) R.push(a.charAt(i));
 	return R;
@@ -254,7 +253,7 @@ var var::split(var separator) {
 		start = 0,
 		i = 0,
 		count = V._strcount(D) + 1;
-	var R = arr;
+	var R = Array;
 	while (i < count) {
 		int end = V.find(start, D.s, D.size);
 		if (end < 0) end = V.size;
