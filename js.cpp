@@ -332,10 +332,20 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-var a = 123.456;
-int i = a.toInt();
-double d = a.toDouble();
-printf("Basic types, integer=%i, double=%f\n", i, d);
+var hello = "world,мир,世界";
+
+char *str = hello.getStringAllocUtf(); 
+printf("char* = %s\n", str);
+delete str;
+
+str = hello.getStringAllocAscii();
+printf("char* = %s\n", str);
+delete str;
+
+wchar_t *w = hello.getStringPointer();
+for (int i = 0; i < hello.length().toInt(); i++) {
+	printf("%i: char code: %i\n", i, (int)w[i]);
+}
 
 //	return 0;
 //	testNumbers();

@@ -358,24 +358,52 @@ printf("Basic types, integer=%i, double=%f\n", i, d);
 Basic types, integer=123, double=123.456000
 ```
 
-var hello = "world";
+###Getting a pointer to a character buffer of a String.
+Internally strings are stored as UTF16/32 AKA wchar_t.
+You can either get a pointer to a internal `wchar_t*` buffer, or get a pointer to a `char*` copy of that buffer, allocated and copied for you.
 
-char *str = hello.getStringAllocUtf(); // ..Alloc() means you are
-// responsible for deallocation of the returned data. Use `delete`.
-printf("char* = %s\n", str);
-delete str; // you must delete what you got with ...Alloc().
+`whar_t* var::getStringPointer()` returns a pointer to an internal data, it 
+is valid until the var exists. Do not delete the pointer returned from this function.
 
-str = hello.getStringAllocAscii(); // Ascii is faster that Utf.
+When function name has **Alloc**() in it, it means you are responsible for the deallocation of the returned data. Use C++ `delete` operator when you are done.
+
+`var var::getStringAllocUtf()` and `var var::getStringAllocUtf()` alloc and copy the contents.
+
+```js
+var hello = "world,мир,世界";
+
+char *str = hello.getStringAllocUtf(); 
 printf("char* = %s\n", str);
 delete str;
 
-// Internally strings are stored as UTF16/32 AKA wchar_t.
+str = hello.getStringAllocAscii();
+printf("char* = %s\n", str);
+delete str;
+
 wchar_t *w = hello.getStringPointer();
 for (int i = 0; i < hello.length().toInt(); i++) {
-	printf("char code: %i, char: %c\n", w[i], w[i]);
+	printf("%i: char code: %i\n", i, (int)w[i]);
 }
-// getStringPointer returns a pointer to an internal data, it 
-// is valid until the var exists. Do not delete the returned pointer.
+```
+
+*output:*
+
+```console
+char* = world,мир,世界
+char* = world,<8@,L
+0: char code: 119
+1: char code: 111
+2: char code: 114
+3: char code: 108
+4: char code: 100
+5: char code: 44
+6: char code: 1084
+7: char code: 1080
+8: char code: 1088
+9: char code: 44
+10: char code: 19990
+11: char code: 30028
+
 ```
 
 ###Passing var as an argument
