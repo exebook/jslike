@@ -82,7 +82,8 @@ using namespace jslike;
 int main() {
 	var hello = "hello world привет мир 你好世界";
 	log(hello)
-}```
+}
+```
 
 *output:*
 
