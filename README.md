@@ -9,51 +9,51 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 - Pass by value for Numbers/Boolean, pass by reference for Array/Object.
 
 Functions and properties:
-- var = var, int, double, char*, wchar_t*, bool -- construct var from basic types
-- var.toString()
-- var[#] -- Array index access
-- var[key] -- Object property access
-- var[#] -- String character access
-- var + var -- Arithmetic/logic operators ++ -- + - / * % & | && || == != < >
-- var + var -- String concatenation, comparison < > ==
-- var.round()
-- var.charAt()
-- var.charCodeAt()
-- var.toNumber()
-- var.fromCharCode()
-- var.split()
-- var.objectKeys() -- JavaScript's Object.keys()
-- var.indexOf() Array/String
-- var.push()
-- var.pop()
-- var.Push() -- JavaScript unshift ("shift" is a reserved word in C++).
-- var.Pop() -- JavaScript shift()
-- var.length()
-- var.splice()
-- var.slice()
-- var.join()
-- var.typeOf()
-- var.del() -- delete key/value pairs from Object
-- var.has() -- check if key is set in the Object
-- undefined -- set and compare vars with Undefined(), undefined
-- JSON.stringify()
-- JSON.parse()
+- `var = var, int, double, char*, wchar_t*, bool` -- construct var from basic types
+- `var.toString()`
+- `var[#]` -- Array index access
+- `var[key]` -- Object property access
+- `var[#]` -- String character access
+- `var + var` -- Arithmetic/logic operators ++ -- + - / * % & | && || == != < >
+- `var + var` -- String concatenation, comparison < > ==
+- `var.round()`
+- `var.charAt()`
+- `var.charCodeAt()`
+- `var.toNumber()`
+- `var.fromCharCode()`
+- `var.split()`
+- `var.objectKeys()` -- JavaScript's Object.keys()
+- `var.indexOf()` -- Array/String
+- `var.push()`
+- `var.pop()`
+- `var.Push()` -- JavaScript unshift ("shift" is a reserved word in C++).
+- `var.Pop()` -- JavaScript shift()
+- `var.length()`
+- `var.splice()`
+- `var.slice()`
+- `var.join()`
+- `var.typeOf()`
+- `var.del()` -- delete key/value pairs from Object
+- `var.has()` -- check if key is set in the Object
+- `undefined` -- set and compare vars with Undefined(), undefined
+- `JSON.stringify()`
+- `JSON.parse()`
 
 Conversion to basic C++ types:
 
-- wchar_t* getStringPointer()
-- char* getStringAllocUtf()
-- char* getStringAllocAscii()
-- int toDouble()
-- int toInt()
+- `wchar_t* getStringPointer()`
+- `char* getStringAllocUtf()`
+- `char* getStringAllocAscii()`
+- `int toDouble()`
+- `int toInt()`
 
 Experimental complex literals:
 
-- var::arr() = <a,b,c,d,....>
-- var::obj() = <a,b,c,d,....>
-- ARR(1,2,3,4)
-- OBJ("a", 2, "b", 4)
-- log(...) function to conveniently output to console
+- `var::arr() = a,b,c,d,....`
+- `var::obj() = a,b,c,d,....`
+- `ARR(1,2,3,4)`
+- `OBJ("a", 2, "b", 4)`
+- `log(...)` -- function to conveniently output to console
 
 ###Not yet implemented
 - mark&sweep GC
