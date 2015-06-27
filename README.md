@@ -6,22 +6,10 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 ###Currently implemented
 
 - Number, String, Array, Object, Boolean.
-- operator =(int, bool, double, char*, wchar_t*)
-- operator = obj/Array to create empty Array/Object.
-- JSON.stringify() recursive stringify for Objects, Arrays and basic types.
-- JSON.parse()
-- Reference counting, pass by value for Numbers/Boolean, pass by reference for Array/Object.
-
-Conversion to basic C++ types:
-
-- wchar_t* getStringPointer()
-- char* getStringAllocUtf()
-- char* getStringAllocAscii()
-- int toDouble()
-- int toInt()
+- Pass by value for Numbers/Boolean, pass by reference for Array/Object.
 
 Functions and properties:
-
+- var = var, int, double, char*, wchar_t*, bool -- construct var from basic types
 - var.toString()
 - var[#] -- Array index access
 - var[key] -- Object property access
@@ -50,6 +38,14 @@ Functions and properties:
 - undefined -- set and compare vars with Undefined(), undefined
 - JSON.stringify()
 - JSON.parse()
+
+Conversion to basic C++ types:
+
+- wchar_t* getStringPointer()
+- char* getStringAllocUtf()
+- char* getStringAllocAscii()
+- int toDouble()
+- int toInt()
 
 Experimental complex literals:
 
