@@ -499,3 +499,16 @@ int main() {
 200 
 What remains in b: 100 
 ```
+
+##Implementation details.
+
+###Operator overloading
+jslike intensively relies on C++ operator overloading. `var` is declared as `struct var`, hence all members are public.
+
+The code is C++98 compatible. No modern C++2015 features are used.
+
+###Amalgamated header
+jslike is header-only library, there is no object file involved. You just include it in your source and it includes other files. The complete size of all files together is about 1700 LOC at the moment of this writing.
+
+`jslike.h` includes few more headers, but for your convenience `_jslike.h` is also provided, which is an *amalgamation* or basically concatenation of all headers into one single file. You can just grab it and copy to your project directory if you need.
+
