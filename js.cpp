@@ -332,19 +332,13 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-var hello = "hello";
-var world;
-world = "world";
-log(hello + "-" + world + "!"); // string concatenation
-log(hello, world); // log can accept unlimited number or arguments
-log(hello.indexOf("ll"));
-
-var s = "Nuke the entire site from orbit";
-log("Sentence length:", s.length());
-log(s.slice(0, 4), s.slice(-10));
-
-for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
-log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
+var q;
+q = (Arr 0,1,2,3,4,5,6);
+var j = q.indexOf(3);
+log(q);
+log(j);
+var a = "hello world";
+log(a.indexOf("wo"));
 //	return 0;
 //	testNumbers();
 //	testArrayLiteral();

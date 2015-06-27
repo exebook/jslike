@@ -64,7 +64,7 @@ Experimental complex literals:
 ##Examples
 
 The library is included by source, so you simply add these two lines:
-```cpp
+```js
 	#include "jslike.h"
 	using namespace jslike;
 ```
@@ -74,7 +74,7 @@ The library is included by source, so you simply add these two lines:
 	
 ###Undefined variables and numbers
 
-```cpp
+```js
 var x;
 var y = 42;
 log(x, x.typeOf());
@@ -92,55 +92,76 @@ undefined undefined
 ```
 
 ###Strings
-```cpp
+```js
 var hello = "hello";
 var world;
 world = "world";
 log(hello + "-" + world + "!"); // string concatenation
 log(hello, world); // log can accept unlimited number or arguments
 log(hello.indexOf("ll"));
+```
 
+```console
+hello-world!
+hello world
+2
+```
+
+```js
 var s = "Nuke the entire site from orbit";
 log("Sentence length:", s.length());
 log(s.slice(0, 4), s.slice(-10));
 
 for (int i = 0; i < 4; i++) log(s.charAt(i), s.charCodeAt(i));
-log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
 ```
 
-```terminal
-hello-world!
-hello world
-2
+```console
 Sentence length: 31
 Nuke from orbit
 N 78
 u 117
 k 107
 e 101
-2 + 2 = 4
 ```
 
 ###Mix numbers and strings
-```cpp	
+```js	
 var a = "A", b = 1; // 'string + number' implies conversion to string
-log(a + b); // -> A1
+log(a + b);
 log((var)"Received #" + 12 + " from " + 2 + " planets");
-// -> Received #12 from 2 planets
+log((var)"2 + 2 = " + (2 + 2)); // explicit var constructor
+```
+
+
+```console
+A1
+Received #12 from 2 planets
+2 + 2 = 4
 ```
 
 ###Arrays
 
-```cpp
-var A = Array; // declare empty array
+Declare empty array and push something into it.
+
+```js
+var A = Array;
 A.push("planet");
 A.push("LV");
 A.push(426);
-log(A); // Array toString() is called before output
-// -> planet, LV, 426
+log(A);
+```
 
-/* log() analog of console.log() in JavaScript */
-// log can print any var or anything that a var constructor accepts.
+Array `toString()` is called before output.
+
+```console
+planet, LV, 426
+```
+
+### log()
+log() is console.log() of JavaScript
+log can print any var or anything that a var constructor accepts.
+
+```js
 var a = 1;
 var b = "hello";
 var c = Array;
@@ -148,30 +169,44 @@ c.push(100);
 c.push(200);
 log(a, b, c, 500, "world");
 ```
+
+```console
+1 hello 100, 200 500 world
+```
 	
 ###Array.slice()
-```cpp
+```js
 var fruits;
-fruits.Arr() = "Banana", "Orange", "Lemon", "Apple", "Mango";
+fruits = (Arr "Banana", "Orange", "Lemon", "Apple", "Mango");
 var citrus = fruits.slice(1, 3);
-//The result of citrus will be:
 log(citrus);
-//Orange,Lemon
+```
+
+The contents of citrus will be:
+
+```console
+Orange, Lemon
 ```
 
 ###Array splice()
 
-```cpp
-fruits.Arr() = "Banana", "Orange", "Apple", "Mango";
-fruits.splice(2, 0, "Kiwi"); // unlike JavaScript you cannot insert more than one item here.
+Unlike JavaScript you cannot insert more than one item in splice().
+
+```js
+var fruits = (Arr "Banana", "Orange", "Apple", "Mango");
+fruits.splice(2, 0, "Kiwi");
 fruits.splice(2, 0, "Lemon");
 log(fruits);
 ```
 
+```console
+Banana, Orange, Lemon, Kiwi, Apple, Mango 
+```
+
 ###Array indexOf() and String indexOf()
-```cpp
+```js
 var q;
-q.Arr() = 0,1,2,3,4,5,6; // Array literal notation
+q = (Arr 0,1,2,3,4,5,6);
 var j = q.indexOf(3);
 log(q);
 log(j);
@@ -179,30 +214,43 @@ var a = "hello world";
 log(a.indexOf("wo"));
 ```	
 
+```console
+0, 1, 2, 3, 4, 5, 6 
+3 
+6 
+```
+
 ###Array literal notation
 
-```cpp
+The closest syntax we could achieve in C++ to cozy JavaScript Array literal notation is this: `var x = (Arr list-of-items)`.
+This syntax is achieved with overloading `operator=` and `operator,` for a temporary class `arrset`. And then hiding it under the macro `Arr`.
+
+`Arr` is a `#define` macro that expands to `var::arr() =`.
+
+```js
 var planets;
-// literal setter:
-planets.Arr() = "Earth", "Venus", "Mars", "Jupiter";
-// static literal returner, useful for passing as an argument.
-var stars = (var::initArr() = "Vega", "Aldebaran", "Altair", "Decrux");
-// if you are OK with using macros, there is a macro-shortcut for the above:
-stars = ARR("Vega", "Aldebaran", "Altair", "Decrux");
+planets = (Arr "Earth", "Venus", "Mars", "Jupiter");
+var stars = (Arr "Vega", "Aldebaran", "Altair", "Decrux");
+stars = (Arr "Vega", "Aldebaran", "Altair", "Decrux");
 log("Stars:", stars);
-//This syntax is achieved with overloading operator= and operator, for a
-// temporary class "arrset".
 ```
 
 ###Object variables
 
-```cpp
+```js
 var xy = obj; // Declare empty object
 xy["x"] = 100;
 xy["y"] = 200;
-log(JSON.stringify(xy)); // -> { x: 100, y: 200 } 
+log(JSON.stringify(xy));
+```
 
-// Object literal notation:
+```console
+{ x: 100, y: 200 } 
+```
+
+Object literal notation:
+
+```js
 var o = OBJ("x", 100, "y", 400);
 log(JSON.stringify(o)); // -> { x: 100, y: 400 } 
 
@@ -219,7 +267,7 @@ log(JSON.stringify(o)); // -> { y: 202 }
 
 
 ##Converting between var and basic types
-```cpp
+```js
 var a = 123;
 int i = a.toInt();
 double d = a.toDouble();
@@ -246,7 +294,7 @@ for (int i = 0; i < hello.length().toInt(); i++) {
 
 ###Passing var as an argument
 
-```cpp
+```js
 var sum10(var a, var b) {
 	a = a * 10;
 	b = b * 10;
