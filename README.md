@@ -426,7 +426,15 @@ char* = world,<8@,L
 
 ###Passing var as an argument
 
+Arrays and Objects are passed by reference, just like in JavaScript.
+Strings, Numbers, Booleans are passed by value.
+This example illustrates this principle:
+
 ```js
+#include "stdio.h"
+#include "jslike.h"
+using namespace jslike;
+
 var sum10(var a, var b) {
 	a = a * 10;
 	b = b * 10;
@@ -437,16 +445,24 @@ void popAndPrint(var a) {
 	log(a.pop());
 }
 
-void main() {
+int main() {
 	var x = 400, y = 500;
-	log(sum10(x, y)); // 9000
-	log(x, y); // 400, 500 are left unmodified, because x,y were passed by values
+	log(sum10(x, y));
+	log(x, y);
 	var b;
-	b.Arr() = 100,200,300;
+	b = (Arr 100,200,300);
 	popAndPrint(b);
 	popAndPrint(b);
-	log("What remains of b:", b); // prints 100
-	// because arrays and objects are passed by reference
+	log("What remains in b:", b);
 }
+```
 
+*output:*
+
+```console
+9000 
+400 500 
+300 
+200 
+What remains in b: 100 
 ```
