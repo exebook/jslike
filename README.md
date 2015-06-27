@@ -158,7 +158,8 @@ planet, LV, 426
 ```
 
 ### log()
-log() is console.log() of JavaScript
+log() is console.log() of JavaScript.
+
 log can print any var or anything that a var constructor accepts.
 
 ```js
@@ -228,10 +229,8 @@ This syntax is achieved with overloading `operator=` and `operator,` for a tempo
 `Arr` is a `#define` macro that expands to `var::arr() =`.
 
 ```js
-var planets;
-planets = (Arr "Earth", "Venus", "Mars", "Jupiter");
+var planets = (Arr "Earth", "Venus", "Mars", "Jupiter");
 var stars = (Arr "Vega", "Aldebaran", "Altair", "Decrux");
-stars = (Arr "Vega", "Aldebaran", "Altair", "Decrux");
 log("Stars:", stars);
 ```
 
