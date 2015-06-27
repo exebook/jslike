@@ -160,6 +160,8 @@ bool operator != (varSyntax b) {
 	var& getObjElement(const var &n);
 	void deleteObj();
 	var typeOf();
+	var concat(var a);
+	var concatAll();
 
 //	arrset Arr();
 //	objset Obj();
@@ -199,6 +201,24 @@ var typeName(varType a) {
 	if (a == varNull) return "undefined";
 	if (a == varObj) return "object";
 	return "unsure";
+}
+
+var var::concat(var a) {
+	var R = Array;
+	lst &L = *(lst*) R.ref->data;
+	int count2 = a.length().toInt();
+	int count = length().toInt(), x = 0;
+	L.resize(count + count2);
+	for (int i = 0; i < count; i++) L[x++] = self[i];
+	for (int i = 0; i < count2; i++) L[x++] = a[i];
+	return R;
+}
+
+var var::concatAll() {
+	var R = Array;
+	int count = length().toInt(), x = 0;
+	for (int i = 0; i < count; i++) R = R.concat(self[i]);
+	return R;
 }
 
 var var::replace(var find, var repl) {

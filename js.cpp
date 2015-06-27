@@ -332,13 +332,13 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-var q;
-q = (Arr 0,1,2,3,4,5,6);
-var j = q.indexOf(3);
-log(q);
-log(j);
-var a = "hello world";
-log(a.indexOf("wo"));
+	var a = Array;
+	a.push((Arr 1,2,3));
+	a.push((Arr 4,5,6));
+	a.push((Arr 7,8,9));
+	log(JSON.stringify(a));
+	var b = a.concatAll();
+	log(JSON.stringify(b));
 //	return 0;
 //	testNumbers();
 //	testArrayLiteral();

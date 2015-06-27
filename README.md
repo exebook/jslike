@@ -231,7 +231,42 @@ This syntax is achieved with overloading `operator=` and `operator,` for a tempo
 ```js
 var planets = (Arr "Earth", "Venus", "Mars", "Jupiter");
 var stars = (Arr "Vega", "Aldebaran", "Altair", "Decrux");
+for (var i = 0; i < planets.length(); i++)
+	log((var)"Planet #" + (i+1), planets[i]);
 log("Stars:", stars);
+log("Space objects:", planets.concat(stars));
+```
+
+```console
+Planet #1 Earth 
+Planet #2 Venus 
+Planet #3 Mars 
+Planet #4 Jupiter 
+Stars: Vega, Aldebaran, Altair, Decrux 
+Space objects: Earth, Venus, Mars, Jupiter, Vega, Aldebaran, Altair, Decrux 
+
+```
+
+###concatAll()
+
+Unfortunately there is no way use varargs/stdargs with class constructors, so we cannot have concat(a,...) syntax. Instead `var.concatAll()` is provided.
+
+```js
+	var a = Array;
+	a.push((Arr 1,2,3));
+	a.push((Arr 4,5,6));
+	a.push((Arr 7,8,9));
+	log(JSON.stringify(a));
+	var b = a.concatAll();
+	log(JSON.stringify(b));
+```
+
+-
+
+```console
+[[1,2,3],[4,5,6],[7,8,9]] 
+[1,2,3,4,5,6,7,8,9] 
+
 ```
 
 ###Object variables
