@@ -14,32 +14,6 @@ int len(wchar_t *c) {
 	return R;
 }
 
-char to_ascii(wchar_t w) {
-	char c;
-	char a = 0xE0; // rusA
-	if (w >= 0x0410)
-	c = (char) w - (0x0410 - a);
-	else if (w == 0x0451) c = 184;
-	else if (w == 0x2014) c = 0x97;
-	else c = w & 0xff;
-	return c;
-}
-
-wchar_t up_char(wchar_t c) {
-	wchar_t A = 1040, a = 1072, YA = 1071, ya = 1103;
-	if (c >= 'a' && c <= 'z') c -= 'a' - 'A';
-	if (c >= a && c <= ya) c -= a - A;
-	return c;
-}
-
-wchar_t low_char(wchar_t c) {
-	wchar_t A = 1040, a = 1072, YA = 1071, ya = 1103;
-	if (c >= 'A' && c <= 'Z') c += 'a' - 'A';
-	if (c >= A && c <= YA) c += a - A;
-	return c;
-}
-
-
 wchar_t UTF = 0xFEFF;
 
 int utf_offsets[6] = { 0x0UL, 0x3080UL, 0xE2080UL, 0x3C82080UL, 0xFA082080UL, 0x82082080UL };

@@ -3,8 +3,8 @@
 
 namespace jslike {
 
-#include "jsutil.h"
-#include "jsstr.h"
+#include "chrutil.h"
+#include "chr.h"
 #include "stk.h"
 #define constructor
 
@@ -14,6 +14,13 @@ namespace jslike {
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
 enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
 
+void *newLst();
+void *newObj();
+
+struct var;// void log(var a);
+struct arrset;
+struct objset;
+
 struct Ref {
 	int uses;
 	void *data;
@@ -22,17 +29,10 @@ struct Ref {
 	}
 };
 
-void *newLst();
-void *newObj();
-
-struct var;// void log(var a);
-struct arrset;
-struct objset;
-
 struct var {
 	varType type;
 	union {
-		double n;
+		double num;
 		Ref* ref;
 	};
 #include "construct.h"
@@ -59,17 +59,15 @@ struct var {
 	}
 	
 	double toDouble() {
-		if (type == varNum) return n;
-		return 0;
+		return num; // returns garbage if not varNum
 	}
 	
 	int toInt() {
-		if (type == varNum) return n;
-		return 0;
+		return num;
 	}
 
 	bool toBool() {
-		if (type == varBool) return n;
+		if (type == varBool) return num;
 		return false;
 	}
 	
@@ -92,12 +90,12 @@ struct var {
 			R.type = varStr;
 			R.ref = new Ref;
 			chr *c = new chr;
-			c->set(n);
+			c->set(num);
 			R.ref->data = c;
 			return R;
 		}
 		if (type == varBool) {
-			if (n) return "true";
+			if (num) return "true";
 			return "false";
 		}
 		if (type == varStr) {
@@ -192,7 +190,7 @@ var & Undefined() {
 #include "jsobj.h"
 #include "jsix.h"
 #include "jschar.h"
-#include "jsjson.h"
+#include "json.h"
 
 var typeName(varType a) {
 	if (a == varNum) return "number";
@@ -255,11 +253,10 @@ var var::indexOf(var a) {
 void var::copy(const var &a) {
 	// at this point this object is empty
 	type = a.type;
-	if (type == varNum || type == varBool) n = a.n;
+	if (type == varNum || type == varBool) num = a.num;
 	else {
 		if (a.type == varNull) { ref = 0; return; }
 		ref = a.ref;
-		chr &c = (*(var*)&a)._chr();
 		if (ref) ref->uses++;
 	}
 }

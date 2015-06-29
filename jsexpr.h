@@ -1,16 +1,12 @@
 void operator ++ (int a) {
-	//if (type == varNum) 
-	n++;
-//	else self = NaN;
+	if (type == varNum) num++;
 }
 void operator -- (int a) {
-	//if (type == varNum) 
-	n--;
-//	else self = NaN;
+	if (type == varNum) num--;
 }
 
 void operator += (var a) {
-	if (type == varNum && a.type == varNum) n += a.n;
+	if (type == varNum && a.type == varNum) num += a.num;
 	else if (type == varStr) {
 		a = a.toString();
 		self = self + a;
@@ -55,21 +51,7 @@ var operator + (var a) {
 	}\
 	return undefined;\
 }
-//fast version
-STD_OP(n, -, a.n)
-STD_OP(n, *, a.n)
-STD_OP(n, /, a.n)
-STD_OP((int)n, |, (int)a.n)
-STD_OP((int)n, &, (int)a.n)
-STD_OP(n, ||, a.n)
-STD_OP(n, &&, a.n)
-STD_OP((int)n, %, (int)a.n)
-STD_OP(n, *=, a.n)
-STD_OP(n, /=, a.n)
-STD_OP(n, -=, a.n)
 
-/*
-//safe version
 STD_OP(toDouble(), -, a.toDouble())
 STD_OP(toDouble(), *, a.toDouble())
 STD_OP(toDouble(), /, a.toDouble())
@@ -78,10 +60,10 @@ STD_OP(toInt(), &, a.toInt())
 STD_OP(toDouble(), ||, a.toDouble())
 STD_OP(toDouble(), &&, a.toDouble())
 STD_OP(toInt(), %, a.toInt())
-STD_OP(n, *=, a.toDouble())
-STD_OP(n, /=, a.toDouble())
-STD_OP(n, -=, a.toDouble())
-*/
+STD_OP(num, *=, a.toDouble())
+STD_OP(num, /=, a.toDouble())
+STD_OP(num, -=, a.toDouble())
+
 #undef STD_OP
 
 var round() {

@@ -1,27 +1,30 @@
-struct lst {
-
+class lst {
 	typedef var** P;
 	P p;
-	int size, capacity, delta;
-
+	int capacity, size;
+	void zeroInit() {
+		p = 0;
+		size = capacity = 0;
+	}
+	
+public:
 	lst() {
-		basic();
+		zeroInit();
 	}
 
 	~lst() {
 		resize(0);
 	}
-
-	void basic() {
-		p = 0;
-		size = capacity = 0;
-	}
 	
+	int length() {
+		return size;
+	}
+
 	void resize(int newsize) {
 		if (newsize <= 0) {
 			for (int i = 0; i < size; i++) if (p[i]) delete p[i];
 			if (p) delete[] p;
-			basic();
+			zeroInit();
 			return;
 		};
 		if (newsize == size) return;
@@ -38,7 +41,6 @@ struct lst {
 			return;
 		}
 		// capacity growth
-//		int oldcap = capacity;
 		if (newsize == capacity+1) capacity = newsize*2;
 		else capacity = newsize;
 		P o = p;
@@ -47,14 +49,6 @@ struct lst {
 		for (int i = size; i < capacity; i++) p[i] = 0;
 		delete[] o;
 		size = newsize;
-	}
-
-	int operator ! () {
-		return size;
-	}
-
-	void operator () (int i) {
-		resize(i);
 	}
 
 	var pop() {

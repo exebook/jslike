@@ -44,7 +44,7 @@ constructor var (int a) {
 constructor var (bool a) {
 	type = varBool;
 	ref = 0;
-	n = (double)a;
+	num = (double)a;
 }
 
 void operator = (int a) { self = (var)a;}
@@ -52,7 +52,7 @@ void operator = (int a) { self = (var)a;}
 void operator = (bool a) { self = (var)a;}
 
 void operator = (double a) {
-	n = a;
+	num = a;
 	type = varNum;
 }
 constructor var (char* a) {

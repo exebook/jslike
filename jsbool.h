@@ -1,6 +1,6 @@
 bool operator == (var a, var b) {
 	if (a.type == varNum && b.type == varNum) {
-		return a.n == b.n;
+		return a.num == b.num;
 	}
 	if (a.type == varStr && b.type == varStr) {
 		chr &A = a._chr();
@@ -16,7 +16,7 @@ bool operator != (var a, var b) {
 
 bool operator < (var a, var b) {
 	if (a.type == varNum && b.type == varNum) {
-		return a.n < b.n;
+		return a.num < b.num;
 	}
 	if (a.type == varStr && b.type == varStr) {
 		chr &A = a._chr();

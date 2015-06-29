@@ -78,11 +78,12 @@ var var::slice(var start, var end = undefined) {
 	lst &L = * (lst*) R.ref->data;
 	
 	L.resize(b - a);
-	for (int i = 0; i < L.size; i++) L[i] = self[a + i];
+	for (int i = 0; i < L.length(); i++) L[i] = self[a + i];
 	return R;
 }
 
 var var::push(var a) {
+	if (type != varArr) return undefined;
 	lst *L = (lst*) ref->data;
 	L->push(a);
 	return a;
@@ -109,7 +110,7 @@ var var::Pop() {
 var var::length() {
 	if (type == varArr) {
 		lst *L = (lst*) ref->data;
-		return L->size;
+		return L->length();
 	}
 	if (type == varStr) {
 		return _chr().size;

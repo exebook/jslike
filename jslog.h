@@ -67,12 +67,13 @@ void log(var a,
 #else
 
 #define ARR(...) (jslike::var::arr() = __VA_ARGS__)
-#define Arr jslike::var::arr() =
 #define OBJ(...) (jslike::var::obj() = __VA_ARGS__)
-#define Obj jslike::var::obj() =
 #define log(...) __Log((jslike::var::arr() = __VA_ARGS__));
 
 #endif
+
+#define Arr jslike::var::arr() =
+#define Obj jslike::var::obj() =
 
 struct __console {
 	void __Log(var a) {

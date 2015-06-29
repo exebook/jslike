@@ -22,32 +22,6 @@ int len(wchar_t *c) {
 	return R;
 }
 
-char to_ascii(wchar_t w) {
-	char c;
-	char a = 0xE0; // rusA
-	if (w >= 0x0410)
-	c = (char) w - (0x0410 - a);
-	else if (w == 0x0451) c = 184;
-	else if (w == 0x2014) c = 0x97;
-	else c = w & 0xff;
-	return c;
-}
-
-wchar_t up_char(wchar_t c) {
-	wchar_t A = 1040, a = 1072, YA = 1071, ya = 1103;
-	if (c >= 'a' && c <= 'z') c -= 'a' - 'A';
-	if (c >= a && c <= ya) c -= a - A;
-	return c;
-}
-
-wchar_t low_char(wchar_t c) {
-	wchar_t A = 1040, a = 1072, YA = 1071, ya = 1103;
-	if (c >= 'A' && c <= 'Z') c += 'a' - 'A';
-	if (c >= A && c <= YA) c += a - A;
-	return c;
-}
-
-
 wchar_t UTF = 0xFEFF;
 
 int utf_offsets[6] = { 0x0UL, 0x3080UL, 0xE2080UL, 0x3C82080UL, 0xFA082080UL, 0x82082080UL };
@@ -167,7 +141,7 @@ void setAscii(char *a, int length = -1) {
 	if (length == -1) length = len(a);
 	s = new wchar_t[length];
 	size = length;
-	for (int x = 0; x < size; x++) s[x] = to_ascii(*a++);
+	for (int x = 0; x < size; x++) s[x] = (char)(*a++);
 }
 
 int intToStr(int i, char *s) {
@@ -245,20 +219,20 @@ double toNumber () {
 }
 
 char * getAscii() { // basic 0-128 range only
-	static char* u = new char[size];
+	char* u = new char[size];
 	for (int i = 0; i < size; i++) u[i] = s[i];
 	return u;
 }
 
 char * getUtf() {
-	static char* u = 0;
+	char* u = 0;
 	if (u != 0) delete u;
 	u = new char[size*4];
 	w2utf(u, size*4, s, size);
 	return u;
 }
 
-int cmp (const chr &other, bool caseInsensetive = false) {
+int cmp (const chr &other) {
 	if (size == 0 && other.size == 0) return 0;
 	if (size == 0) return -1;
 	if (other.size == 0) return 1;
@@ -268,10 +242,6 @@ int cmp (const chr &other, bool caseInsensetive = false) {
 	eb = b + other.size;
 	while (true) {
 		wchar_t A = *a, B = *b;
-		if (caseInsensetive) {
-			A = up_char(A);
-			B = up_char(B);
-		}
 		if (A != B) {
 			if (A < B) return -1;
 			return 1;
@@ -284,10 +254,6 @@ int cmp (const chr &other, bool caseInsensetive = false) {
 	if (size < size) return -1;
 	if (size > size) return 1;
 	return 0;
-}
-
-int operator ! () {
-	return size;
 }
 
 wchar_t operator [](int i) {
@@ -323,14 +289,6 @@ chr substr(int pos, int count = -1) {
 	return R;
 }
 
-void upper() {
-	for (int x = 0; x < size; x++) s[x] = up_char(s[x]);
-}
-
-void lower() {
-	for (int x = 0; x < size; x++) s[x] = low_char(s[x]);
-}
-
 int _strcount(const chr &substring) {
 	int i = 0;
 	int result = 0;
@@ -354,25 +312,25 @@ chr clone() {
 	return R;
 }
 
-chr replace(chr &A, chr &B) {
-	chr R;
+void replace(chr &A, chr &B, chr &dest) {
+//	chr dest;
 	int subcount, len, si=0, di, x;
-	if (size == 0) return R;
-	R.size = size + _strcount(A) * (B.size - A.size);
-	R.s = new wchar_t [R.size];
+	if (size == 0) return;
+	dest.size = size + _strcount(A) * (B.size - A.size);
+	dest.s = new wchar_t [dest.size];
 	di = si;
-	_cpto(0, R, 0, si);
+	_cpto(0, dest, 0, si);
 	while (true) {
 		x = find(si, A.s, A.size);
 		if (x < 0) {
 			len = size - si;
-			if (len > 0) _cpto(si, R, di, len);
-			return R;
+			if (len > 0) _cpto(si, dest, di, len);
+			return;
 		}
 		else len = x - si;
-		if (len > 0) _cpto(si, R, di, len);
+		if (len > 0) _cpto(si, dest, di, len);
 		di += len;
-		if (B.size > 0) B._cpto(0, R, di, B.size);
+		if (B.size > 0) B._cpto(0, dest, di, B.size);
 		si = x + A.size;
 		di += B.size;
 	}
@@ -430,7 +388,14 @@ struct stk {
 //functions
 
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
-enum varSyntax { argIgnore, undefined, arr, obj, NaN, end };
+enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
+
+void *newLst();
+void *newObj();
+
+struct var;// void log(var a);
+struct arrset;
+struct objset;
 
 struct Ref {
 	int uses;
@@ -440,14 +405,10 @@ struct Ref {
 	}
 };
 
-void *newLst();
-void *newObj();
-
-struct var;// void log(var a);
 struct var {
 	varType type;
 	union {
-		double n;
+		double num;
 		Ref* ref;
 	};
 constructor var () {
@@ -468,11 +429,11 @@ constructor var (const varSyntax syntax) {
 }
 void operator = (const varSyntax syntax) {
 	if (ref) unref();
-	if (syntax == arr) {
+	if (syntax == Array) {
 		type = varArr;
 		ref = new Ref;
 		ref->data = newLst();
-	} else if (syntax == obj) {
+	} else if (syntax == Object) {
 		type = varObj;
 		ref = new Ref;
 		ref->data = newObj();
@@ -496,7 +457,7 @@ constructor var (int a) {
 constructor var (bool a) {
 	type = varBool;
 	ref = 0;
-	n = (double)a;
+	num = (double)a;
 }
 
 void operator = (int a) { self = (var)a;}
@@ -504,7 +465,7 @@ void operator = (int a) { self = (var)a;}
 void operator = (bool a) { self = (var)a;}
 
 void operator = (double a) {
-	n = a;
+	num = a;
 	type = varNum;
 }
 constructor var (char* a) {
@@ -583,17 +544,15 @@ void unref() {
 	}
 	
 	double toDouble() {
-		if (type == varNum) return n;
-		return 0;
+		return num; // returns garbage if not varNum
 	}
 	
 	int toInt() {
-		if (type == varNum) return n;
-		return 0;
+		return num;
 	}
 
 	bool toBool() {
-		if (type == varBool) return n;
+		if (type == varBool) return num;
 		return false;
 	}
 	
@@ -616,12 +575,12 @@ void unref() {
 			R.type = varStr;
 			R.ref = new Ref;
 			chr *c = new chr;
-			c->set(n);
+			c->set(num);
 			R.ref->data = c;
 			return R;
 		}
 		if (type == varBool) {
-			if (n) return "true";
+			if (num) return "true";
 			return "false";
 		}
 		if (type == varStr) {
@@ -643,18 +602,14 @@ void unref() {
 	var Pop();
 
 void operator ++ (int a) {
-	//if (type == varNum) 
-	n++;
-//	else self = NaN;
+	if (type == varNum) num++;
 }
 void operator -- (int a) {
-	//if (type == varNum) 
-	n--;
-//	else self = NaN;
+	if (type == varNum) num--;
 }
 
 void operator += (var a) {
-	if (type == varNum && a.type == varNum) n += a.n;
+	if (type == varNum && a.type == varNum) num += a.num;
 	else if (type == varStr) {
 		a = a.toString();
 		self = self + a;
@@ -699,21 +654,7 @@ var operator + (var a) {
 	}\
 	return undefined;\
 }
-//fast version
-STD_OP(n, -, a.n)
-STD_OP(n, *, a.n)
-STD_OP(n, /, a.n)
-STD_OP((int)n, |, (int)a.n)
-STD_OP((int)n, &, (int)a.n)
-STD_OP(n, ||, a.n)
-STD_OP(n, &&, a.n)
-STD_OP((int)n, %, (int)a.n)
-STD_OP(n, *=, a.n)
-STD_OP(n, /=, a.n)
-STD_OP(n, -=, a.n)
 
-/*
-//safe version
 STD_OP(toDouble(), -, a.toDouble())
 STD_OP(toDouble(), *, a.toDouble())
 STD_OP(toDouble(), /, a.toDouble())
@@ -722,10 +663,10 @@ STD_OP(toInt(), &, a.toInt())
 STD_OP(toDouble(), ||, a.toDouble())
 STD_OP(toDouble(), &&, a.toDouble())
 STD_OP(toInt(), %, a.toInt())
-STD_OP(n, *=, a.toDouble())
-STD_OP(n, /=, a.toDouble())
-STD_OP(n, -=, a.toDouble())
-*/
+STD_OP(num, *=, a.toDouble())
+STD_OP(num, /=, a.toDouble())
+STD_OP(num, -=, a.toDouble())
+
 #undef STD_OP
 
 var round() {
@@ -758,6 +699,7 @@ bool operator != (varSyntax b) {
 
 
 	// decls:
+	var replace(var find, var repl);
 	var charAt(int n);
 	var charCodeAt(int n);
 	var split(var separator);
@@ -775,6 +717,19 @@ bool operator != (varSyntax b) {
 	var& getObjElement(const var &n);
 	void deleteObj();
 	var typeOf();
+	var concat(var a);
+	var concatAll();
+
+//	arrset Arr();
+//	objset Obj();
+	static objset obj();
+	static arrset arr();
+
+	void del(var key);
+//--on class 8fa
+};
+//--off class
+
 struct Rc {
 	var *ref;
 	int count;
@@ -819,16 +774,11 @@ struct arrset {
 		return self;
 	}
 	arrset &operator = (var b) {
-		(*get()) = arr;
+		(*get()) = Array;
 		get()->push(b);
 		return self;
 	}
 };
-
-arrset Arr() {
-	arrset R(this, 1);
-	return R;
-}
 
 struct objset {
 	Rc *rc;
@@ -878,8 +828,8 @@ struct objset {
 		return (*get())[t];
 	}
 	objset &operator , (varSyntax b) {
-		if (b == obj) {
-			__value() = obj;
+		if (b == Object) {
+			__value() = Object;
 			stack.push(get());
 			set(& __value());
 			delete key;
@@ -904,7 +854,7 @@ struct objset {
 		return self;
 	}
 	objset &operator = (var b) {
-		(*get()) = obj;
+		(*get()) = Object;
 		key = new chr;
 		b = b.toString();
 		key->set(b._chr().s, b._chr().size);
@@ -912,28 +862,35 @@ struct objset {
 	}
 };
 
-objset Obj() {
-	objset R(this);
+objset var::obj() {
+	objset R;
 	return R;
 }
 
+arrset var::arr() {
+	arrset R;
+	return R;
+}
+
+//arrset var::Arr() {
+//	arrset R(this, 1);
+//	return R;
+//}
+//
+//objset var::Obj() {
+//	objset R(this);
+//	return R;
+//}
+
+//objset (varSyntax) {
+	
+//}
 
 
+//maybe that would be better than var::initObj() = 1,2,3,4
+//                              var a = lit(arr) = 1,2,3,4;
+//var a = lit(obj) = "a",1,"b",2,"c",3,"d",4;
 
-	static objset initObj() {
-		objset R;
-		return R;
-	}
-
-	static arrset initArr() {
-		arrset R;
-		return R;
-	}
-
-	void del(var key);
-//--on class 8fa
-};
-//--off class
 
 extern "C" void exit(int);
 
@@ -957,6 +914,10 @@ void __Log(var a) {
 	}
 	printf("\n");
 	fflush(0);
+}
+
+void __Log1(var a) {
+	__Log(a);
 }
 
 #ifdef __BORLANDC__
@@ -1008,36 +969,48 @@ void log(var a,
 
 #else
 
-#define ARR(...) (var::initArr() = __VA_ARGS__)
-#define OBJ(...) (var::initObj() = __VA_ARGS__)
-#define log(...) __Log((var::initArr() = __VA_ARGS__));
+#define ARR(...) (jslike::var::arr() = __VA_ARGS__)
+#define OBJ(...) (jslike::var::obj() = __VA_ARGS__)
+#define log(...) __Log((jslike::var::arr() = __VA_ARGS__));
 
 #endif
 
-struct lst {
+#define Arr jslike::var::arr() =
+#define Obj jslike::var::obj() =
 
+struct __console {
+	void __Log(var a) {
+		__Log1(a);
+	}
+} console;
+
+class lst {
 	typedef var** P;
 	P p;
-	int size, capacity, delta;
-
+	int capacity, size;
+	void zeroInit() {
+		p = 0;
+		size = capacity = 0;
+	}
+	
+public:
 	lst() {
-		basic();
+		zeroInit();
 	}
 
 	~lst() {
 		resize(0);
 	}
-
-	void basic() {
-		p = 0;
-		size = capacity = 0;
-	}
 	
+	int length() {
+		return size;
+	}
+
 	void resize(int newsize) {
 		if (newsize <= 0) {
 			for (int i = 0; i < size; i++) if (p[i]) delete p[i];
 			if (p) delete[] p;
-			basic();
+			zeroInit();
 			return;
 		};
 		if (newsize == size) return;
@@ -1054,7 +1027,6 @@ struct lst {
 			return;
 		}
 		// capacity growth
-//		int oldcap = capacity;
 		if (newsize == capacity+1) capacity = newsize*2;
 		else capacity = newsize;
 		P o = p;
@@ -1063,14 +1035,6 @@ struct lst {
 		for (int i = size; i < capacity; i++) p[i] = 0;
 		delete[] o;
 		size = newsize;
-	}
-
-	int operator ! () {
-		return size;
-	}
-
-	void operator () (int i) {
-		resize(i);
 	}
 
 	var pop() {
@@ -1119,7 +1083,7 @@ void var::deleteLst() {
 }
 
 var var::splice(var start, var deleteCount, var item = argIgnore) {
-	var R = arr;
+	var R = Array;
 	lst &L = *(lst*) ref->data;
 	int
 		x = start.toDouble(),
@@ -1185,16 +1149,17 @@ var var::slice(var start, var end = undefined) {
 		return R;
 	}
 	if (type != varArr) return undefined;
-	var R = arr;
+	var R = Array;
 	if (b <= a) { return R; }
 	lst &L = * (lst*) R.ref->data;
 	
 	L.resize(b - a);
-	for (int i = 0; i < L.size; i++) L[i] = self[a + i];
+	for (int i = 0; i < L.length(); i++) L[i] = self[a + i];
 	return R;
 }
 
 var var::push(var a) {
+	if (type != varArr) return undefined;
 	lst *L = (lst*) ref->data;
 	L->push(a);
 	return a;
@@ -1221,7 +1186,7 @@ var var::Pop() {
 var var::length() {
 	if (type == varArr) {
 		lst *L = (lst*) ref->data;
-		return L->size;
+		return L->length();
 	}
 	if (type == varStr) {
 		return _chr().size;
@@ -1236,7 +1201,7 @@ var& var::getArrElement(int n) {
 
 bool operator == (var a, var b) {
 	if (a.type == varNum && b.type == varNum) {
-		return a.n == b.n;
+		return a.num == b.num;
 	}
 	if (a.type == varStr && b.type == varStr) {
 		chr &A = a._chr();
@@ -1252,7 +1217,7 @@ bool operator != (var a, var b) {
 
 bool operator < (var a, var b) {
 	if (a.type == varNum && b.type == varNum) {
-		return a.n < b.n;
+		return a.num < b.num;
 	}
 	if (a.type == varStr && b.type == varStr) {
 		chr &A = a._chr();
@@ -1272,8 +1237,8 @@ bool operator > (var a, var b) {
 struct keyval {
 	var keys, vals;
 	keyval () {
-		keys = arr;
-		vals = arr;
+		keys = Array;
+		vals = Array;
 	}
 	void set(var key, var val) {
 		key = key.toString();
@@ -1425,6 +1390,7 @@ var parseString(var &s, int &i) {
 	i++;
 	var str = "";
 	while (i < size) {
+		if (s[i] == "\\") { i++; } else 
 		if (s[i] == q) break;
 		str += s[i];
 		i++;
@@ -1440,12 +1406,17 @@ bool isAlpha(wchar_t c) {
 	return false;
 }
 
+bool isNum(wchar_t c) {
+	return (c >= '0' && c <= '9');
+}
+
 var parseId(var &s, int &i) {
 	int size = s.length().toInt();
 	var str = "";
 	wchar_t *C = s.getStringPointer();
+	if (!isAlpha(C[i])) return undefined;
 	while (i < size) {
-		if (!isAlpha(C[i])) break;
+		if (!isAlpha(C[i]) && !isNum(C[i])) break;
 		str += s[i];
 		i++;
 	}
@@ -1478,7 +1449,7 @@ bool parseSingleCharOp(wchar_t op, var &s, int &i) {
 var parseJsonObject(var &s, int &i);
 
 var parseArray(var &s, int &i) {
-	var R = arr;
+	var R = Array;
 	int size = s.length().toInt();
 	i++;
 	while (i < size) {
@@ -1499,7 +1470,7 @@ var parseArray(var &s, int &i) {
 }
 
 var parseObject(var &s, int &i) {
-	var R = obj;
+	var R = Object;
 	int size = s.length().toInt();
 	i++;
 	int max = 10;
@@ -1522,34 +1493,50 @@ var parseObject(var &s, int &i) {
 		R[K] = V;
 		bool comma = parseSingleCharOp(',', s, i);
 		if (!comma) break;
+		
 		if (max-- <= 0) break;
 	}
+	i++;
 	return R;
+}
+
+var parseBool(var &s, int &i) {
+	if (s.slice(i, i+4) == "true") { i += 4; return true; }
+	if (s.slice(i, i+5) == "false") { i += 5; return false; }
+	return undefined;
+}
+
+bool parseNull(var &s, int &i) {
+	if (s.slice(i, i+4) == "null") { i += 4; return true; }
+	if (s.slice(i, i+9) == "undefined") { i += 9; return true; }
+	return false;
 }
 
 var parseJsonObject(var &s, int &i) {
 	var R;
 	var *C = &R;
 	int size = s.length().toInt();
-	while (i < size) {
+	if (i < size) {
 		var q = s.charAt(i);
 		if (startNum(q)) {
 			return parseNum(s, i);
 		}
 		if (q == "[") { 
-			R = arr; 
-			log("parseArray");
+			R = Array; 
 			return parseArray(s, i);
 		}
 		if (q == "{") {
-			R = obj;
+			R = Object;
 			return parseObject(s, i);
 		}
 		if (q == "\"" || q == "'") { 
 			return parseString(s, i);
 		}
+		var boo = parseBool(s, i);
+		if (boo != undefined) return boo;
+		bool nul = parseNull(s, i);
+		if (nul) return undefined;
 		return undefined;
-		i++;
 	}
 }
 
@@ -1562,37 +1549,48 @@ var quoteIfNeeded(var a) {
 	return a;
 }
 
+var escapeStr(var a) {
+	var R = "";
+	for (int i = 0; i < a.length(); i++) {
+		if (a[i] == "\"") R += "\\";
+		else if (a[i] == "\'") R += "\\";
+		else if (a[i] == "\\") R += "\\";
+		R += a[i];
+	}
+	return (var)"\""+R+"\"";
+}
+
 struct classJSON {
 
 	var stringifyObj(var a) {
 		var keys = a.objectKeys();
-		var R = arr;
+		var R = Array;
 		for (var i = 0; i < keys.length(); i++) {
 			var &ref = a[keys[i]];
 			var q = "";
-			if (ref.type == varStr) q = "\"";
 			var s;
 			s = stringify(ref);
-			R.push( quoteIfNeeded(keys[i]) + ": " + q + s + q );
+			R.push( quoteIfNeeded(keys[i]) + ":" + s);
 		}
-		return (var) "{ " + R.join(", ") + " }";
+		return (var) "{" + R.join(",") + "}";
 	}
 	
 	var stringifyArr(var a) {
 		int cnt = a.length().toDouble();
-		var R = arr;
+		var R = Array;
 		for (var i = 0; i < cnt; i++) {
 			var &ref = a[i];
 			var q = "";
-			if (ref.type == varStr) q = "\"";
 			var s;
 			s = stringify(ref);
-			R.push( q + s + q );
+			R.push(s);
 		}
-		return (var) "[ " + R.join(", ") + " ]";
+		return (var) "[" + R.join(",") + "]";
 	}
 	
 	var stringify(var a) {
+		if (a.type == varNull) return "null";
+		if (a.type == varStr) return escapeStr(a);
 		if (a.type == varArr) return stringifyArr(a);
 		if (a.type == varObj) return stringifyObj(a);
 		return a.toString();
@@ -1615,6 +1613,33 @@ var typeName(varType a) {
 	if (a == varNull) return "undefined";
 	if (a == varObj) return "object";
 	return "unsure";
+}
+
+var var::concat(var a) {
+	var R = Array;
+	lst &L = *(lst*) R.ref->data;
+	int count2 = a.length().toInt();
+	int count = length().toInt(), x = 0;
+	L.resize(count + count2);
+	for (int i = 0; i < count; i++) L[x++] = self[i];
+	for (int i = 0; i < count2; i++) L[x++] = a[i];
+	return R;
+}
+
+var var::concatAll() {
+	var R = Array;
+	int count = length().toInt(), x = 0;
+	for (int i = 0; i < count; i++) R = R.concat(self[i]);
+	return R;
+}
+
+var var::replace(var find, var repl) {
+	find = find.toString();
+	repl = repl.toString();
+	var R ;
+	R.makeStringToSet();
+	_chr().replace(find._chr(), repl._chr(), R._chr());
+	return R;
 }
 
 var var::typeOf() {
@@ -1642,17 +1667,16 @@ var var::indexOf(var a) {
 void var::copy(const var &a) {
 	// at this point this object is empty
 	type = a.type;
-	if (type == varNum || type == varBool) n = a.n;
+	if (type == varNum || type == varBool) num = a.num;
 	else {
 		if (a.type == varNull) { ref = 0; return; }
 		ref = a.ref;
-		chr &c = (*(var*)&a)._chr();
 		if (ref) ref->uses++;
 	}
 }
 
 var splitEveryChar(var a) {
-	var R = arr;
+	var R = Array;
 	int len = a.length().toDouble();
 	for (int i = 0; i < len; i++) R.push(a.charAt(i));
 	return R;
@@ -1670,7 +1694,7 @@ var var::split(var separator) {
 		start = 0,
 		i = 0,
 		count = V._strcount(D) + 1;
-	var R = arr;
+	var R = Array;
 	while (i < count) {
 		int end = V.find(start, D.s, D.size);
 		if (end < 0) end = V.size;

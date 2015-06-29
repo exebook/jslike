@@ -31,7 +31,7 @@ void setAscii(char *a, int length = -1) {
 	if (length == -1) length = len(a);
 	s = new wchar_t[length];
 	size = length;
-	for (int x = 0; x < size; x++) s[x] = to_ascii(*a++);
+	for (int x = 0; x < size; x++) s[x] = (char)(*a++);
 }
 
 int intToStr(int i, char *s) {
@@ -122,7 +122,7 @@ char * getUtf() {
 	return u;
 }
 
-int cmp (const chr &other, bool caseInsensetive = false) {
+int cmp (const chr &other) {
 	if (size == 0 && other.size == 0) return 0;
 	if (size == 0) return -1;
 	if (other.size == 0) return 1;
@@ -132,10 +132,6 @@ int cmp (const chr &other, bool caseInsensetive = false) {
 	eb = b + other.size;
 	while (true) {
 		wchar_t A = *a, B = *b;
-		if (caseInsensetive) {
-			A = up_char(A);
-			B = up_char(B);
-		}
 		if (A != B) {
 			if (A < B) return -1;
 			return 1;
@@ -148,10 +144,6 @@ int cmp (const chr &other, bool caseInsensetive = false) {
 	if (size < size) return -1;
 	if (size > size) return 1;
 	return 0;
-}
-
-int operator ! () {
-	return size;
 }
 
 wchar_t operator [](int i) {
@@ -185,14 +177,6 @@ chr substr(int pos, int count = -1) {
 	if (count > size - pos) count = size - pos;
 	R.set(&s[pos], count);
 	return R;
-}
-
-void upper() {
-	for (int x = 0; x < size; x++) s[x] = up_char(s[x]);
-}
-
-void lower() {
-	for (int x = 0; x < size; x++) s[x] = low_char(s[x]);
 }
 
 int _strcount(const chr &substring) {
