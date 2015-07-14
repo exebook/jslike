@@ -333,23 +333,26 @@ var testJSON() {
 }
 
 int main(int argc, char* argv[]) {
-	var a = Array;
-	a.push(100);
-	a.push("foo");
-	var b = a.push(Array);
-	b.push(200);
-	b.push("foo");
-	log(a);
-	log(b);
-	log(a[2]);
+	var a = "";
+	var b = a.split(" ");
+	log(b.typeOf(), b.length());
+//	var a = Array;
+//	a.push(100);
+//	a.push("foo");
+//	var b = a.push(Array);
+//	b.push(200);
+//	b.push("foo");
+//	log(a);
+//	log(b);
+//	log(a[2]);
 //	printf("%x %x %x\n", a.arr, a.arr[2].arr, b.arr);//
-//	return 0;
-//	testNumbers();
-//	testArrayLiteral();
-//	testObjectLiteral();
-//	testChain();
-//	testIndexOf();
-//	readme();
-//	testJSON();
+	return 0;
+	testNumbers();
+	testArrayLiteral();
+	testObjectLiteral();
+	testChain();
+	testIndexOf();
+	readme();
+	testJSON();
 }
 

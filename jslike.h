@@ -255,7 +255,10 @@ void var::copy(const var &a) {
 	type = a.type;
 	if (type == varNum || type == varBool) num = a.num;
 	else {
-		if (a.type == varNull) { ref = 0; return; }
+		if (a.type == varNull) { 
+			//ref = 0;
+			return;
+		}
 		ref = a.ref;
 		if (ref) ref->uses++;
 	}
@@ -272,7 +275,7 @@ var var::split(var separator) {
 	separator = separator.toString();
 	self = self.toString();
 	if (separator.length() == 0) return splitEveryChar(self);
-	if (self.length() == 0) return Undefined();
+	if (self.length() == 0) return Array;
 	chr
 		&V = self._chr(),
 		&D = separator._chr();
