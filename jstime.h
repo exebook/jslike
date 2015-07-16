@@ -1,6 +1,6 @@
+#ifdef linux
 #include "sys/time.h"
 
-#ifdef linux
 long time1000() {
   timeval val;
   gettimeofday(&val, 0);
