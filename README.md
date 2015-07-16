@@ -22,7 +22,7 @@ jslike let's you create objects, assign properties, use arrays and strings a Jav
 - `var.charAt()`
 - `var.charCodeAt()`
 - `var.toNumber()`
-- `var.fromCharCode()`
+- `var::fromCharCode()` -- static function
 - `var.split()`
 - `var.objectKeys()` -- JavaScript's `Object.keys()`
 - `var.indexOf()` -- Array/String

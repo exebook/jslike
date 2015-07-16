@@ -11,7 +11,7 @@ namespace jslike {
 //TODO: Garbage collector (mark/sweep)
 //functions
 
-enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
+enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5, varDeleted=6 };
 enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
 
 void *newLst();
@@ -51,11 +51,17 @@ struct var {
 	}
 
 	char* getStringAllocUtf() {
-		return _chr().getUtf();
+		if (type == varStr) {
+			char *c =_chr().getUtf();
+			return c;
+		}
+		else return 0;
 	}
 
 	char* getStringAllocAscii() {
-		return _chr().getAscii();
+		if (type == varStr)
+			return _chr().getAscii();
+		else return 0;
 	}
 	
 	double toDouble() {
@@ -138,6 +144,11 @@ bool operator != (varSyntax b) {
 	return ! (self == b);
 }
 
+void setAscii (char* a) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().setAscii(a);
+}
 
 	// decls:
 	var replace(var find, var repl);
@@ -186,11 +197,13 @@ var & Undefined() {
 #include "lst.h"
 #include "jslst.h"
 #include "jsbool.h"
-#include "keyval.h"
+//#include "keyval.h"
+#include "trie16.h"
 #include "jsobj.h"
 #include "jsix.h"
 #include "jschar.h"
 #include "json.h"
+#include "jsfile.h"
 
 var typeName(varType a) {
 	if (a == varNum) return "number";

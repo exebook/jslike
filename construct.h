@@ -41,6 +41,10 @@ constructor var (int a) {
 	self = (double) a;
 }
 
+constructor var (long a) {
+	self = (double) a;
+}
+
 constructor var (bool a) {
 	type = varBool;
 	ref = 0;

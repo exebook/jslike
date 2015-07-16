@@ -1,7 +1,9 @@
 void logVar(var a) {
 	var z;
 	z = a.toString();
-	printf("%s ", z._chr().getUtf());
+	char *c = z._chr().getUtf();
+	printf("%s ", c);
+	delete[] c;
 }
 
 void __Log(var a) {

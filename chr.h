@@ -8,7 +8,7 @@ chr () {
 }
 
 ~chr() {
-	delete s;
+	delete[] s;
 	size = 0;
 }
 
@@ -24,7 +24,7 @@ void setUtf(char *a, int length = -1) {
 	wchar_t *d = new wchar_t[length];
 	size = utf2w((unsigned char*)a, (unsigned char*)&a[length], d, &d[length]);
 	set(d, size);
-	delete d;
+	delete[] d;
 }
 
 void setAscii(char *a, int length = -1) {
@@ -35,23 +35,23 @@ void setAscii(char *a, int length = -1) {
 }
 
 int intToStr(int i, char *s) {
-   char *c = s;
-   int n = 0;
+	char *c = s;
+	int n = 0;
 	while (true) {
-      unsigned int i10 = i / 10;
-      *s = (i - (i10 * 10)) + '0';
-      i = i10;
-      s++;
-      n++;
-      if (i == 0) { *s-- = 0; break; }
-   }
+		unsigned int i10 = i / 10;
+		*s = (i - (i10 * 10)) + '0';
+		i = i10;
+		s++;
+		n++;
+		if (i == 0) { *s-- = 0; break; }
+	}
 	char *b = s;
 	while (b > c) {
-      char tmp = *b;
-      *b-- = *c;
-      *c++ = tmp;
-   }
-   return n; 
+		char tmp = *b;
+		*b-- = *c;
+		*c++ = tmp;
+	}
+	return n; 
 }
 
 void dblToStr (double d, char *s) {
@@ -109,16 +109,16 @@ double toNumber () {
 }
 
 char * getAscii() { // basic 0-128 range only
-	char* u = new char[size];
+	char* u = new char[size+1];
 	for (int i = 0; i < size; i++) u[i] = s[i];
+	u[size] = 0;
 	return u;
 }
 
 char * getUtf() {
-	char* u = 0;
-	if (u != 0) delete u;
-	u = new char[size*4];
-	w2utf(u, size*4, s, size);
+	char* u = new char[size*4];
+	int usize = w2utf(u, size*4, s, size);
+	u[usize] = 0;
 	return u;
 }
 
@@ -141,8 +141,8 @@ int cmp (const chr &other) {
 		if (a == ea) break;
 		if (b == eb) break;
 	}
-	if (size < size) return -1;
-	if (size > size) return 1;
+	if (size < other.size) return -1;
+	if (size > other.size) return 1;
 	return 0;
 }
 

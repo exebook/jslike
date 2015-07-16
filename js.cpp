@@ -4,6 +4,7 @@
 #	define ロ(...) printf(__VA_ARGS__); fflush(0);
 #endif
 
+#include "jstime.h"
 #include "jslike.h"
 using namespace jslike;
 
@@ -259,13 +260,13 @@ void readme() {
 		double d = a.toDouble();
 		printf("Basic types: %i %f\n", i, d);
 		var hello = "world";
-		char *str = hello.getStringAllocUtf(); // ..Alloc() means you are responsible for deallocation of the returned data. Use `delete`.
+		char *str = hello.getStringAllocUtf(); // ..Alloc() means you are responsible for deallocation of the returned data. Use `delete[]`.
 		printf("char* = %s\n", str);
-		delete str; // you must delete what you got with ...Alloc().
+		delete[] str; // you must delete what you got with ...Alloc().
 
 		str = hello.getStringAllocAscii(); // Ascii is faster that Utf.
 		printf("char* = %s\n", str);
-		delete str;
+		delete[] str;
 
 		// Internally strings are stored as UTF16/32 AKA wchar_t.
 		wchar_t *w = hello.getStringPointer();
@@ -332,10 +333,39 @@ var testJSON() {
 	return R;
 }
 
+void testObjectProperties() {
+	// indexOf property access: 2000 items, -O0 639ms, -O3: 171ms
+	// trie property access: 2000 items, -O0 14ms, -O3 11ms
+	// trie property access: 20000 items, -O0 68ms, -O3 45ms
+	int T = time1000();
+	var O = Object;
+	for (var i = 0; i < 20000; i++) {
+		var key = i.toString();
+		var val = "__"; val += i;
+		O[key] = val;
+	}
+	int err = 0;
+	for (var i = 0; i < 20000; i++) {
+		var key = i.toString();
+		var val = "__"; val += i;
+		if (O[key] != val) err++;
+	}
+	log(O["5"], "errors:", err);
+	log("test time:", time1000() - T);
+}
+
 int main(int argc, char* argv[]) {
-	var a = "";
-	var b = a.split(" ");
-	log(b.typeOf(), b.length());
+	var O = Object;
+	O["a"] = "aaa";
+	O["b"] = "bbb";
+	log(O["a"], O["b"]);
+	O.del("a");
+	log(O["a"], O["b"]);
+	keyval *u = (keyval*) O.ref->data;
+	O["A"] = "AAA";
+	O["hello world"] = "Hello World!";
+	log("u->vals", u->vals);
+	log(JSON.stringify(O.objectKeys()));
 //	var a = Array;
 //	a.push(100);
 //	a.push("foo");
@@ -346,6 +376,10 @@ int main(int argc, char* argv[]) {
 //	log(b);
 //	log(a[2]);
 //	printf("%x %x %x\n", a.arr, a.arr[2].arr, b.arr);//
+//	for (int i = 0; i < 100; i ++) {
+//		log("step", i);
+		testObjectProperties();
+//	}
 	return 0;
 	testNumbers();
 	testArrayLiteral();

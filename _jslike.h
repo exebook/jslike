@@ -1159,7 +1159,11 @@ var var::slice(var start, var end = undefined) {
 }
 
 var var::push(var a) {
-	if (type != varArr) return undefined;
+	if (type != varArr) {
+		log("FATAL ERROR: push() into non-Array\n");
+		exit(1);
+		//return undefined;
+	}
 	lst *L = (lst*) ref->data;
 	L->push(a);
 	return a;
