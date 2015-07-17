@@ -88,6 +88,7 @@ struct var {
 	}
 
 	var toString() {
+		if (type == varStr) return self;
 		if (type == varNull) {
 			return (var)"undefined";
 		}
@@ -198,8 +199,8 @@ var & Undefined() {
 #include "jslst.h"
 #include "jsbool.h"
 //#include "keyval.h"
-#include "trie4d.h"
-//#include "trie5d.h"
+//#include "trie4d.h"
+#include "trie5d.h"
 #include "jsobj.h"
 #include "jsix.h"
 #include "jschar.h"

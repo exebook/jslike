@@ -1,7 +1,11 @@
 namespace trie4d {
+
+const char * trieType = "trie4d, c++, value_t, prefetch"
 #ifdef TRACE_MEM
+", mem_count";
 int mem_count;
 #endif
+;
 
 template <typename value_t> class Trie4d {
 	struct BitScanner { // separate a key in 4 bit chunks
@@ -42,18 +46,19 @@ template <typename value_t> class Trie4d {
 public:
 	value_t *result;
 	
-	bool add(void *key, int count, value_t value) {
+	bool add(void *key, int count) {//, value_t value) {
 		Node *C = &root;
 		BitScanner B(key, count);
 		while (true) {
 			char u = B.next();
 			if (u < 0) {
+				result = &C->value;
 				if (C->value == -1) {
-					C->value = value;
-					return true; // value added
+//					C->value = value;
+					return false; // new node added
 				}
-				C->value = value;
-				return false; // value replaced
+//				if (value != -1) C->value = value;
+				return true; // node found, value replaced
 			}
 			if (C->item == -1) {
 				C->item = u;
@@ -70,6 +75,7 @@ public:
 					C = C->N[u] = new Node();
 				}
 			} else {
+				__builtin_prefetch(C->N[u]);// <-- optional
 				if (!C->N[u]) C->N[u] = new Node();
 				C = C->N[u];
 			}

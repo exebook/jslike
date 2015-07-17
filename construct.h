@@ -63,6 +63,10 @@ constructor var (char* a) {
 	ref = 0;
 	self = a;
 }
+constructor var (const char* a) {
+	ref = 0;
+	self = (char*)a;
+}
 
 constructor var (wchar_t* a) {
 	ref = 0;

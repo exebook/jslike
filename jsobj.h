@@ -6,16 +6,16 @@ char* shape(wchar_t *w, int wsize, int &rsize) {
 	return u;
 }
 
-bool addToTrie(trie4d::Trie4d<int> &trie, var key, var value) {
+bool addToTrie(trie4d::Trie4d<int> &trie, var key) {
 	wchar_t *w = key._chr().s;
 	int size = key._chr().size;
 
 	int usize;
 	char *u = shape(w, size, usize);
-	int intval = value.toInt();
-	bool ok =  trie.add(u, usize, intval);
+//	int intval = value.toInt();
+	bool existed =  trie.add(u, usize);
 	delete[] u;
-	return ok;
+	return existed;
 }
 
 bool findNode(trie4d::Trie4d<int> &trie, var key) {
@@ -40,9 +40,9 @@ struct keyval {
 	}
 	var &get(var key) {
 		key = key.toString();
-		bool found = findNode(trie, key);
+		bool exist = addToTrie(trie, key);
 		int k;
-		if (found) {
+		if (exist) {
 			k = *trie.result;
 		}
 		else {
@@ -60,7 +60,7 @@ struct keyval {
 				k = vals.length().toInt();
 				vals.push(undefined);
 			}
-			addToTrie(trie, key, k);
+			*trie.result = k;
 		}
 		return vals[k];
 	}
