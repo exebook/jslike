@@ -6,7 +6,7 @@ char* shape(wchar_t *w, int wsize, int &rsize) {
 	return u;
 }
 
-bool addToTrie(Trie16 &trie, var key, var value) {
+bool addToTrie(trie4d::Trie4d<int> &trie, var key, var value) {
 	wchar_t *w = key._chr().s;
 	int size = key._chr().size;
 
@@ -18,20 +18,20 @@ bool addToTrie(Trie16 &trie, var key, var value) {
 	return ok;
 }
 
-Node *findNode(Trie16 &trie, var key) {
+bool findNode(trie4d::Trie4d<int> &trie, var key) {
 	wchar_t *w = key._chr().s;
 	int size = key._chr().size;
 
 	int usize;
 	char *u = shape(w, size, usize);
 
-	Node *R = trie.findNode(u, usize);
+	bool found = trie.find(u, usize);
 	delete[] u;
-	return R;
+	return found;
 }
 
 struct keyval {
-	Trie16 trie;
+	trie4d::Trie4d<int> trie;
 	var vals;
 	int deleted;
 	keyval () {
@@ -40,10 +40,10 @@ struct keyval {
 	}
 	var &get(var key) {
 		key = key.toString();
-		Node *n = findNode(trie, key);
+		bool found = findNode(trie, key);
 		int k;
-		if (n) {
-			k = n->value;
+		if (found) {
+			k = *trie.result;
 		}
 		else {
 			// reuse deleted slots...
@@ -76,44 +76,69 @@ var & var::getObjElement(const var &n) {
 	return R;
 }
 
-void recursiveScanTrie(Node *C, var result, var curPath) {
-	if (C->value != -1) {
-		var nul = Array;
-		result.push(curPath.concat(nul));
-	}
-	for (int i = 0; i < 16; i++) {
-		if (C->N[i]) {
-			curPath.push(i);
-			recursiveScanTrie(C->N[i], result, curPath);
-			curPath.pop();
-		}
-	}
-}
+//void recursiveScanTrie(trie4d::Node *C, var result, var curPath) {
+//	if (C->value != -1) {
+//		var nul = Array;
+//		result.push(curPath.concat(nul));
+//	}
+//	if (C->item == -1) return;
+//	if (C->item >= 0) {
+//		curPath.push(C->item);
+//		recursiveScanTrie((trie4d::Node*)C->N, result, curPath);
+//		curPath.pop();
+//		return;
+//	}
+//	for (int i = 0; i < trie4d::bucket_size; i++) {
+//		if (C->N[i]) {
+//			curPath.push(i);
+//			recursiveScanTrie(C->N[i], result, curPath);
+//			curPath.pop();
+//		}
+//	}
+//}
+//
+//var decode16bitArray(var e) {
+//	return e;
+//	var d = Array;
+//	for (var i = 0; i < e.length(); i++) {
+//		var line = e[i];
+//		var s = "";
+//		for (var j = 0; j < line.length(); j+=2) {
+//			int a = line[j].toInt(), b = line[j+1].toInt();
+//			s += var::fromCharCode(a + (b << 4));
+//		}
+//		d.push(s);
+//	}
+//	return d;
+//}
 
-var decode16bitArray(var e) {
-	var d = Array;
-	for (var i = 0; i < e.length(); i++) {
-		var line = e[i];
-		var s = "";
-		for (var j = 0; j < line.length(); j+=2) {
-			int a = line[j].toInt(), b = line[j+1].toInt();
-			s += var::fromCharCode(a + (b << 4));
-		}
-		d.push(s);
-	}
-	return d;
-}
+//var decode32bitArray(var e) {
+//	return e;
+//	var d = Array;
+//	for (var i = 0; i < e.length(); i++) {
+//		var line = e[i];
+//		var s = "";
+//		for (var j = 0; j < line.length(); j+=2) {
+//			int a = line[j].toInt(), b = line[j+1].toInt();
+//			s += var::fromCharCode(a + (b << 4));
+//		}
+//		d.push(s);
+//	}
+//	return d;
+//}
 
 var var::objectKeys() {
-	// iterate over whole trie, performance untested
-	if (type != varObj) return undefined;
-	keyval *u = (keyval*) ref->data;
-	Trie16 &trie = u->trie;
-	var result = Array;
-	var curPath = Array;
-	recursiveScanTrie(&trie.root, result, curPath);
-	result = decode16bitArray(result);
-	return result;
+	return "not implemented";
+//	// iterate over whole trie, performance untested
+//	if (type != varObj) return undefined;
+//	keyval *u = (keyval*) ref->data;
+//	trie4d::Trie16 &trie = u->trie;
+//	var result = Array;
+//	var curPath = Array;
+//	recursiveScanTrie(&trie.root, result, curPath);
+//	if (trie4d::B == 4) result = decode16bitArray(result);
+////	if (trie4d::B == 5) result = decode32bitArray(result);
+//	return result;
 }
 
 void var::deleteObj() {
@@ -125,12 +150,13 @@ void var::del(var key) {
 	keyval *u = (keyval*) ref->data;
 	key = key.toString();
 
-	Node *n = findNode(u->trie, key);
+	bool found = findNode(u->trie, key);
 
-	if (n) {
-		n->value = -1;
-		u->vals[n->value] = undefined;
-		u->vals[n->value].type = varDeleted;
+	if (found) {
+		int v = *u->trie.result;
+		*u->trie.result = -1;
+		u->vals[v] = undefined;
+		u->vals[v].type = varDeleted;
 		u->deleted++; // can be reused later
 	}
 }
