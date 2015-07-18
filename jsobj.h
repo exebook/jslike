@@ -1,4 +1,5 @@
-
+//typedef trie4d::Trie4d<int> Dict;
+typedef jshash<int> Dict;
 
 char* shape(wchar_t *w, int wsize, int &rsize) {
 	char* u = new char[wsize*4];
@@ -6,32 +7,32 @@ char* shape(wchar_t *w, int wsize, int &rsize) {
 	return u;
 }
 
-bool addToTrie(trie4d::Trie4d<int> &trie, var key) {
+bool addToTrie(Dict &trie, var key) {
 	wchar_t *w = key._chr().s;
 	int size = key._chr().size;
 
-	int usize;
-	char *u = shape(w, size, usize);
+//	int usize;
+//	char *u = shape(w, size, usize);
 //	int intval = value.toInt();
-	bool existed =  trie.add(u, usize);
-	delete[] u;
+	bool existed =  trie.add(w, size*2);
+//	delete[] u;
 	return existed;
 }
 
-bool findNode(trie4d::Trie4d<int> &trie, var key) {
+bool findNode(Dict &trie, var key) {
 	wchar_t *w = key._chr().s;
 	int size = key._chr().size;
 
-	int usize;
-	char *u = shape(w, size, usize);
+//	int usize;
+//	char *u = shape(w, size, usize);
 
-	bool found = trie.find(u, usize);
-	delete[] u;
+	bool found = trie.find(w, size*2);
+//	delete[] u;
 	return found;
 }
 
 struct keyval {
-	trie4d::Trie4d<int> trie;
+	Dict trie;
 	var vals;
 	int deleted;
 	keyval () {
@@ -93,8 +94,8 @@ var & var::getObjElement(const var &n) {
 
 bool trieEnumerator(void *key, int count, int *value, void *user) {
 	var &data = *(var*) user;
-	var str; str.setUtf((char*)key, count);
-	data["result"].push(str);
+//	var str; str.setUtf((char*)key, count);
+	data["result"].push((wchar_t*)key);
 	return true; // continue iteration
 }
 
@@ -102,7 +103,7 @@ var var::objectKeys() {
 	// iterate over whole trie, performance untested
 	if (type != varObj) return undefined;
 	keyval *u = (keyval*) ref->data;
-	trie4d::Trie4d<int> &trie = u->trie;
+	Dict &trie = u->trie;
 	var data = Object;
 	data["result"] = Array;
 	trie.forEach(trieEnumerator, (void*) &data);

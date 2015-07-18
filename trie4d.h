@@ -1,4 +1,4 @@
-namespace trie4d {
+//namespace trie4d {
 typedef bool (*trieFunc)(void *key, int count, int *value, void *user);
 const char * trieType = "trie4d, c++, value_t, prefetch"
 #ifdef TRACE_MEM
@@ -42,6 +42,40 @@ template <typename value_t> class Trie4d {
 		}
 	};
 	
+	//structures for get keys iteration
+	
+	struct cnode {
+		char c;
+		cnode *p;
+		cnode(char c, cnode *p):c(c), p(p) {}
+	};
+	
+	struct iter_t {
+		trieFunc f;
+		void *user;
+	};
+
+	void iterate(Node *C, iter_t *iter, int size, cnode *p) {
+		if (C->value != -1) {
+			char *c = new char[size/2], *w = &c[size/2-1];
+			do { *w-- = p->c << 4 | p->p->c; } while (p = p->p->p);
+			iter->f(c, size/2, &C->value, iter->user);
+			delete[] c;
+		}
+		if (C->item == -1) return;
+		if (C->item >= 0) {
+			cnode n(C->item, p);
+			iterate((Node*)C->N, iter, size+1, &n);
+			return;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (C->N[i]) {
+				cnode n(i, p);
+				iterate(C->N[i], iter, size+1, &n);
+			}
+		}
+	}
+
 	Node root;
 public:
 	value_t *result;
@@ -54,10 +88,8 @@ public:
 			if (u < 0) {
 				result = &C->value;
 				if (C->value == -1) {
-//					C->value = value;
 					return false; // new node added
 				}
-//				if (value != -1) C->value = value;
 				return true; // node found, value replaced
 			}
 			if (C->item == -1) {
@@ -102,38 +134,6 @@ public:
 		}
 	}
 
-	struct cnode {
-		char c;
-		cnode *p;
-		cnode(char c, cnode *p):c(c), p(p) {}
-	};
-	
-	struct iter_t {
-		trieFunc f;
-		void *user;
-	};
-
-	void iterate(Node *C, iter_t *iter, int size, cnode *p) {
-		if (C->value != -1) {
-			char *c = new char[size/2], *w = &c[size/2-1];
-			do { *w-- = p->c << 4 | p->p->c; } while (p = p->p->p);
-			iter->f(c, size/2, &C->value, iter->user);
-			delete[] c;
-		}
-		if (C->item == -1) return;
-		if (C->item >= 0) {
-			cnode n(C->item, p);
-			iterate((Node*)C->N, iter, size+1, &n);
-			return;
-		}
-		for (int i = 0; i < 16; i++) {
-			if (C->N[i]) {
-				cnode n(i, p);
-				iterate(C->N[i], iter, size+1, &n);
-			}
-		}
-	}
-
 	void forEach(trieFunc f, void *user) {
 		iter_t t;
 		t.f = f;
@@ -142,4 +142,4 @@ public:
 	}
 };
 
-} // namespace trie4d
+//} // namespace trie4d
