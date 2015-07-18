@@ -202,7 +202,7 @@ var & Undefined() {
 //#include "keyval.h"
 //#include "trie4d.h"
 //#include "trie5d.h"
-#include "hash.h"
+#include "hashdic.h"
 #include "jsobj.h"
 #include "jsix.h"
 #include "jschar.h"
