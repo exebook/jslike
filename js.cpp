@@ -357,14 +357,14 @@ void testObjectProperties() {
 int main(int argc, char* argv[]) {
 	var O = Object;
 	O["a"] = "aaa";
-	O["b"] = "bbb";
-	log(O["a"], O["b"]);
-	O.del("a");
-	log(O["a"], O["b"]);
-	keyval *u = (keyval*) O.ref->data;
-	O["A"] = "AAA";
-	O["hello world"] = "Hello World!";
-	log("u->vals", u->vals);
+//	O["b"] = "bbb";
+//	log(O["a"], O["b"]);
+//	O.del("a");
+//	log(O["a"], O["b"]);
+//	keyval *u = (keyval*) O.ref->data;
+	O["AB"] = "AAA";
+	O["hello.world"] = "Hello World!";
+//	log("u->vals", u->vals);
 	log(JSON.stringify(O.objectKeys()));
 //	var a = Array;
 //	a.push(100);

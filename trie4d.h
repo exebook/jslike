@@ -1,5 +1,5 @@
 namespace trie4d {
-
+typedef bool (*trieFunc)(void *key, int count, int *value, void *user);
 const char * trieType = "trie4d, c++, value_t, prefetch"
 #ifdef TRACE_MEM
 ", mem_count";
@@ -100,6 +100,45 @@ public:
 				if (!(C = C->N[u])) return false;
 			}
 		}
+	}
+
+	struct cnode {
+		char c;
+		cnode *p;
+		cnode(char c, cnode *p):c(c), p(p) {}
+	};
+	
+	struct iter_t {
+		trieFunc f;
+		void *user;
+	};
+
+	void iterate(Node *C, iter_t *iter, int size, cnode *p) {
+		if (C->value != -1) {
+			char *c = new char[size/2], *w = &c[size/2-1];
+			do { *w-- = p->c << 4 | p->p->c; } while (p = p->p->p);
+			iter->f(c, size/2, &C->value, iter->user);
+			delete[] c;
+		}
+		if (C->item == -1) return;
+		if (C->item >= 0) {
+			cnode n(C->item, p);
+			iterate((Node*)C->N, iter, size+1, &n);
+			return;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (C->N[i]) {
+				cnode n(i, p);
+				iterate(C->N[i], iter, size+1, &n);
+			}
+		}
+	}
+
+	void forEach(trieFunc f, void *user) {
+		iter_t t;
+		t.f = f;
+		t.user = user;
+		iterate(&root, &t, 0, 0);
 	}
 };
 

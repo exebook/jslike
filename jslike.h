@@ -35,17 +35,18 @@ struct var {
 		double num;
 		Ref* ref;
 	};
+
 #include "construct.h"
 
 	chr & _chr() { return *((chr*)(ref->data)); }
-	
+
 	void makeStringToSet() {
 		// use to set some value from wchar_t* to a new var
 		ref = new Ref;
 		type = varStr;
 		ref->data = new chr;
 	}
-	
+
 	wchar_t* getStringPointer() {
 		return _chr().s;
 	}
@@ -63,11 +64,11 @@ struct var {
 			return _chr().getAscii();
 		else return 0;
 	}
-	
+
 	double toDouble() {
 		return num; // returns garbage if not varNum
 	}
-	
+
 	int toInt() {
 		return num;
 	}
@@ -76,7 +77,7 @@ struct var {
 		if (type == varBool) return num;
 		return false;
 	}
-	
+
 	var toNumber() {
 		return _chr().toNumber();
 	}
@@ -199,8 +200,8 @@ var & Undefined() {
 #include "jslst.h"
 #include "jsbool.h"
 //#include "keyval.h"
-//#include "trie4d.h"
-#include "trie5d.h"
+#include "trie4d.h"
+//#include "trie5d.h"
 #include "jsobj.h"
 #include "jsix.h"
 #include "jschar.h"
@@ -218,7 +219,7 @@ var typeName(varType a) {
 
 var var::concat(var a) {
 	var R = Array;
-	lst &L = *(lst*) R.ref->data;
+	vars &L = *(vars*) R.ref->data;
 	int count2 = a.length().toInt();
 	int count = length().toInt(), x = 0;
 	L.resize(count + count2);

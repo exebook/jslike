@@ -1,5 +1,5 @@
-class lst {
-	typedef var** P;
+template <typename T> class lst {
+	typedef T** P;
 	P p;
 	int capacity, size;
 	void zeroInit() {
@@ -44,39 +44,44 @@ public:
 		if (newsize == capacity+1) capacity = newsize*2;
 		else capacity = newsize;
 		P o = p;
-		p = new var* [capacity];
+		p = new T* [capacity];
 		for (int i = 0;  i < size;  i++) p[i] = o[i];
 		for (int i = size; i < capacity; i++) p[i] = 0;
 		delete[] o;
 		size = newsize;
 	}
+	
+	void prealloc(int count) {
+		capacity = count;
+		p = new T* [capacity];
+	}
 
-	var pop() {
+	T pop() {
 		if (size == 0) return undefined;
-		var item = self[-1];
+		T item = self[-1];
 		resize(size - 1);
 		return item;
 	}
-	void push(const var &a) {
+	void push(const T &a) {
 		resize(size + 1);
 		self[size-1] = a;
 	}
 
-	var& operator [](int i) { //TMPVAR? callback if op= ?
+	T& operator [](int i) { //TMPVAR? callback if op= ?
 		if (i < 0) i = size + i;
 		if (i >= size) resize(i + 1);
-		if (p[i] == 0) p[i] = new var();
+		if (p[i] == 0) p[i] = new T();
 		return (*p[i]);
 	}
 
-	void delIns(int pos, int delCount, var *item, int insCount) {
+	void delIns(int pos, int delCount, T *item, int insCount) {
 		P o = p;
 		int newSize = size - delCount + insCount;
-		p = new var* [newSize];
+		p = new T* [newSize];
 		for (int i = 0; i < pos; i++) p[i] = o[i];
 		for (int i = pos; i < pos + delCount; i++) delete o[i];
 		for (int i = 0; i < insCount; i++) {
-			p[pos+i] = new var;
+			p[pos+i] = new T;
 			*p[pos+i] = item[i];//val|ref?
 		}
 		int remainCount = size - (pos + delCount);
@@ -87,3 +92,5 @@ public:
 	}
 
 };
+
+//typedef lstvar<var> lst;

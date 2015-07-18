@@ -1,14 +1,15 @@
+typedef lst<var> vars;
 void *newLst() {
-	return new lst;
+	return new vars;
 }
 
 void var::deleteLst() {
-	delete (lst*)ref->data, delete ref;
+	delete (vars*)ref->data, delete ref;
 }
 
 var var::splice(var start, var deleteCount, var item = argIgnore) {
 	var R = Array;
-	lst &L = *(lst*) ref->data;
+	vars &L = *(vars*) ref->data;
 	int
 		x = start.toDouble(),
 		d = deleteCount.toDouble(),
@@ -25,7 +26,7 @@ var var::splice(var start, var deleteCount, var item = argIgnore) {
 
 var var::join(var separator) {
 	var R;
-	lst L;
+	vars L;
 	int cnt = length().toDouble();
 	if (cnt == 0) {
 		return (var)"";
@@ -75,7 +76,7 @@ var var::slice(var start, var end = undefined) {
 	if (type != varArr) return undefined;
 	var R = Array;
 	if (b <= a) { return R; }
-	lst &L = * (lst*) R.ref->data;
+	vars &L = * (vars*) R.ref->data;
 	
 	L.resize(b - a);
 	for (int i = 0; i < L.length(); i++) L[i] = self[a + i];
@@ -88,24 +89,24 @@ var var::push(var a) {
 		exit(1);
 		//return undefined;
 	}
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	L->push(a);
 	return a;
 }
 
 var var::pop() {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	return L->pop();
 }
 
 var var::Push(var a) {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	L->delIns(0, 0, &a, 1);
 	return a;
 }
 
 var var::Pop() {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	var R = (*L)[0];
 	L->delIns(0, 1, 0, 0);
 	return R;
@@ -113,7 +114,7 @@ var var::Pop() {
 
 var var::length() {
 	if (type == varArr) {
-		lst *L = (lst*) ref->data;
+		vars *L = (vars*) ref->data;
 		return L->length();
 	}
 	if (type == varStr) {
@@ -123,6 +124,6 @@ var var::length() {
 }
 
 var& var::getArrElement(int n) {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	return (*L)[n];
 }

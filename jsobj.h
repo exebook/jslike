@@ -76,42 +76,6 @@ var & var::getObjElement(const var &n) {
 	return R;
 }
 
-//void recursiveScanTrie(trie4d::Node *C, var result, var curPath) {
-//	if (C->value != -1) {
-//		var nul = Array;
-//		result.push(curPath.concat(nul));
-//	}
-//	if (C->item == -1) return;
-//	if (C->item >= 0) {
-//		curPath.push(C->item);
-//		recursiveScanTrie((trie4d::Node*)C->N, result, curPath);
-//		curPath.pop();
-//		return;
-//	}
-//	for (int i = 0; i < trie4d::bucket_size; i++) {
-//		if (C->N[i]) {
-//			curPath.push(i);
-//			recursiveScanTrie(C->N[i], result, curPath);
-//			curPath.pop();
-//		}
-//	}
-//}
-//
-//var decode16bitArray(var e) {
-//	return e;
-//	var d = Array;
-//	for (var i = 0; i < e.length(); i++) {
-//		var line = e[i];
-//		var s = "";
-//		for (var j = 0; j < line.length(); j+=2) {
-//			int a = line[j].toInt(), b = line[j+1].toInt();
-//			s += var::fromCharCode(a + (b << 4));
-//		}
-//		d.push(s);
-//	}
-//	return d;
-//}
-
 //var decode32bitArray(var e) {
 //	return e;
 //	var d = Array;
@@ -127,18 +91,25 @@ var & var::getObjElement(const var &n) {
 //	return d;
 //}
 
+bool trieEnumerator(void *key, int count, int *value, void *user) {
+	var &data = *(var*) user;
+	var str; str.setUtf((char*)key, count);
+	data["result"].push(str);
+	return true; // continue iteration
+}
+
 var var::objectKeys() {
-	return "not implemented";
-//	// iterate over whole trie, performance untested
-//	if (type != varObj) return undefined;
-//	keyval *u = (keyval*) ref->data;
-//	trie4d::Trie16 &trie = u->trie;
-//	var result = Array;
-//	var curPath = Array;
+	// iterate over whole trie, performance untested
+	if (type != varObj) return undefined;
+	keyval *u = (keyval*) ref->data;
+	trie4d::Trie4d<int> &trie = u->trie;
+	var data = Object;
+	data["result"] = Array;
+	trie.forEach(trieEnumerator, (void*) &data);
 //	recursiveScanTrie(&trie.root, result, curPath);
 //	if (trie4d::B == 4) result = decode16bitArray(result);
-////	if (trie4d::B == 5) result = decode32bitArray(result);
-//	return result;
+//	if (trie4d::B == 5) result = decode32bitArray(result);
+	return data["result"];
 }
 
 void var::deleteObj() {

@@ -84,6 +84,12 @@ void operator = (char* a) {
 	//_chr().setAscii(a);
 }
 
+void setUtf (char* a, int size = -1) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().setUtf(a, size);
+}
+
 void operator = (wchar_t* a) {
 	if (ref) unref();
 	makeStringToSet();
