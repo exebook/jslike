@@ -268,8 +268,8 @@ void readme() {
 		printf("char* = %s\n", str);
 		delete[] str;
 
-		// Internally strings are stored as UTF16/32 AKA wchar_t.
-		wchar_t *w = hello.getStringPointer();
+		// Internally strings are stored as UTF16/32 AKA jschar.
+		jschar *w = hello.getStringPointer();
 		for (int i = 0; i < hello.length().toInt(); i++) {
 			printf("char code: %i, char: %c\n", w[i], w[i]);
 		}

@@ -2,6 +2,7 @@
 #define __JSLIKE_H__
 
 namespace jslike {
+typedef __uint16_t jschar;
 
 #include "chrutil.h"
 #include "chr.h"
@@ -41,13 +42,13 @@ struct var {
 	chr & _chr() { return *((chr*)(ref->data)); }
 
 	void makeStringToSet() {
-		// use to set some value from wchar_t* to a new var
+		// use to set some value from jschar* to a new var
 		ref = new Ref;
 		type = varStr;
 		ref->data = new chr;
 	}
 
-	wchar_t* getStringPointer() {
+	jschar* getStringPointer() {
 		return _chr().s;
 	}
 
@@ -84,7 +85,7 @@ struct var {
 
 	static var fromCharCode(var a) {
 		var R = "1";
-		R.getStringPointer()[0] = (wchar_t)a.toInt();
+		R.getStringPointer()[0] = (jschar)a.toInt();
 		return R;
 	}
 

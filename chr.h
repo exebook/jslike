@@ -1,7 +1,7 @@
 
 struct chr {
 	int size;
-	wchar_t *s;
+	jschar *s;
 
 chr () {
 	size = 0; s = 0;
@@ -12,16 +12,16 @@ chr () {
 	size = 0;
 }
 
-void set(wchar_t *a, int length = -1) { // can be used as resize if a≟0
+void set(jschar *a, int length = -1) { // can be used as resize if a≟0
 	if (length == -1) length = len(a);
-	s = new wchar_t[length];
+	s = new jschar[length];
 	size = length;
 	if (a) for (int x = 0; x < size; x++) s[x] = *a++;
 }
 
 void setUtf(char *a, int length = -1) {
 	if (length == -1) length = len(a);
-	wchar_t *d = new wchar_t[length];
+	jschar *d = new jschar[length];
 	size = utf2w((unsigned char*)a, (unsigned char*)&a[length], d, &d[length]);
 	set(d, size);
 	delete[] d;
@@ -29,7 +29,7 @@ void setUtf(char *a, int length = -1) {
 
 void setAscii(char *a, int length = -1) {
 	if (length == -1) length = len(a);
-	s = new wchar_t[length];
+	s = new jschar[length];
 	size = length;
 	for (int x = 0; x < size; x++) s[x] = (char)(*a++);
 }
@@ -86,7 +86,7 @@ void set(double i) {
 
 double toNumber () {
 	bool minus;
-	wchar_t *s = this->s;
+	jschar *s = this->s;
 	if (*s == '-') { s++; minus = true; };
 	char *p = getAscii();
 	double A = 0, B = 0, *C = &A, n = 0;
@@ -126,12 +126,12 @@ int cmp (const chr &other) {
 	if (size == 0 && other.size == 0) return 0;
 	if (size == 0) return -1;
 	if (other.size == 0) return 1;
-	wchar_t *a, *b, *ea, *eb;
+	jschar *a, *b, *ea, *eb;
 	a = s; b = other.s;
 	ea = a + size;
 	eb = b + other.size;
 	while (true) {
-		wchar_t A = *a, B = *b;
+		jschar A = *a, B = *b;
 		if (A != B) {
 			if (A < B) return -1;
 			return 1;
@@ -146,12 +146,12 @@ int cmp (const chr &other) {
 	return 0;
 }
 
-wchar_t operator [](int i) {
+jschar operator [](int i) {
 	if (i < 0) i = size + i;
 	return s[i];
 }
 
-int find (int start, wchar_t *c, int subsize) {
+int find (int start, jschar *c, int subsize) {
 	if (subsize == 0) return -1;
 	int e = subsize;
 	int l = start + e;
@@ -160,7 +160,7 @@ int find (int start, wchar_t *c, int subsize) {
 		if (s[i] != c[e - 1]) i++;
 		else {
 			int x = e;
-			wchar_t    *a = &s[i], *b = &c[e - 1];
+			jschar    *a = &s[i], *b = &c[e - 1];
 			while (x--)
 			{
 				if (*a != *b) { i++; break; }
@@ -191,8 +191,8 @@ int _strcount(const chr &substring) {
 }
 
 void _cpto(int from, const chr &dest, int to, int count) {
-	wchar_t *a = s + from;
-	wchar_t *b = dest.s + to;
+	jschar *a = s + from;
+	jschar *b = dest.s + to;
 	while (count-- > 0) *b++ = *a++;
 }
 
@@ -207,7 +207,7 @@ void replace(chr &A, chr &B, chr &dest) {
 	int subcount, len, si=0, di, x;
 	if (size == 0) return;
 	dest.size = size + _strcount(A) * (B.size - A.size);
-	dest.s = new wchar_t [dest.size];
+	dest.s = new jschar [dest.size];
 	di = si;
 	_cpto(0, dest, 0, si);
 	while (true) {

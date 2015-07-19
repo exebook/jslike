@@ -7,14 +7,14 @@ int len(char *c) {
 	return R;
 }
 
-int len(wchar_t *c) {
+int len(jschar *c) {
 	int R = 0;
 	if (c == 0) return 0;
 	while (*c++) R++;
 	return R;
 }
 
-wchar_t UTF = 0xFEFF;
+jschar UTF = 0xFEFF;
 
 int utf_offsets[6] = { 0x0UL, 0x3080UL, 0xE2080UL, 0x3C82080UL, 0xFA082080UL, 0x82082080UL };
 
@@ -28,14 +28,14 @@ unsigned char utf_trail(int i)
 	return 5;
 }
 
-int utf2w (unsigned char* src, unsigned char* SB, wchar_t* dst, wchar_t* TB)
+int utf2w (unsigned char* src, unsigned char* SB, jschar* dst, jschar* TB)
 {
 	 unsigned char* S = src;
-	 wchar_t* T = dst;
+	 jschar* T = dst;
 	 while (S < SB)
 	 {
 	int ch = 0;
-	wchar_t X = utf_trail(*S);
+	jschar X = utf_trail(*S);
 	if (S + X >= SB) break;
 		  int x = X;
 		  while (x-- > 0) ch += *S++, ch <<= 6;
@@ -45,21 +45,21 @@ int utf2w (unsigned char* src, unsigned char* SB, wchar_t* dst, wchar_t* TB)
 	if (ch <= 0xFFFF)
 		  {
 		 if (ch >= 0xD800 && ch <= 0xDFFF) *T++ = 0xFFFD;
-				else *T++ = (wchar_t)ch;
+				else *T++ = (jschar)ch;
 	}
 		  else if (ch > 0x0010FFFF) *T++ = 0xFFFD;
 	else
 		  {
 		 if (T + 1 >= TB) { S -= (X+1); break; }
 	    ch -= 0x0010000UL;
-	    *T++ = (wchar_t)((ch >> 10) + 0xD800);
-		 *T++ = (wchar_t)((ch & 0x3FFUL) + 0xDC00);
+	    *T++ = (jschar)((ch >> 10) + 0xD800);
+		 *T++ = (jschar)((ch & 0x3FFUL) + 0xDC00);
 	}
     }
     return T - dst;
 }
 
-int w2utf(char *D, int DD, wchar_t *S, int SS)
+int w2utf(char *D, int DD, jschar *S, int SS)
 {
   int i = 0, n = 0, c;
   if (S == 0) return 0;

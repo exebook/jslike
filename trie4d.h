@@ -87,10 +87,8 @@ public:
 			char u = B.next();
 			if (u < 0) {
 				result = &C->value;
-				if (C->value == -1) {
-					return false; // new node added
-				}
-				return true; // node found, value replaced
+				if (C->value == (value_t)-1) return false; // new node added
+				return true; // existing node found
 			}
 			if (C->item == -1) {
 				C->item = u;

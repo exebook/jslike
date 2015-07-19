@@ -14,7 +14,7 @@ var &var::operator [] (var a) {
 		if (n >= C.size) {
 			return Undefined();
 		}
-		wchar_t c = C.s[n];
+		jschar c = C.s[n];
 		static var R = "1";
 		R._chr().s[0] = c;
 		return R;

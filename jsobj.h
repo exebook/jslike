@@ -1,14 +1,14 @@
 //typedef trie4d::Trie4d<int> Dict;
 typedef jshash<int> Dict;
 
-char* shape(wchar_t *w, int wsize, int &rsize) {
+char* shape(jschar *w, int wsize, int &rsize) {
 	char* u = new char[wsize*4];
 	rsize = w2utf(u, wsize*4, w, wsize);
 	return u;
 }
 
-bool addToTrie(Dict &trie, var key) {
-	wchar_t *w = key._chr().s;
+bool addToDict(Dict &trie, var key) {
+	jschar *w = key._chr().s;
 	int size = key._chr().size;
 
 //	int usize;
@@ -20,7 +20,7 @@ bool addToTrie(Dict &trie, var key) {
 }
 
 bool findNode(Dict &trie, var key) {
-	wchar_t *w = key._chr().s;
+	jschar *w = key._chr().s;
 	int size = key._chr().size;
 
 //	int usize;
@@ -41,7 +41,7 @@ struct keyval {
 	}
 	var &get(var key) {
 		key = key.toString();
-		bool exist = addToTrie(trie, key);
+		bool exist = addToDict(trie, key);
 		int k;
 		if (exist) {
 			k = *trie.result;
@@ -95,7 +95,7 @@ var & var::getObjElement(const var &n) {
 bool trieEnumerator(void *key, int count, int *value, void *user) {
 	var &data = *(var*) user;
 //	var str; str.setUtf((char*)key, count);
-	data["result"].push((wchar_t*)key);
+	data["result"].push((jschar*)key);
 	return true; // continue iteration
 }
 

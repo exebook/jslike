@@ -1,6 +1,6 @@
 fs ∆ ≣'fs'
 
-ignore ∆ ['stdio.h', 'wchar.h']
+ignore ∆ ['stdio.h', 'wchar.h', 'string.h']
 R ∆ []
 
 go ('jslike.h')
@@ -8,8 +8,9 @@ go ('jslike.h')
 ➮ go {
 	A ∆ ⛁ a ≂⌶'\n'
 	i ⬌ A {
-		⌥ (Aⁱ ≀ '#' >= 0 && Aⁱ ≀ 'include' > 0) {
-			s ∆ Aⁱ⌶'"'
+		⌥ (Aⁱ ≀ '#' == 0 && Aⁱ ≀ 'include' > 0) {
+			s ∆ repl(repl(Aⁱ,'<','"'),'>','"')⌶'"'
+			⌥ (ignore ≀ (s¹) >= 0) { R ⬊ (Aⁱ); ♻ }
 			ロ 'include', s¹
 			go(s¹)
 		} ⎇ R ⬊ (Aⁱ)

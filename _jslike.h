@@ -5,6 +5,7 @@
 #define __JSLIKE_H__
 
 namespace jslike {
+typedef __uint16_t jschar;
 
 #define self (*this)
 
@@ -15,14 +16,14 @@ int len(char *c) {
 	return R;
 }
 
-int len(wchar_t *c) {
+int len(jschar *c) {
 	int R = 0;
 	if (c == 0) return 0;
 	while (*c++) R++;
 	return R;
 }
 
-wchar_t UTF = 0xFEFF;
+jschar UTF = 0xFEFF;
 
 int utf_offsets[6] = { 0x0UL, 0x3080UL, 0xE2080UL, 0x3C82080UL, 0xFA082080UL, 0x82082080UL };
 
@@ -36,14 +37,14 @@ unsigned char utf_trail(int i)
 	return 5;
 }
 
-int utf2w (unsigned char* src, unsigned char* SB, wchar_t* dst, wchar_t* TB)
+int utf2w (unsigned char* src, unsigned char* SB, jschar* dst, jschar* TB)
 {
 	 unsigned char* S = src;
-	 wchar_t* T = dst;
+	 jschar* T = dst;
 	 while (S < SB)
 	 {
 	int ch = 0;
-	wchar_t X = utf_trail(*S);
+	jschar X = utf_trail(*S);
 	if (S + X >= SB) break;
 		  int x = X;
 		  while (x-- > 0) ch += *S++, ch <<= 6;
@@ -53,21 +54,21 @@ int utf2w (unsigned char* src, unsigned char* SB, wchar_t* dst, wchar_t* TB)
 	if (ch <= 0xFFFF)
 		  {
 		 if (ch >= 0xD800 && ch <= 0xDFFF) *T++ = 0xFFFD;
-				else *T++ = (wchar_t)ch;
+				else *T++ = (jschar)ch;
 	}
 		  else if (ch > 0x0010FFFF) *T++ = 0xFFFD;
 	else
 		  {
 		 if (T + 1 >= TB) { S -= (X+1); break; }
 	    ch -= 0x0010000UL;
-	    *T++ = (wchar_t)((ch >> 10) + 0xD800);
-		 *T++ = (wchar_t)((ch & 0x3FFUL) + 0xDC00);
+	    *T++ = (jschar)((ch >> 10) + 0xD800);
+		 *T++ = (jschar)((ch & 0x3FFUL) + 0xDC00);
 	}
     }
     return T - dst;
 }
 
-int w2utf(char *D, int DD, wchar_t *S, int SS)
+int w2utf(char *D, int DD, jschar *S, int SS)
 {
   int i = 0, n = 0, c;
   if (S == 0) return 0;
@@ -111,57 +112,57 @@ int w2utf(char *D, int DD, wchar_t *S, int SS)
 
 struct chr {
 	int size;
-	wchar_t *s;
+	jschar *s;
 
 chr () {
 	size = 0; s = 0;
 }
 
 ~chr() {
-	delete s;
+	delete[] s;
 	size = 0;
 }
 
-void set(wchar_t *a, int length = -1) { // can be used as resize if a≟0
+void set(jschar *a, int length = -1) { // can be used as resize if a≟0
 	if (length == -1) length = len(a);
-	s = new wchar_t[length];
+	s = new jschar[length];
 	size = length;
 	if (a) for (int x = 0; x < size; x++) s[x] = *a++;
 }
 
 void setUtf(char *a, int length = -1) {
 	if (length == -1) length = len(a);
-	wchar_t *d = new wchar_t[length];
+	jschar *d = new jschar[length];
 	size = utf2w((unsigned char*)a, (unsigned char*)&a[length], d, &d[length]);
 	set(d, size);
-	delete d;
+	delete[] d;
 }
 
 void setAscii(char *a, int length = -1) {
 	if (length == -1) length = len(a);
-	s = new wchar_t[length];
+	s = new jschar[length];
 	size = length;
 	for (int x = 0; x < size; x++) s[x] = (char)(*a++);
 }
 
 int intToStr(int i, char *s) {
-   char *c = s;
-   int n = 0;
+	char *c = s;
+	int n = 0;
 	while (true) {
-      unsigned int i10 = i / 10;
-      *s = (i - (i10 * 10)) + '0';
-      i = i10;
-      s++;
-      n++;
-      if (i == 0) { *s-- = 0; break; }
-   }
+		unsigned int i10 = i / 10;
+		*s = (i - (i10 * 10)) + '0';
+		i = i10;
+		s++;
+		n++;
+		if (i == 0) { *s-- = 0; break; }
+	}
 	char *b = s;
 	while (b > c) {
-      char tmp = *b;
-      *b-- = *c;
-      *c++ = tmp;
-   }
-   return n; 
+		char tmp = *b;
+		*b-- = *c;
+		*c++ = tmp;
+	}
+	return n; 
 }
 
 void dblToStr (double d, char *s) {
@@ -196,7 +197,7 @@ void set(double i) {
 
 double toNumber () {
 	bool minus;
-	wchar_t *s = this->s;
+	jschar *s = this->s;
 	if (*s == '-') { s++; minus = true; };
 	char *p = getAscii();
 	double A = 0, B = 0, *C = &A, n = 0;
@@ -219,16 +220,16 @@ double toNumber () {
 }
 
 char * getAscii() { // basic 0-128 range only
-	char* u = new char[size];
+	char* u = new char[size+1];
 	for (int i = 0; i < size; i++) u[i] = s[i];
+	u[size] = 0;
 	return u;
 }
 
 char * getUtf() {
-	char* u = 0;
-	if (u != 0) delete u;
-	u = new char[size*4];
-	w2utf(u, size*4, s, size);
+	char* u = new char[size*4];
+	int usize = w2utf(u, size*4, s, size);
+	u[usize] = 0;
 	return u;
 }
 
@@ -236,12 +237,12 @@ int cmp (const chr &other) {
 	if (size == 0 && other.size == 0) return 0;
 	if (size == 0) return -1;
 	if (other.size == 0) return 1;
-	wchar_t *a, *b, *ea, *eb;
+	jschar *a, *b, *ea, *eb;
 	a = s; b = other.s;
 	ea = a + size;
 	eb = b + other.size;
 	while (true) {
-		wchar_t A = *a, B = *b;
+		jschar A = *a, B = *b;
 		if (A != B) {
 			if (A < B) return -1;
 			return 1;
@@ -251,17 +252,17 @@ int cmp (const chr &other) {
 		if (a == ea) break;
 		if (b == eb) break;
 	}
-	if (size < size) return -1;
-	if (size > size) return 1;
+	if (size < other.size) return -1;
+	if (size > other.size) return 1;
 	return 0;
 }
 
-wchar_t operator [](int i) {
+jschar operator [](int i) {
 	if (i < 0) i = size + i;
 	return s[i];
 }
 
-int find (int start, wchar_t *c, int subsize) {
+int find (int start, jschar *c, int subsize) {
 	if (subsize == 0) return -1;
 	int e = subsize;
 	int l = start + e;
@@ -270,7 +271,7 @@ int find (int start, wchar_t *c, int subsize) {
 		if (s[i] != c[e - 1]) i++;
 		else {
 			int x = e;
-			wchar_t    *a = &s[i], *b = &c[e - 1];
+			jschar    *a = &s[i], *b = &c[e - 1];
 			while (x--)
 			{
 				if (*a != *b) { i++; break; }
@@ -301,8 +302,8 @@ int _strcount(const chr &substring) {
 }
 
 void _cpto(int from, const chr &dest, int to, int count) {
-	wchar_t *a = s + from;
-	wchar_t *b = dest.s + to;
+	jschar *a = s + from;
+	jschar *b = dest.s + to;
 	while (count-- > 0) *b++ = *a++;
 }
 
@@ -317,7 +318,7 @@ void replace(chr &A, chr &B, chr &dest) {
 	int subcount, len, si=0, di, x;
 	if (size == 0) return;
 	dest.size = size + _strcount(A) * (B.size - A.size);
-	dest.s = new wchar_t [dest.size];
+	dest.s = new jschar [dest.size];
 	di = si;
 	_cpto(0, dest, 0, si);
 	while (true) {
@@ -387,7 +388,7 @@ struct stk {
 //TODO: Garbage collector (mark/sweep)
 //functions
 
-enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5 };
+enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5, varDeleted=6 };
 enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
 
 void *newLst();
@@ -411,6 +412,7 @@ struct var {
 		double num;
 		Ref* ref;
 	};
+
 constructor var () {
 	type = varNull; ref = 0;
 }
@@ -454,6 +456,10 @@ constructor var (int a) {
 	self = (double) a;
 }
 
+constructor var (long a) {
+	self = (double) a;
+}
+
 constructor var (bool a) {
 	type = varBool;
 	ref = 0;
@@ -472,8 +478,12 @@ constructor var (char* a) {
 	ref = 0;
 	self = a;
 }
+constructor var (const char* a) {
+	ref = 0;
+	self = (char*)a;
+}
 
-constructor var (wchar_t* a) {
+constructor var (jschar* a) {
 	ref = 0;
 	self = a;
 }
@@ -489,7 +499,13 @@ void operator = (char* a) {
 	//_chr().setAscii(a);
 }
 
-void operator = (wchar_t* a) {
+void setUtf (char* a, int size = -1) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().setUtf(a, size);
+}
+
+void operator = (jschar* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().set(a);
@@ -523,30 +539,36 @@ void unref() {
 	
 
 	chr & _chr() { return *((chr*)(ref->data)); }
-	
+
 	void makeStringToSet() {
-		// use to set some value from wchar_t* to a new var
+		// use to set some value from jschar* to a new var
 		ref = new Ref;
 		type = varStr;
 		ref->data = new chr;
 	}
-	
-	wchar_t* getStringPointer() {
+
+	jschar* getStringPointer() {
 		return _chr().s;
 	}
 
 	char* getStringAllocUtf() {
-		return _chr().getUtf();
+		if (type == varStr) {
+			char *c =_chr().getUtf();
+			return c;
+		}
+		else return 0;
 	}
 
 	char* getStringAllocAscii() {
-		return _chr().getAscii();
+		if (type == varStr)
+			return _chr().getAscii();
+		else return 0;
 	}
-	
+
 	double toDouble() {
 		return num; // returns garbage if not varNum
 	}
-	
+
 	int toInt() {
 		return num;
 	}
@@ -555,18 +577,19 @@ void unref() {
 		if (type == varBool) return num;
 		return false;
 	}
-	
+
 	var toNumber() {
 		return _chr().toNumber();
 	}
 
 	static var fromCharCode(var a) {
 		var R = "1";
-		R.getStringPointer()[0] = (wchar_t)a.toInt();
+		R.getStringPointer()[0] = (jschar)a.toInt();
 		return R;
 	}
 
 	var toString() {
+		if (type == varStr) return self;
 		if (type == varNull) {
 			return (var)"undefined";
 		}
@@ -630,8 +653,8 @@ var operator + (var a) {
 	} else if (type = varStr) {
 		if (a.type != varStr) a = a.toString();
 		int an = _chr().size, bn = a._chr().size;
-		wchar_t 
-			* sum = new wchar_t [an + bn],
+		jschar 
+			* sum = new jschar [an + bn],
 			* c = sum,
 			* A = _chr().s,
 			* B = a._chr().s;
@@ -697,6 +720,11 @@ bool operator != (varSyntax b) {
 	return ! (self == b);
 }
 
+void setAscii (char* a) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().setAscii(a);
+}
 
 	// decls:
 	var replace(var find, var repl);
@@ -904,7 +932,9 @@ var & Undefined() {
 void logVar(var a) {
 	var z;
 	z = a.toString();
-	printf("%s ", z._chr().getUtf());
+	char *c = z._chr().getUtf();
+	printf("%s ", c);
+	delete[] c;
 }
 
 void __Log(var a) {
@@ -984,8 +1014,8 @@ struct __console {
 	}
 } console;
 
-class lst {
-	typedef var** P;
+template <typename T> class lst {
+	typedef T** P;
 	P p;
 	int capacity, size;
 	void zeroInit() {
@@ -1030,39 +1060,44 @@ public:
 		if (newsize == capacity+1) capacity = newsize*2;
 		else capacity = newsize;
 		P o = p;
-		p = new var* [capacity];
+		p = new T* [capacity];
 		for (int i = 0;  i < size;  i++) p[i] = o[i];
 		for (int i = size; i < capacity; i++) p[i] = 0;
 		delete[] o;
 		size = newsize;
 	}
+	
+	void prealloc(int count) {
+		capacity = count;
+		p = new T* [capacity];
+	}
 
-	var pop() {
+	T pop() {
 		if (size == 0) return undefined;
-		var item = self[-1];
+		T item = self[-1];
 		resize(size - 1);
 		return item;
 	}
-	void push(const var &a) {
+	void push(const T &a) {
 		resize(size + 1);
 		self[size-1] = a;
 	}
 
-	var& operator [](int i) { //TMPVAR? callback if op= ?
+	T& operator [](int i) { //TMPVAR? callback if op= ?
 		if (i < 0) i = size + i;
 		if (i >= size) resize(i + 1);
-		if (p[i] == 0) p[i] = new var();
+		if (p[i] == 0) p[i] = new T();
 		return (*p[i]);
 	}
 
-	void delIns(int pos, int delCount, var *item, int insCount) {
+	void delIns(int pos, int delCount, T *item, int insCount) {
 		P o = p;
 		int newSize = size - delCount + insCount;
-		p = new var* [newSize];
+		p = new T* [newSize];
 		for (int i = 0; i < pos; i++) p[i] = o[i];
 		for (int i = pos; i < pos + delCount; i++) delete o[i];
 		for (int i = 0; i < insCount; i++) {
-			p[pos+i] = new var;
+			p[pos+i] = new T;
 			*p[pos+i] = item[i];//val|ref?
 		}
 		int remainCount = size - (pos + delCount);
@@ -1074,17 +1109,20 @@ public:
 
 };
 
+//typedef lstvar<var> lst;
+
+typedef lst<var> vars;
 void *newLst() {
-	return new lst;
+	return new vars;
 }
 
 void var::deleteLst() {
-	delete (lst*)ref->data, delete ref;
+	delete (vars*)ref->data, delete ref;
 }
 
 var var::splice(var start, var deleteCount, var item = argIgnore) {
 	var R = Array;
-	lst &L = *(lst*) ref->data;
+	vars &L = *(vars*) ref->data;
 	int
 		x = start.toDouble(),
 		d = deleteCount.toDouble(),
@@ -1101,7 +1139,7 @@ var var::splice(var start, var deleteCount, var item = argIgnore) {
 
 var var::join(var separator) {
 	var R;
-	lst L;
+	vars L;
 	int cnt = length().toDouble();
 	if (cnt == 0) {
 		return (var)"";
@@ -1151,7 +1189,7 @@ var var::slice(var start, var end = undefined) {
 	if (type != varArr) return undefined;
 	var R = Array;
 	if (b <= a) { return R; }
-	lst &L = * (lst*) R.ref->data;
+	vars &L = * (vars*) R.ref->data;
 	
 	L.resize(b - a);
 	for (int i = 0; i < L.length(); i++) L[i] = self[a + i];
@@ -1164,24 +1202,24 @@ var var::push(var a) {
 		exit(1);
 		//return undefined;
 	}
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	L->push(a);
 	return a;
 }
 
 var var::pop() {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	return L->pop();
 }
 
 var var::Push(var a) {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	L->delIns(0, 0, &a, 1);
 	return a;
 }
 
 var var::Pop() {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	var R = (*L)[0];
 	L->delIns(0, 1, 0, 0);
 	return R;
@@ -1189,7 +1227,7 @@ var var::Pop() {
 
 var var::length() {
 	if (type == varArr) {
-		lst *L = (lst*) ref->data;
+		vars *L = (vars*) ref->data;
 		return L->length();
 	}
 	if (type == varStr) {
@@ -1199,7 +1237,7 @@ var var::length() {
 }
 
 var& var::getArrElement(int n) {
-	lst *L = (lst*) ref->data;
+	vars *L = (vars*) ref->data;
 	return (*L)[n];
 }
 
@@ -1238,33 +1276,278 @@ bool operator > (var a, var b) {
 }
 
 
-struct keyval {
-	var keys, vals;
-	keyval () {
-		keys = Array;
-		vals = Array;
+//#include "keyval.h"
+//#include "trie4d.h"
+//#include "trie5d.h"
+#include "string.h" // memcpy/memcmp
+
+typedef __uint32_t u32;
+typedef __int8_t i8;
+typedef __uint8_t u8;
+
+u32 MurMur(const char* key, int count) {
+	#define muR(x, r) (((x) << r) | ((x) >> (32 - r)))
+	u32 seed = 0x8e96a8f2;
+	int n = count >> 2;
+	u32 k, mur = seed, c1 = 0xcc9e2d51, c2 = 0x1b873593,
+	*b = (u32*) (key + n * 4);
+	for(int i = -n; i != 0; i++) {
+		k = (muR(b[i] * c1, 15) * c2);
+		mur = muR(mur^k, 13)*5+0xe6546b64;
 	}
-	void set(var key, var val) {
-		key = key.toString();
-		int k = keys.indexOf(key).toDouble();
-		if (k < 0) {
-			keys.push(key);
-			vals.push(val);
-		} else {
-			vals[k] = val;
+	u8 * tail = (u8*)(key + (n<<2));
+	k = 0;
+	switch(count & 3) {
+		case 3: k ^= tail[2] << 16;
+		case 2: k ^= tail[1] << 8;
+		case 1: k ^= tail[0];
+		k = mur ^ muR(k*c1,15)*c2;
+	}
+	
+	mur ^= count;
+	mur ^= (mur ^ mur >> 16) * 0x85ebca6b >> 13;
+	return mur ^ (mur * 0xc2b2ae35 >> 16);
+	#undef muR
+}
+
+#define hash MurMur
+
+int initial_size = 1024;
+float growth_threshold = 2.0; //when to resize, for example 0.5 means "if number of inserted keys is half of table length then resize". My experiments on english dictionary shows balanced performance/memory savings with 1.0.
+float growth_factor = 10; // grow the size of hash table by N, suggested number is between 2 (conserve memory) and 10 (faster insertions).
+
+int dups = 0, resizes = 0, mem_count = 0, slots=0; // count some stats
+
+typedef bool (*enumFunc)(void *key, int count, int *value, void *user);
+
+template <typename value_t> struct jshash {
+	struct keynode {
+
+		char *key;
+		short len;
+		keynode *next;
+		value_t value;
+		
+		keynode(char*k, int l) {
+			len = l;
+			key = new char[l];
+			memcpy(key, k, l);
+			next = 0;
+			value = -1;
 		}
+		
+		~keynode() {
+			delete[] key;
+			mem_count += sizeof(keynode) + len;
+			if (next) delete next;
+		}
+		
+		bool cmp(char*k, int l) {
+			if (len != l) return false;
+			return memcmp(key, k, l) == 0;
+		}
+	};
+	
+	struct entry {
+		keynode *k;
+		entry():k(0) {}
+		~entry() {
+			mem_count += sizeof(entry);
+			if (k) delete k;
+		}
+	};
+	
+	entry **table;
+	int length, count;
+	
+	jshash() {
+		length = initial_size;
+		count = 0;
+		table = new entry*[initial_size]();
+	}
+	
+	~jshash() {
+		for (int i = 0; i < length; i++) if (table[i]) delete table[i];
+		delete[] table;
+		mem_count += sizeof(entry*) * length;
+	}
+	
+	void resize(int newsize) {
+	dups = 0; resizes++; slots = 0;
+		int o = length;
+		entry **old = table;
+		table = new entry*[newsize]();
+		length = newsize;
+		for (int i = 0; i < o; i++) {
+			if (old[i]) {
+				keynode *k = old[i]->k;
+				while (k) {
+					keynode *next = k->next;
+					k->next = 0;
+					reinsert_when_resizing(k);
+					k = next;
+				}
+				old[i]->k = 0;
+			}
+			delete old[i];
+		}
+		delete[] old;
+	}
+	
+	value_t *result;
+	
+	bool reinsert_when_resizing(keynode *k2) {
+		int h = (hash(k2->key, k2->len) >> 2);
+		int n = h % length;
+		if (table[n] == 0) {
+			slots++;
+			table[n] = new entry;
+			table[n]->k = k2;
+			result = &table[n]->k->value;
+			return false;
+		}
+		keynode *k = table[n]->k;
+		k2->next = table[n]->k;
+		table[n]->k = k2;
+		result = &k2->value;
+		return false;
+	}
+	
+	bool add(void *key, int keyn) {
+		int h = (hash((const char*)key, keyn) >> 2);
+		int n = h % length;
+		if (table[n] == 0) {
+			slots++;
+			double f = (double)count / (double)length;
+			if (f > growth_threshold) {
+//				printf("resize: count:%i length:%i->%i %f %f\n", count, length, (int)(length * growth_factor), f, growth_threshold);
+				resize(length * growth_factor);
+				return add(key, keyn);
+			}
+			
+			table[n] = new entry;
+			table[n]->k = new keynode((char*)key, keyn);
+			result = &table[n]->k->value;
+			count++;
+			return false;
+		}
+		keynode *k = table[n]->k;
+		while (k) {
+			if (k->cmp((char*)key, keyn)) {
+				result = &k->value;
+				return true;
+			}
+			k = k->next;
+		}
+		dups++;
+		count++;
+		keynode *k2 = new keynode((char*)key, keyn);
+		k2->next = table[n]->k;
+		table[n]->k = k2;
+		result = &k2->value;
+		return false;
+	}
+	
+	bool find(void *key, int keyn) {
+		int h = (hash((const char*)key, keyn) >> 2);
+		int n = h % length;
+//		__builtin_prefetch(table[n]);
+		if (table[n] == 0) {
+			return false;
+		}
+		keynode *k = table[n]->k;
+		while (k) {
+			if (k->cmp((char*)key, keyn)) {
+				result = &k->value;
+				return true;
+			}
+			k = k->next;
+		}
+		return false;
+	}
+	
+	void forEach(enumFunc f, void *user) {
+		for (int i = 0; i < length; i++) {
+			if (table[i] != 0) {
+				keynode *k = table[i]->k;
+				while (k) {
+					if (!f(k->key, k->len, &k->value, user)) return;
+					k = k->next;
+				}
+			}
+		}
+	}
+};
+
+
+//typedef trie4d::Trie4d<int> Dict;
+typedef jshash<int> Dict;
+
+char* shape(jschar *w, int wsize, int &rsize) {
+	char* u = new char[wsize*4];
+	rsize = w2utf(u, wsize*4, w, wsize);
+	return u;
+}
+
+bool addToDict(Dict &trie, var key) {
+	jschar *w = key._chr().s;
+	int size = key._chr().size;
+
+//	int usize;
+//	char *u = shape(w, size, usize);
+//	int intval = value.toInt();
+	bool existed =  trie.add(w, size*2);
+//	delete[] u;
+	return existed;
+}
+
+bool findNode(Dict &trie, var key) {
+	jschar *w = key._chr().s;
+	int size = key._chr().size;
+
+//	int usize;
+//	char *u = shape(w, size, usize);
+
+	bool found = trie.find(w, size*2);
+//	delete[] u;
+	return found;
+}
+
+struct keyval {
+	Dict trie;
+	var vals;
+	int deleted;
+	keyval () {
+		vals = Array;
+		deleted = 0;
 	}
 	var &get(var key) {
 		key = key.toString();
-		int k = keys.indexOf(key).toDouble();
-		if (k < 0) {
-			k = keys.length().toDouble();
-			keys[k] = key;
+		bool exist = addToDict(trie, key);
+		int k;
+		if (exist) {
+			k = *trie.result;
+		}
+		else {
+			// reuse deleted slots...
+			if (deleted > 0) {
+				for (int i = 0; i < vals.length().toInt(); i++) {
+					if (vals[i].type == varDeleted) {
+						vals[i].type = varNull;
+						k = i;
+						break;
+					}
+				}
+				deleted--;
+			} else {
+				k = vals.length().toInt();
+				vals.push(undefined);
+			}
+			*trie.result = k;
 		}
 		return vals[k];
 	}
 };
-
 
 void *newObj() {
 	return new keyval;
@@ -1276,10 +1559,40 @@ var & var::getObjElement(const var &n) {
 	return R;
 }
 
+//var decode32bitArray(var e) {
+//	return e;
+//	var d = Array;
+//	for (var i = 0; i < e.length(); i++) {
+//		var line = e[i];
+//		var s = "";
+//		for (var j = 0; j < line.length(); j+=2) {
+//			int a = line[j].toInt(), b = line[j+1].toInt();
+//			s += var::fromCharCode(a + (b << 4));
+//		}
+//		d.push(s);
+//	}
+//	return d;
+//}
+
+bool trieEnumerator(void *key, int count, int *value, void *user) {
+	var &data = *(var*) user;
+//	var str; str.setUtf((char*)key, count);
+	data["result"].push((jschar*)key);
+	return true; // continue iteration
+}
+
 var var::objectKeys() {
+	// iterate over whole trie, performance untested
 	if (type != varObj) return undefined;
 	keyval *u = (keyval*) ref->data;
-	return u->keys;
+	Dict &trie = u->trie;
+	var data = Object;
+	data["result"] = Array;
+	trie.forEach(trieEnumerator, (void*) &data);
+//	recursiveScanTrie(&trie.root, result, curPath);
+//	if (trie4d::B == 4) result = decode16bitArray(result);
+//	if (trie4d::B == 5) result = decode32bitArray(result);
+	return data["result"];
 }
 
 void var::deleteObj() {
@@ -1290,10 +1603,15 @@ void var::del(var key) {
 	if (type != varObj) return;
 	keyval *u = (keyval*) ref->data;
 	key = key.toString();
-	int k = u->keys.indexOf(key).toDouble();
-	if (k >= 0) {
-		u->keys.splice(k, 1);
-		u->vals.splice(k, 1);
+
+	bool found = findNode(u->trie, key);
+
+	if (found) {
+		int v = *u->trie.result;
+		*u->trie.result = -1;
+		u->vals[v] = undefined;
+		u->vals[v].type = varDeleted;
+		u->deleted++; // can be reused later
 	}
 }
 
@@ -1313,7 +1631,7 @@ var &var::operator [] (var a) {
 		if (n >= C.size) {
 			return Undefined();
 		}
-		wchar_t c = C.s[n];
+		jschar c = C.s[n];
 		static var R = "1";
 		R._chr().s[0] = c;
 		return R;
@@ -1340,7 +1658,7 @@ var var::charAt(int n) {
 	}
 	chr &C = _chr();
 	if (n >= C.size) return Undefined();
-	wchar_t c = C.s[n];
+	jschar c = C.s[n];
 	var R = "1";
 	R._chr().s[0] = c;
 	return R;
@@ -1353,7 +1671,7 @@ var var::charCodeAt(int n) {
 	}
 	chr &C = _chr();
 	if (n >= C.size) return Undefined();
-	wchar_t c = C.s[n];
+	jschar c = C.s[n];
 	var R = (int)c;
 	return R;
 }
@@ -1361,7 +1679,7 @@ var var::charCodeAt(int n) {
 
 
 bool startNum(var s) {
-	wchar_t C = s.getStringPointer()[0];
+	jschar C = s.getStringPointer()[0];
 	if ((C >= '0' && C <= '9') || C == '-' || C == '.') return true;
 	return false;
 }
@@ -1371,10 +1689,10 @@ var parseNum(var &s, int &i) {
 	var R = "";
 	bool minus = false;
 	bool dot = false;
-	wchar_t *CH = s.getStringPointer();
+	jschar *CH = s.getStringPointer();
 	if (CH[i] == '-') minus = true, i++;
 	while (i < size) {
-		wchar_t C = CH[i];
+		jschar C = CH[i];
 		if (C >= '0' && C <= '9') {
 			R += var::fromCharCode(C);
 		} else if (C == '.') {
@@ -1403,21 +1721,21 @@ var parseString(var &s, int &i) {
 	return str;
 }
 
-bool isAlpha(wchar_t c) {
+bool isAlpha(jschar c) {
 	if (c >= 'a' && c <= 'z') return true;
 	if (c >= 'A' && c <= 'Z') return true;
 	if (c > 128) return true; // really dirty hack
 	return false;
 }
 
-bool isNum(wchar_t c) {
+bool isNum(jschar c) {
 	return (c >= '0' && c <= '9');
 }
 
 var parseId(var &s, int &i) {
 	int size = s.length().toInt();
 	var str = "";
-	wchar_t *C = s.getStringPointer();
+	jschar *C = s.getStringPointer();
 	if (!isAlpha(C[i])) return undefined;
 	while (i < size) {
 		if (!isAlpha(C[i]) && !isNum(C[i])) break;
@@ -1429,17 +1747,17 @@ var parseId(var &s, int &i) {
 
 void skipSpaces(var &s, int &i) {
 	int size = s.length().toInt();
-	wchar_t *S = s.getStringPointer();
+	jschar *S = s.getStringPointer();
 	while (i < size && S[i] <= 32) {
 		i++;
 	}
 }
 
-bool parseSingleCharOp(wchar_t op, var &s, int &i) {
+bool parseSingleCharOp(jschar op, var &s, int &i) {
 	int size = s.length().toInt();
-	wchar_t *S = s.getStringPointer();
+	jschar *S = s.getStringPointer();
 	while (i < size) {
-		wchar_t C = S[i];
+		jschar C = S[i];
 		if (C == op) { i++; return true; }
 		if (C == ' ' || C == '\t' || C == '\r' || C == '\n') {
 			i++;
@@ -1545,7 +1863,7 @@ var parseJsonObject(var &s, int &i) {
 }
 
 var quoteIfNeeded(var a) {
-	wchar_t *s = a.getStringPointer();
+	jschar *s = a.getStringPointer();
 	int size = a.length().toInt();
 	for (int i = 0; i < size; i++) {
 		if (!isAlpha(s[i])) return (var)"\"" + a + "\"";
@@ -1609,6 +1927,81 @@ struct classJSON {
 } JSON;
 
 
+#include <stdio.h>
+
+namespace jsfile { // low-level internal use functions
+
+void deleteFile(char *fileName) {
+	FILE *f;
+	f = fopen(fileName, "wb");
+	fclose(f);
+}
+
+bool fileExists(char *fileName) {
+	FILE *f = fopen(fileName, "r+b");
+	bool b = f != NULL;
+	if (b) fclose(f);
+	return b;
+}
+
+void appendFile(char *fileName, void *data, int size) {
+	FILE *f;
+	if (fileExists(fileName)) {
+		f = fopen(fileName, "r+b");
+	}
+	else {
+		f = fopen(fileName, "wb");
+	}
+	fseek(f, 0, SEEK_END);
+	fwrite(data, 1, size, f);
+	fclose(f);
+}
+
+int fileSize(char *n) {
+	FILE *f;
+	f = fopen(n, "rb");
+	if (f) {
+		fseek(f, 0, 2);
+		int t;
+		t = ftell(f);
+		fseek(f, 0, 0);
+		fclose(f);
+		return t;
+	}
+	else return -1;
+}
+
+char* load(char *fileName) { // you must 'delete' returned pointer
+//TODO: rewrite to use size and set into var immediately
+	FILE *f = fopen(fileName, "r");
+	if (f >= 0) {
+		int size = fileSize(fileName);
+		if (size == 0) {
+			return 0;
+		}
+		char *s = new char[size];
+		int l = fread(s, 1, size, f);
+		fclose(f);
+		return s;
+	}
+	else return 0;
+}
+
+}
+
+var readFile(var fileName, var encoding = "utf8") {
+	var t = fileName;
+	char *fn = t.getStringAllocUtf();
+	char *c = jsfile::load(fn);
+	if (c == 0) return "";
+	var R;
+	if (encoding == "binary") R.setAscii(c);
+	else R = c;
+	delete[] fn;
+	delete[] c;
+	return R;
+}
+
 
 var typeName(varType a) {
 	if (a == varNum) return "number";
@@ -1621,7 +2014,7 @@ var typeName(varType a) {
 
 var var::concat(var a) {
 	var R = Array;
-	lst &L = *(lst*) R.ref->data;
+	vars &L = *(vars*) R.ref->data;
 	int count2 = a.length().toInt();
 	int count = length().toInt(), x = 0;
 	L.resize(count + count2);

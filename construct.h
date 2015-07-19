@@ -68,7 +68,7 @@ constructor var (const char* a) {
 	self = (char*)a;
 }
 
-constructor var (wchar_t* a) {
+constructor var (jschar* a) {
 	ref = 0;
 	self = a;
 }
@@ -90,7 +90,7 @@ void setUtf (char* a, int size = -1) {
 	_chr().setUtf(a, size);
 }
 
-void operator = (wchar_t* a) {
+void operator = (jschar* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().set(a);

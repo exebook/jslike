@@ -1,6 +1,6 @@
 
 bool startNum(var s) {
-	wchar_t C = s.getStringPointer()[0];
+	jschar C = s.getStringPointer()[0];
 	if ((C >= '0' && C <= '9') || C == '-' || C == '.') return true;
 	return false;
 }
@@ -10,10 +10,10 @@ var parseNum(var &s, int &i) {
 	var R = "";
 	bool minus = false;
 	bool dot = false;
-	wchar_t *CH = s.getStringPointer();
+	jschar *CH = s.getStringPointer();
 	if (CH[i] == '-') minus = true, i++;
 	while (i < size) {
-		wchar_t C = CH[i];
+		jschar C = CH[i];
 		if (C >= '0' && C <= '9') {
 			R += var::fromCharCode(C);
 		} else if (C == '.') {
@@ -42,21 +42,21 @@ var parseString(var &s, int &i) {
 	return str;
 }
 
-bool isAlpha(wchar_t c) {
+bool isAlpha(jschar c) {
 	if (c >= 'a' && c <= 'z') return true;
 	if (c >= 'A' && c <= 'Z') return true;
 	if (c > 128) return true; // really dirty hack
 	return false;
 }
 
-bool isNum(wchar_t c) {
+bool isNum(jschar c) {
 	return (c >= '0' && c <= '9');
 }
 
 var parseId(var &s, int &i) {
 	int size = s.length().toInt();
 	var str = "";
-	wchar_t *C = s.getStringPointer();
+	jschar *C = s.getStringPointer();
 	if (!isAlpha(C[i])) return undefined;
 	while (i < size) {
 		if (!isAlpha(C[i]) && !isNum(C[i])) break;
@@ -68,17 +68,17 @@ var parseId(var &s, int &i) {
 
 void skipSpaces(var &s, int &i) {
 	int size = s.length().toInt();
-	wchar_t *S = s.getStringPointer();
+	jschar *S = s.getStringPointer();
 	while (i < size && S[i] <= 32) {
 		i++;
 	}
 }
 
-bool parseSingleCharOp(wchar_t op, var &s, int &i) {
+bool parseSingleCharOp(jschar op, var &s, int &i) {
 	int size = s.length().toInt();
-	wchar_t *S = s.getStringPointer();
+	jschar *S = s.getStringPointer();
 	while (i < size) {
-		wchar_t C = S[i];
+		jschar C = S[i];
 		if (C == op) { i++; return true; }
 		if (C == ' ' || C == '\t' || C == '\r' || C == '\n') {
 			i++;
@@ -184,7 +184,7 @@ var parseJsonObject(var &s, int &i) {
 }
 
 var quoteIfNeeded(var a) {
-	wchar_t *s = a.getStringPointer();
+	jschar *s = a.getStringPointer();
 	int size = a.length().toInt();
 	for (int i = 0; i < size; i++) {
 		if (!isAlpha(s[i])) return (var)"\"" + a + "\"";

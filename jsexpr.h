@@ -27,8 +27,8 @@ var operator + (var a) {
 	} else if (type = varStr) {
 		if (a.type != varStr) a = a.toString();
 		int an = _chr().size, bn = a._chr().size;
-		wchar_t 
-			* sum = new wchar_t [an + bn],
+		jschar 
+			* sum = new jschar [an + bn],
 			* c = sum,
 			* A = _chr().s,
 			* B = a._chr().s;
