@@ -32,10 +32,10 @@ u32 MurMur(const char* key, int count) {
 #define hash MurMur
 
 int initial_size = 1024;
-float growth_threshold = 1.0; //when to resize, for example 0.5 means "if number of inserted keys is half of table length then resize". My experiments on english dictionary shows best performance/memory savings with 1.0.
-float growth_factor = 10; // increase the size of hash table N times
-int dups = 0, resizes = 0;
-int mem_count = 0, slots=0;
+float growth_threshold = 2.0; //when to resize, for example 0.5 means "if number of inserted keys is half of table length then resize". My experiments on english dictionary shows balanced performance/memory savings with 1.0.
+float growth_factor = 10; // grow the size of hash table by N, suggested number is between 2 (conserve memory) and 10 (faster insertions).
+
+int dups = 0, resizes = 0, mem_count = 0, slots=0; // count some stats
 
 typedef bool (*enumFunc)(void *key, int count, int *value, void *user);
 
@@ -92,7 +92,7 @@ template <typename value_t> struct jshash {
 	}
 	
 	void resize(int newsize) {
-	dups = 0; resizes++;
+	dups = 0; resizes++; slots = 0;
 		int o = length;
 		entry **old = table;
 		table = new entry*[newsize]();
@@ -119,6 +119,7 @@ template <typename value_t> struct jshash {
 		int h = (hash(k2->key, k2->len) >> 2);
 		int n = h % length;
 		if (table[n] == 0) {
+			slots++;
 			table[n] = new entry;
 			table[n]->k = k2;
 			result = &table[n]->k->value;
@@ -138,6 +139,7 @@ template <typename value_t> struct jshash {
 			slots++;
 			double f = (double)count / (double)length;
 			if (f > growth_threshold) {
+//				printf("resize: count:%i length:%i->%i %f %f\n", count, length, (int)(length * growth_factor), f, growth_threshold);
 				resize(length * growth_factor);
 				return add(key, keyn);
 			}
