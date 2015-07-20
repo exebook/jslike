@@ -1348,47 +1348,45 @@ template <typename value_t> struct jshash {
 		}
 	};
 	
-	struct entry {
-		keynode *k;
-		entry():k(0) {}
-		~entry() {
-			mem_count += sizeof(entry);
-			if (k) delete k;
-		}
-	};
+//	struct entry {
+//		keynode *k;
+//		entry():k(0) {}
+//		~entry() {
+//			mem_count += sizeof(entry);
+//			if (k) delete k;
+//		}
+//	};
 	
-	entry **table;
+	keynode **table;
 	int length, count;
 	
 	jshash() {
 		length = initial_size;
 		count = 0;
-		table = new entry*[initial_size]();
+		table = new keynode*[initial_size]();
 	}
 	
 	~jshash() {
 		for (int i = 0; i < length; i++) if (table[i]) delete table[i];
 		delete[] table;
-		mem_count += sizeof(entry*) * length;
+		mem_count += sizeof(keynode*) * length;
 	}
 	
 	void resize(int newsize) {
 	dups = 0; resizes++; slots = 0;
 		int o = length;
-		entry **old = table;
-		table = new entry*[newsize]();
+		keynode **old = table;
+		table = new keynode*[newsize]();
 		length = newsize;
 		for (int i = 0; i < o; i++) {
-			if (old[i]) {
-				keynode *k = old[i]->k;
-				while (k) {
-					keynode *next = k->next;
-					k->next = 0;
-					reinsert_when_resizing(k);
-					k = next;
-				}
-				old[i]->k = 0;
+			keynode *k = old[i];
+			while (k) {
+				keynode *next = k->next;
+				k->next = 0;
+				reinsert_when_resizing(k);
+				k = next;
 			}
+			old[i] = 0;
 			delete old[i];
 		}
 		delete[] old;
@@ -1397,41 +1395,36 @@ template <typename value_t> struct jshash {
 	value_t *result;
 	
 	bool reinsert_when_resizing(keynode *k2) {
-		int h = (hash(k2->key, k2->len) >> 2);
-		int n = h % length;
+		int n = hash(k2->key, k2->len) % length;
 		if (table[n] == 0) {
 			slots++;
-			table[n] = new entry;
-			table[n]->k = k2;
-			result = &table[n]->k->value;
+			table[n] = k2;
+			result = &table[n]->value;
 			return false;
 		}
-		keynode *k = table[n]->k;
-		k2->next = table[n]->k;
-		table[n]->k = k2;
+		keynode *k = table[n];
+		k2->next = k;
+		table[n] = k2;
 		result = &k2->value;
 		return false;
 	}
 	
 	bool add(void *key, int keyn) {
-		int h = (hash((const char*)key, keyn) >> 2);
-		int n = h % length;
+		int n = hash((const char*)key, keyn) % length;
 		if (table[n] == 0) {
 			slots++;
 			double f = (double)count / (double)length;
 			if (f > growth_threshold) {
-//				printf("resize: count:%i length:%i->%i %f %f\n", count, length, (int)(length * growth_factor), f, growth_threshold);
 				resize(length * growth_factor);
 				return add(key, keyn);
 			}
 			
-			table[n] = new entry;
-			table[n]->k = new keynode((char*)key, keyn);
-			result = &table[n]->k->value;
+			table[n] = new keynode((char*)key, keyn);
+			result = &table[n]->value;
 			count++;
 			return false;
 		}
-		keynode *k = table[n]->k;
+		keynode *k = table[n];
 		while (k) {
 			if (k->cmp((char*)key, keyn)) {
 				result = &k->value;
@@ -1442,21 +1435,20 @@ template <typename value_t> struct jshash {
 		dups++;
 		count++;
 		keynode *k2 = new keynode((char*)key, keyn);
-		k2->next = table[n]->k;
-		table[n]->k = k2;
+		k2->next = table[n];
+		table[n] = k2;
 		result = &k2->value;
 		return false;
 	}
 	
 	bool find(void *key, int keyn) {
-		int h = (hash((const char*)key, keyn) >> 2);
-		int n = h % length;
-//		__builtin_prefetch(table[n]);
+		int n = hash((const char*)key, keyn) % length;
 		if (table[n] == 0) {
 			return false;
 		}
-		keynode *k = table[n]->k;
+		keynode *k = table[n];
 		while (k) {
+			//__builtin_prefetch(k->key);
 			if (k->cmp((char*)key, keyn)) {
 				result = &k->value;
 				return true;
@@ -1469,7 +1461,7 @@ template <typename value_t> struct jshash {
 	void forEach(enumFunc f, void *user) {
 		for (int i = 0; i < length; i++) {
 			if (table[i] != 0) {
-				keynode *k = table[i]->k;
+				keynode *k = table[i];
 				while (k) {
 					if (!f(k->key, k->len, &k->value, user)) return;
 					k = k->next;
