@@ -181,6 +181,7 @@ var parseJsonObject(var &s, int &i) {
 		if (nul) return undefined;
 		return undefined;
 	}
+	return undefined;
 }
 
 var quoteIfNeeded(var a) {

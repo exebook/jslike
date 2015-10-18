@@ -496,6 +496,7 @@ void operator = (char* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().setUtf(a);
+//	printf("SET '%s'\n", a);
 	//_chr().setAscii(a);
 }
 
@@ -650,7 +651,7 @@ var operator + (var a) {
 			var R = NaN;
 			return R;
 		}
-	} else if (type = varStr) {
+	} else if (type == varStr) {
 		if (a.type != varStr) a = a.toString();
 		int an = _chr().size, bn = a._chr().size;
 		jschar 
@@ -667,6 +668,7 @@ var operator + (var a) {
 		C.s = sum;
 		return R;
 	}
+	return undefined;
 }
 
 #define STD_OP(X, op, Y) var operator op (var a) {\
@@ -1472,41 +1474,41 @@ template <typename value_t> struct jshash {
 };
 
 
-//typedef trie4d::Trie4d<int> Dict;
+
+//typedef Trie4d<int> Dict;
 typedef jshash<int> Dict;
 
-char* shape(jschar *w, int wsize, int &rsize) {
-	char* u = new char[wsize*4];
-	rsize = w2utf(u, wsize*4, w, wsize);
-	return u;
-}
+//char* shape(jschar *w, int wsize, int &rsize) {
+//	char* u = new char[wsize*4];
+//	rsize = w2utf(u, wsize*4, w, wsize);
+//	return u;
+//}
 
-bool addToDict(Dict &trie, var key) {
+bool addToDict(Dict &dict, var key) {
 	jschar *w = key._chr().s;
 	int size = key._chr().size;
-
 //	int usize;
 //	char *u = shape(w, size, usize);
 //	int intval = value.toInt();
-	bool existed =  trie.add(w, size*2);
+	bool existed =  dict.add(w, size*2);
 //	delete[] u;
 	return existed;
 }
 
-bool findNode(Dict &trie, var key) {
+bool findNode(Dict &dict, var key) {
 	jschar *w = key._chr().s;
 	int size = key._chr().size;
 
 //	int usize;
 //	char *u = shape(w, size, usize);
 
-	bool found = trie.find(w, size*2);
+	bool found = dict.find(w, size*2);
 //	delete[] u;
 	return found;
 }
 
 struct keyval {
-	Dict trie;
+	Dict dict;
 	var vals;
 	int deleted;
 	keyval () {
@@ -1515,10 +1517,10 @@ struct keyval {
 	}
 	var &get(var key) {
 		key = key.toString();
-		bool exist = addToDict(trie, key);
+		bool exist = addToDict(dict, key);
 		int k;
 		if (exist) {
-			k = *trie.result;
+			k = *dict.result;
 		}
 		else {
 			// reuse deleted slots...
@@ -1535,7 +1537,7 @@ struct keyval {
 				k = vals.length().toInt();
 				vals.push(undefined);
 			}
-			*trie.result = k;
+			*dict.result = k;
 		}
 		return vals[k];
 	}
@@ -1566,24 +1568,26 @@ var & var::getObjElement(const var &n) {
 //	return d;
 //}
 
-bool trieEnumerator(void *key, int count, int *value, void *user) {
+bool dictEnumerator(void *key, int keyLength, int *value, void *user) {
 	var &data = *(var*) user;
-//	var str; str.setUtf((char*)key, count);
-	data["result"].push((jschar*)key);
+	var str;
+	str.makeStringToSet();
+	str._chr().set((jschar*)key, keyLength/2);
+	data["result"].push(str);
 	return true; // continue iteration
 }
 
 var var::objectKeys() {
-	// iterate over whole trie, performance untested
+	// iterate over whole dict, performance untested
 	if (type != varObj) return undefined;
 	keyval *u = (keyval*) ref->data;
-	Dict &trie = u->trie;
+	Dict &dict = u->dict;
 	var data = Object;
 	data["result"] = Array;
-	trie.forEach(trieEnumerator, (void*) &data);
-//	recursiveScanTrie(&trie.root, result, curPath);
-//	if (trie4d::B == 4) result = decode16bitArray(result);
-//	if (trie4d::B == 5) result = decode32bitArray(result);
+	dict.forEach(dictEnumerator, (void*) &data);
+//	recursiveScanTrie(&dict.root, result, curPath);
+//	if (dict4d::B == 4) result = decode16bitArray(result);
+//	if (dict4d::B == 5) result = decode32bitArray(result);
 	return data["result"];
 }
 
@@ -1596,11 +1600,11 @@ void var::del(var key) {
 	keyval *u = (keyval*) ref->data;
 	key = key.toString();
 
-	bool found = findNode(u->trie, key);
+	bool found = findNode(u->dict, key);
 
 	if (found) {
-		int v = *u->trie.result;
-		*u->trie.result = -1;
+		int v = *u->dict.result;
+		*u->dict.result = -1;
 		u->vals[v] = undefined;
 		u->vals[v].type = varDeleted;
 		u->deleted++; // can be reused later
@@ -1852,6 +1856,7 @@ var parseJsonObject(var &s, int &i) {
 		if (nul) return undefined;
 		return undefined;
 	}
+	return undefined;
 }
 
 var quoteIfNeeded(var a) {
@@ -2001,6 +2006,7 @@ var typeName(varType a) {
 	if (a == varArr) return "array";
 	if (a == varNull) return "undefined";
 	if (a == varObj) return "object";
+	if (a == varBool) return "boolean";
 	return "unsure";
 }
 

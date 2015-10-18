@@ -216,6 +216,7 @@ var typeName(varType a) {
 	if (a == varArr) return "array";
 	if (a == varNull) return "undefined";
 	if (a == varObj) return "object";
+	if (a == varBool) return "boolean";
 	return "unsure";
 }
 

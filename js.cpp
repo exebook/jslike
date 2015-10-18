@@ -380,7 +380,7 @@ int main(int argc, char* argv[]) {
 //		log("step", i);
 		testObjectProperties();
 //	}
-	return 0;
+//	return 0;
 	testNumbers();
 	testArrayLiteral();
 	testObjectLiteral();
@@ -388,5 +388,8 @@ int main(int argc, char* argv[]) {
 	testIndexOf();
 	readme();
 	testJSON();
+//	var o = OBJ("a", 1);
+//	var k = o.objectKeys();
+//	log("k",k, k[0].length());
 }
 

@@ -81,6 +81,7 @@ void operator = (char* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().setUtf(a);
+//	printf("SET '%s'\n", a);
 	//_chr().setAscii(a);
 }
 

@@ -24,7 +24,7 @@ var operator + (var a) {
 			var R = NaN;
 			return R;
 		}
-	} else if (type = varStr) {
+	} else if (type == varStr) {
 		if (a.type != varStr) a = a.toString();
 		int an = _chr().size, bn = a._chr().size;
 		jschar 
@@ -41,6 +41,7 @@ var operator + (var a) {
 		C.s = sum;
 		return R;
 	}
+	return undefined;
 }
 
 #define STD_OP(X, op, Y) var operator op (var a) {\
