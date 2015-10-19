@@ -52,17 +52,17 @@ struct var {
 		return _chr().s;
 	}
 
-	char* getStringAllocUtf() {
+	char* getStringAllocUtf(int *utfSize = 0) {
 		if (type == varStr) {
-			char *c =_chr().getUtf();
+			char *c =_chr().getUtf(utfSize);
 			return c;
 		}
 		else return 0;
 	}
 
-	char* getStringAllocAscii() {
+	char* getStringAllocAscii(int *returnSize = 0) {
 		if (type == varStr)
-			return _chr().getAscii();
+			return _chr().getAscii(returnSize);
 		else return 0;
 	}
 

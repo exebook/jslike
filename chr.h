@@ -108,17 +108,19 @@ double toNumber () {
 	return R;
 }
 
-char * getAscii() { // basic 0-128 range only
+char * getAscii(int *returnSize = 0) { // basic 0-128 range only
 	char* u = new char[size+1];
 	for (int i = 0; i < size; i++) u[i] = s[i];
 	u[size] = 0;
+	if (returnSize) *returnSize = size;
 	return u;
 }
 
-char * getUtf() {
+char * getUtf(int *returnSize = 0) {
 	char* u = new char[size*4];
-	int usize = w2utf(u, size*4, s, size);
-	u[usize] = 0;
+	int utfSize = w2utf(u, size*4, s, size);
+	u[utfSize] = 0;
+	if (returnSize) *returnSize = utfSize;
 	return u;
 }
 

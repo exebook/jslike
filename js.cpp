@@ -355,6 +355,11 @@ void testObjectProperties() {
 }
 
 int main(int argc, char* argv[]) {
+	var f = "test file write";
+	writeFile("test.write", f);
+	var f1 = readFile("test.write");
+	log("data written and read: ", f+ ",", f1+".");
+	return 0;
 	var O = Object;
 	O["a"] = "aaa";
 //	O["b"] = "bbb";

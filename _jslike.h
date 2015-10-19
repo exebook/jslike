@@ -219,17 +219,19 @@ double toNumber () {
 	return R;
 }
 
-char * getAscii() { // basic 0-128 range only
+char * getAscii(int *returnSize = 0) { // basic 0-128 range only
 	char* u = new char[size+1];
 	for (int i = 0; i < size; i++) u[i] = s[i];
 	u[size] = 0;
+	if (returnSize) *returnSize = size;
 	return u;
 }
 
-char * getUtf() {
+char * getUtf(int *returnSize = 0) {
 	char* u = new char[size*4];
-	int usize = w2utf(u, size*4, s, size);
-	u[usize] = 0;
+	int utfSize = w2utf(u, size*4, s, size);
+	u[utfSize] = 0;
+	if (returnSize) *returnSize = utfSize;
 	return u;
 }
 
@@ -552,17 +554,17 @@ void unref() {
 		return _chr().s;
 	}
 
-	char* getStringAllocUtf() {
+	char* getStringAllocUtf(int *utfSize = 0) {
 		if (type == varStr) {
-			char *c =_chr().getUtf();
+			char *c =_chr().getUtf(utfSize);
 			return c;
 		}
 		else return 0;
 	}
 
-	char* getStringAllocAscii() {
+	char* getStringAllocAscii(int *returnSize = 0) {
 		if (type == varStr)
-			return _chr().getAscii();
+			return _chr().getAscii(returnSize);
 		else return 0;
 	}
 
@@ -1998,6 +2000,27 @@ var readFile(var fileName, var encoding = "utf8") {
 	delete[] c;
 	return R;
 }
+
+var writeFile(var fileName, var data, var encoding = "utf8") {
+	using namespace jsfile;
+	int dataSize;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	if (encoding == "utf8") {
+		d = data.getStringAllocUtf(&dataSize);
+	}
+	else {
+		d = data.getStringAllocAscii(&dataSize);
+	}
+	if (fileExists(fn)) {
+		deleteFile(fn);
+	}
+	appendFile(fn, d, dataSize);
+	delete[] fn;
+	delete[] d;
+	return undefined;
+}
+
 
 
 var typeName(varType a) {

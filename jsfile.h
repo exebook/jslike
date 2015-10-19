@@ -72,3 +72,24 @@ var readFile(var fileName, var encoding = "utf8") {
 	delete[] c;
 	return R;
 }
+
+var writeFile(var fileName, var data, var encoding = "utf8") {
+	using namespace jsfile;
+	int dataSize;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	if (encoding == "utf8") {
+		d = data.getStringAllocUtf(&dataSize);
+	}
+	else {
+		d = data.getStringAllocAscii(&dataSize);
+	}
+	if (fileExists(fn)) {
+		deleteFile(fn);
+	}
+	appendFile(fn, d, dataSize);
+	delete[] fn;
+	delete[] d;
+	return undefined;
+}
+
