@@ -392,6 +392,7 @@ struct stk {
 
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5, varDeleted=6 };
 enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
+char *tmp_charp = 0;
 
 void *newLst();
 void *newObj();
@@ -417,9 +418,12 @@ struct var {
 
 constructor var () {
 	type = varNull; ref = 0;
+	tmp_charp = 0;
 }
 
-~var () { unref(); }
+~var () {
+	unref();
+}
 
 constructor var (const var& a) {
 	type = varNull; ref = 0;
@@ -553,6 +557,17 @@ void unref() {
 	jschar* getStringPointer() {
 		return _chr().s;
 	}
+	
+	// returns termporarily available utf char* that will be auto freed
+	// upon the next call to charp(), do NOT deallocate it yourself
+	char* charp(int *utfSize = 0) { 
+		if (tmp_charp) delete[] tmp_charp;
+		if (type == varStr) {
+			tmp_charp =_chr().getUtf(utfSize);
+			return tmp_charp;
+		}
+		else return 0;
+	}
 
 	char* getStringAllocUtf(int *utfSize = 0) {
 		if (type == varStr) {
@@ -576,6 +591,10 @@ void unref() {
 		return num;
 	}
 
+	long toLong() {
+		return num;
+	}
+
 	bool toBool() {
 		if (type == varBool) return num;
 		return false;
@@ -583,6 +602,9 @@ void unref() {
 
 	var toNumber() {
 		return _chr().toNumber();
+	}
+	static var parseInt(var a) {
+		return a.toNumber();
 	}
 
 	static var fromCharCode(var a) {
@@ -1183,6 +1205,7 @@ var var::slice(var start, var end = undefined) {
 		else if (b > size) b = size;
 		
 	if (a < 0) a += size;
+	if (b < a) b = a+1;
 
 	if (type == varStr) {
 		var R;
@@ -1246,6 +1269,15 @@ var& var::getArrElement(int n) {
 }
 
 bool operator == (var a, var b) {
+	if (a.type == varBool && b.type == varBool) {
+		return (bool)a.num == (bool)b.num;
+	}
+	if (a.type == varNum && b.type == varBool) {
+		return (bool)a.num == (bool)b.num;
+	}
+	if (a.type == varBool && b.type == varNum) {
+		return (bool)a.num == (bool)b.num;
+	}
 	if (a.type == varNum && b.type == varNum) {
 		return a.num == b.num;
 	}
@@ -1675,7 +1707,10 @@ var var::charCodeAt(int n) {
 }
 
 
-
+/*
+	TODO: use a tokenizer here! otherwise not possible to do comments properly.
+	
+*/
 bool startNum(var s) {
 	jschar C = s.getStringPointer()[0];
 	if ((C >= '0' && C <= '9') || C == '-' || C == '.') return true;
@@ -1768,13 +1803,35 @@ bool parseSingleCharOp(jschar op, var &s, int &i) {
 
 var parseJsonObject(var &s, int &i);
 
+
+var parseComment (var &s, int &i) {
+	i += 2;
+	while (true) {
+		if (s.charAt(i) == "*" && s.charAt(i+1) == "/") {
+			i += 2;
+			break;
+		}
+		if (i >= s.length().toInt()) break;
+		i++;
+	}
+	return undefined;
+}
+
 var parseArray(var &s, int &i) {
 	var R = Array;
 	int size = s.length().toInt();
 	i++;
 	while (i < size) {
 		skipSpaces(s, i);
-		if (s[i] == "]") break;
+		if (s[i] == "]") {
+			i++;
+			break;
+		}
+		if (s.charAt(i) == "/" || s.charAt(i+1) == "*") { 
+			parseComment(s, i);
+			continue;
+		}
+
 		var O = parseJsonObject(s, i);
 		R.push(O);
 		bool comma = parseSingleCharOp(',', s, i);
@@ -1801,10 +1858,15 @@ var parseObject(var &s, int &i) {
 		if (K == undefined) {
 			K = parseId(s, i);
 			if (K == undefined) {
-				log("fatal: JSON parse error");
+				log("fatal: JSON parse error, expected an id.");
 				exit(1);
 				return undefined;
 			}
+		}
+		if (s.charAt(i) == "/" || s.charAt(i+1) == "*") { 
+			// TODO: the comment is only possble right after comma, or as the beginning of an object. So obviously, this JSON parser should be changed. Write a tokenizer first, and just skip comments on a token level.
+			parseComment(s, i);
+			continue;
 		}
 		bool colon = parseSingleCharOp(':', s, i);
 		if (!colon) break;
@@ -1842,11 +1904,11 @@ var parseJsonObject(var &s, int &i) {
 			return parseNum(s, i);
 		}
 		if (q == "[") { 
-			R = Array; 
+//			R = Array; 
 			return parseArray(s, i);
 		}
 		if (q == "{") {
-			R = Object;
+//			R = Object;
 			return parseObject(s, i);
 		}
 		if (q == "\"" || q == "'") { 
@@ -1876,7 +1938,10 @@ var escapeStr(var a) {
 		if (a[i] == "\"") R += "\\";
 		else if (a[i] == "\'") R += "\\";
 		else if (a[i] == "\\") R += "\\";
-		R += a[i];
+		
+		if (a[i] == "\r") R += "\\r";
+		else if (a[i] == "\n") R += "\\n";
+		else R += a[i];
 	}
 	return (var)"\""+R+"\"";
 }
@@ -1936,7 +2001,7 @@ void deleteFile(char *fileName) {
 	fclose(f);
 }
 
-bool fileExists(char *fileName) {
+bool existsFile(char *fileName) {
 	FILE *f = fopen(fileName, "r+b");
 	bool b = f != NULL;
 	if (b) fclose(f);
@@ -1945,7 +2010,7 @@ bool fileExists(char *fileName) {
 
 void appendFile(char *fileName, void *data, int size) {
 	FILE *f;
-	if (fileExists(fileName)) {
+	if (existsFile(fileName)) {
 		f = fopen(fileName, "r+b");
 	}
 	else {
@@ -1975,7 +2040,7 @@ char* load(char *fileName) { // you must 'delete' returned pointer
 	FILE *f = fopen(fileName, "r");
 	if (f >= 0) {
 		int size = fileSize(fileName);
-		if (size == 0) {
+		if (size < 0) {
 			return 0;
 		}
 		char *s = new char[size];
@@ -1992,7 +2057,7 @@ var readFile(var fileName, var encoding = "utf8") {
 	var t = fileName;
 	char *fn = t.getStringAllocUtf();
 	char *c = jsfile::load(fn);
-	if (c == 0) return "";
+	if (c == 0) return undefined;
 	var R;
 	if (encoding == "binary") R.setAscii(c);
 	else R = c;
@@ -2012,7 +2077,7 @@ var writeFile(var fileName, var data, var encoding = "utf8") {
 	else {
 		d = data.getStringAllocAscii(&dataSize);
 	}
-	if (fileExists(fn)) {
+	if (existsFile(fn)) {
 		deleteFile(fn);
 	}
 	appendFile(fn, d, dataSize);
@@ -2021,6 +2086,31 @@ var writeFile(var fileName, var data, var encoding = "utf8") {
 	return undefined;
 }
 
+var appendFile(var fileName, var data, var encoding = "utf8") {
+	using namespace jsfile;
+	int dataSize;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	if (encoding == "utf8") {
+		d = data.getStringAllocUtf(&dataSize);
+	}
+	else {
+		d = data.getStringAllocAscii(&dataSize);
+	}
+	appendFile(fn, d, dataSize);
+	delete[] fn;
+	delete[] d;
+	return undefined;
+}
+
+var fileExists(var fileName) {
+	using namespace jsfile;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	bool result = existsFile(fn);
+	delete[] fn;
+	return result;
+}
 
 
 var typeName(varType a) {
@@ -2130,6 +2220,9 @@ var var::split(var separator) {
 	}
 	return R;
 }
+
+var color (int a) { return var::fromCharCode(0x001b) + "[38;5;"+a+"m"; }
+var colorEnd() { return color(7); }
 
 }
 #endif // __JSLIKE_H__

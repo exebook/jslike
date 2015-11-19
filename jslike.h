@@ -14,6 +14,7 @@ typedef __uint16_t jschar;
 
 enum varType { varIgnore = -2, varNull=-1, varNum=0, varStr=1, varArr=2, varObj=3, varFunc=4, varBool=5, varDeleted=6 };
 enum varSyntax { argIgnore, undefined, Array, Object, NaN, end };
+char *tmp_charp = 0;
 
 void *newLst();
 void *newObj();
@@ -51,6 +52,17 @@ struct var {
 	jschar* getStringPointer() {
 		return _chr().s;
 	}
+	
+	// returns termporarily available utf char* that will be auto freed
+	// upon the next call to charp(), do NOT deallocate it yourself
+	char* charp(int *utfSize = 0) { 
+		if (tmp_charp) delete[] tmp_charp;
+		if (type == varStr) {
+			tmp_charp =_chr().getUtf(utfSize);
+			return tmp_charp;
+		}
+		else return 0;
+	}
 
 	char* getStringAllocUtf(int *utfSize = 0) {
 		if (type == varStr) {
@@ -74,6 +86,10 @@ struct var {
 		return num;
 	}
 
+	long toLong() {
+		return num;
+	}
+
 	bool toBool() {
 		if (type == varBool) return num;
 		return false;
@@ -81,6 +97,9 @@ struct var {
 
 	var toNumber() {
 		return _chr().toNumber();
+	}
+	static var parseInt(var a) {
+		return a.toNumber();
 	}
 
 	static var fromCharCode(var a) {
@@ -317,6 +336,9 @@ var var::split(var separator) {
 	}
 	return R;
 }
+
+var color (int a) { return var::fromCharCode(0x001b) + "[38;5;"+a+"m"; }
+var colorEnd() { return color(7); }
 
 }
 #endif // __JSLIKE_H__

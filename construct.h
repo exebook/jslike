@@ -1,8 +1,11 @@
 constructor var () {
 	type = varNull; ref = 0;
+	tmp_charp = 0;
 }
 
-~var () { unref(); }
+~var () {
+	unref();
+}
 
 constructor var (const var& a) {
 	type = varNull; ref = 0;

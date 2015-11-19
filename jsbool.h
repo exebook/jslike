@@ -1,4 +1,13 @@
 bool operator == (var a, var b) {
+	if (a.type == varBool && b.type == varBool) {
+		return (bool)a.num == (bool)b.num;
+	}
+	if (a.type == varNum && b.type == varBool) {
+		return (bool)a.num == (bool)b.num;
+	}
+	if (a.type == varBool && b.type == varNum) {
+		return (bool)a.num == (bool)b.num;
+	}
 	if (a.type == varNum && b.type == varNum) {
 		return a.num == b.num;
 	}

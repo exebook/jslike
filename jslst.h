@@ -66,6 +66,7 @@ var var::slice(var start, var end = undefined) {
 		else if (b > size) b = size;
 		
 	if (a < 0) a += size;
+	if (b < a) b = a+1;
 
 	if (type == varStr) {
 		var R;

@@ -8,6 +8,18 @@
 #include "jslike.h"
 using namespace jslike;
 
+void testFileExists() {
+	log(fileExists("js.cpp"));
+	log(fileExists("some file name that obviouslye does not exists"));
+}
+
+void testReadFile() {
+	var s = readFile("js.cpp");
+	log("existing file: ", s.length());
+	s = readFile("js_non_existing__.cpp");
+	log("non-existing file: ", s.length());
+}
+
 void testArrayLiteral() {
 	var c;
 	c = (Arr 1,2,3,4,5);
@@ -312,11 +324,39 @@ var f(var b) {
 }
 
 var testJSON() {
-	var s = "[null,undefined,,[{o:{a:1}, 'a+a':123, b:'hey', c: [1,2,3], d: "
+/*
+{
+	list:{
+		set:{
+			vb:"400",fps:"25",ar:"44100",vcodec:"h264",acodec:"mp3",h:"200",w:"320",ab:"32"
+		},default:{
+			type:[],id:"default",job:false
+		}
+	},set:{
+		input:"http://sak101.fastbroad.com/i/topchan109_1@356154/master.m3u8"
+	},vlc:{
+		type:["default"],set:{
+			path:"cvlc",app:"vlc"
+		},id:"vlc",job:false
+	},ffmpeg:{
+		type:["default"],set:{
+			path:"ffmpeg",app:"ffmpeg",vcodec:"libx264"
+		},id:"ffmpeg",job:false
+	},"i1":{
+		type:[],id:"i1",job:false
+	}
+} 
+*/
+
+
+	var s = "[null, /* comment line */ undefined,,[{o:{a:1}, 'a+a':123, b:'hey', c: [1,2,3], d: "
 	"{x:100, y:200,opt:"
 	"{\"fname\":\"readme.txt\"}, "
 	"b1: true, a2: [1,2,[3,4,[5,6,{}, "
 	"{ deep : true } ], \"ab\\\"c'd\\\\e\"]] }}],[,,5]]";
+//s = readFile("/home/ya/tpmu.json");
+s = readFile("delme.json");
+
 //	s = "'a\\'sd'";
 	//test for:
 	// Numbers, Strings, Booleans, Arrays, Objects
@@ -354,12 +394,50 @@ void testObjectProperties() {
 	log("test time:", time1000() - T);
 }
 
-int main(int argc, char* argv[]) {
+void testWrite() {
 	var f = "test file write";
 	writeFile("test.write", f);
 	var f1 = readFile("test.write");
 	log("data written and read: ", f+ ",", f1+".");
+}
+
+void testBoolean() {
+	var boo = true;
+	log(boo == true);
+}
+
+void testUndefined() {
+	var A = Object;
+	A["one"] = 1;
+	A["two"] = "1+1";
+	log(A["one"] == undefined);
+	log(A["two"] == undefined);
+	log(A["three"] == undefined);
+	log(A["one"] != undefined);
+	log(A["two"] != undefined);
+	log(A["three"] != undefined);
+}
+
+void test_charp() {
+	var sp = "ajsdkjahsd";
+	printf("%s\n", sp.charp());
+	printf("%s\n", sp.charp());
+	printf("%s\n", sp.charp());
+	sp = "123";
+	printf("%s\n", sp.charp());
+	sp = "sdf";
+	printf("%s\n", sp.charp());
+	var q = "-----";
+	printf("%s\n", q.charp());
+}
+
+int main(int argc, char* argv[]) {
+	test_charp();
 	return 0;
+	testFileExists();
+	testReadFile();
+	testJSON();
+//	testUndefined();
 	var O = Object;
 	O["a"] = "aaa";
 //	O["b"] = "bbb";
@@ -386,6 +464,7 @@ int main(int argc, char* argv[]) {
 		testObjectProperties();
 //	}
 //	return 0;
+	testBoolean();
 	testNumbers();
 	testArrayLiteral();
 	testObjectLiteral();

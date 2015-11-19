@@ -1,4 +1,7 @@
-
+/*
+	TODO: use a tokenizer here! otherwise not possible to do comments properly.
+	
+*/
 bool startNum(var s) {
 	jschar C = s.getStringPointer()[0];
 	if ((C >= '0' && C <= '9') || C == '-' || C == '.') return true;
@@ -91,13 +94,35 @@ bool parseSingleCharOp(jschar op, var &s, int &i) {
 
 var parseJsonObject(var &s, int &i);
 
+
+var parseComment (var &s, int &i) {
+	i += 2;
+	while (true) {
+		if (s.charAt(i) == "*" && s.charAt(i+1) == "/") {
+			i += 2;
+			break;
+		}
+		if (i >= s.length().toInt()) break;
+		i++;
+	}
+	return undefined;
+}
+
 var parseArray(var &s, int &i) {
 	var R = Array;
 	int size = s.length().toInt();
 	i++;
 	while (i < size) {
 		skipSpaces(s, i);
-		if (s[i] == "]") break;
+		if (s[i] == "]") {
+			i++;
+			break;
+		}
+		if (s.charAt(i) == "/" || s.charAt(i+1) == "*") { 
+			parseComment(s, i);
+			continue;
+		}
+
 		var O = parseJsonObject(s, i);
 		R.push(O);
 		bool comma = parseSingleCharOp(',', s, i);
@@ -124,10 +149,15 @@ var parseObject(var &s, int &i) {
 		if (K == undefined) {
 			K = parseId(s, i);
 			if (K == undefined) {
-				log("fatal: JSON parse error");
+				log("fatal: JSON parse error, expected an id.");
 				exit(1);
 				return undefined;
 			}
+		}
+		if (s.charAt(i) == "/" || s.charAt(i+1) == "*") { 
+			// TODO: the comment is only possble right after comma, or as the beginning of an object. So obviously, this JSON parser should be changed. Write a tokenizer first, and just skip comments on a token level.
+			parseComment(s, i);
+			continue;
 		}
 		bool colon = parseSingleCharOp(':', s, i);
 		if (!colon) break;
@@ -165,11 +195,11 @@ var parseJsonObject(var &s, int &i) {
 			return parseNum(s, i);
 		}
 		if (q == "[") { 
-			R = Array; 
+//			R = Array; 
 			return parseArray(s, i);
 		}
 		if (q == "{") {
-			R = Object;
+//			R = Object;
 			return parseObject(s, i);
 		}
 		if (q == "\"" || q == "'") { 
@@ -199,7 +229,10 @@ var escapeStr(var a) {
 		if (a[i] == "\"") R += "\\";
 		else if (a[i] == "\'") R += "\\";
 		else if (a[i] == "\\") R += "\\";
-		R += a[i];
+		
+		if (a[i] == "\r") R += "\\r";
+		else if (a[i] == "\n") R += "\\n";
+		else R += a[i];
 	}
 	return (var)"\""+R+"\"";
 }

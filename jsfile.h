@@ -8,7 +8,7 @@ void deleteFile(char *fileName) {
 	fclose(f);
 }
 
-bool fileExists(char *fileName) {
+bool existsFile(char *fileName) {
 	FILE *f = fopen(fileName, "r+b");
 	bool b = f != NULL;
 	if (b) fclose(f);
@@ -17,7 +17,7 @@ bool fileExists(char *fileName) {
 
 void appendFile(char *fileName, void *data, int size) {
 	FILE *f;
-	if (fileExists(fileName)) {
+	if (existsFile(fileName)) {
 		f = fopen(fileName, "r+b");
 	}
 	else {
@@ -47,7 +47,7 @@ char* load(char *fileName) { // you must 'delete' returned pointer
 	FILE *f = fopen(fileName, "r");
 	if (f >= 0) {
 		int size = fileSize(fileName);
-		if (size == 0) {
+		if (size < 0) {
 			return 0;
 		}
 		char *s = new char[size];
@@ -64,7 +64,7 @@ var readFile(var fileName, var encoding = "utf8") {
 	var t = fileName;
 	char *fn = t.getStringAllocUtf();
 	char *c = jsfile::load(fn);
-	if (c == 0) return "";
+	if (c == 0) return undefined;
 	var R;
 	if (encoding == "binary") R.setAscii(c);
 	else R = c;
@@ -84,7 +84,7 @@ var writeFile(var fileName, var data, var encoding = "utf8") {
 	else {
 		d = data.getStringAllocAscii(&dataSize);
 	}
-	if (fileExists(fn)) {
+	if (existsFile(fn)) {
 		deleteFile(fn);
 	}
 	appendFile(fn, d, dataSize);
@@ -93,3 +93,28 @@ var writeFile(var fileName, var data, var encoding = "utf8") {
 	return undefined;
 }
 
+var appendFile(var fileName, var data, var encoding = "utf8") {
+	using namespace jsfile;
+	int dataSize;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	if (encoding == "utf8") {
+		d = data.getStringAllocUtf(&dataSize);
+	}
+	else {
+		d = data.getStringAllocAscii(&dataSize);
+	}
+	appendFile(fn, d, dataSize);
+	delete[] fn;
+	delete[] d;
+	return undefined;
+}
+
+var fileExists(var fileName) {
+	using namespace jsfile;
+	char *fn, *d;
+	fn = fileName.getStringAllocUtf();
+	bool result = existsFile(fn);
+	delete[] fn;
+	return result;
+}
