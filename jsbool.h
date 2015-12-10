@@ -41,3 +41,15 @@ bool operator > (var a, var b) {
 	return true;
 }
 
+bool operator >= (var a, var b) {
+	if (a == b) return true;
+	if (a < b) return false;
+	return true;
+}
+
+bool operator <= (var a, var b) {
+	if (a == b) return true;
+	if (a > b) return false;
+	return true;
+}
+

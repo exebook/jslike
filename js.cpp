@@ -404,6 +404,8 @@ void testWrite() {
 void testBoolean() {
 	var boo = true;
 	log(boo == true);
+	var a = 5, b = 7, c = 5;
+	log(a == b, a < b, a > b, a >= b, a <= b, a <= c, a >= c);
 }
 
 void testUndefined() {
@@ -431,12 +433,17 @@ void test_charp() {
 	printf("%s\n", q.charp());
 }
 
+void test_big_num() {
+	var s = 139818969505824;
+	log(s);
+}
+
 int main(int argc, char* argv[]) {
-	test_charp();
+	test_big_num();
 	return 0;
+	test_charp();
 	testFileExists();
 	testReadFile();
-	testJSON();
 //	testUndefined();
 	var O = Object;
 	O["a"] = "aaa";

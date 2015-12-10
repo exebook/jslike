@@ -145,11 +145,11 @@ void setAscii(char *a, int length = -1) {
 	for (int x = 0; x < size; x++) s[x] = (char)(*a++);
 }
 
-int intToStr(int i, char *s) {
+long intToStr(long i, char *s) {
 	char *c = s;
-	int n = 0;
+	long n = 0;
 	while (true) {
-		unsigned int i10 = i / 10;
+		unsigned long i10 = i / 10;
 		*s = (i - (i10 * 10)) + '0';
 		i = i10;
 		s++;
@@ -167,11 +167,11 @@ int intToStr(int i, char *s) {
 
 void dblToStr (double d, char *s) {
 	if (d < 0) d = -d, s[0] = '-', s++;
-	int n = d;
-	int w = intToStr(n, s);
+	long n = d;
+	long w = intToStr(n, s);
 	s += w;
 	d = d - n;
-	int q = d * 100000;
+	long q = d * 100000;
 	d *= 100000000;
 	{ // fix
 		q = d - q * 1000;
@@ -1311,6 +1311,18 @@ bool operator > (var a, var b) {
 	return true;
 }
 
+bool operator >= (var a, var b) {
+	if (a == b) return true;
+	if (a < b) return false;
+	return true;
+}
+
+bool operator <= (var a, var b) {
+	if (a == b) return true;
+	if (a > b) return false;
+	return true;
+}
+
 
 //#include "keyval.h"
 //#include "trie4d.h"
@@ -1850,7 +1862,7 @@ var parseObject(var &s, int &i) {
 	var R = Object;
 	int size = s.length().toInt();
 	i++;
-	int max = 10;
+//	int max = 10;
 	while (i < size) {
 		skipSpaces(s, i);
 		if (s[i] == "}") break;
@@ -1876,7 +1888,7 @@ var parseObject(var &s, int &i) {
 		bool comma = parseSingleCharOp(',', s, i);
 		if (!comma) break;
 		
-		if (max-- <= 0) break;
+//		if (max-- <= 0) break; //debug only
 	}
 	i++;
 	return R;

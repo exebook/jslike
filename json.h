@@ -141,7 +141,7 @@ var parseObject(var &s, int &i) {
 	var R = Object;
 	int size = s.length().toInt();
 	i++;
-	int max = 10;
+//	int max = 10;
 	while (i < size) {
 		skipSpaces(s, i);
 		if (s[i] == "}") break;
@@ -167,7 +167,7 @@ var parseObject(var &s, int &i) {
 		bool comma = parseSingleCharOp(',', s, i);
 		if (!comma) break;
 		
-		if (max-- <= 0) break;
+//		if (max-- <= 0) break; //debug only
 	}
 	i++;
 	return R;
