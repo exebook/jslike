@@ -604,7 +604,9 @@ void unref() {
 		return _chr().toNumber();
 	}
 	static var parseInt(var a) {
-		return a.toNumber();
+		if (a.type == varStr) return a.toNumber();
+		if (a.type == varNum) return a.num;
+		return undefined;
 	}
 
 	static var fromCharCode(var a) {

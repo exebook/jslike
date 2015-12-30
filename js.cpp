@@ -438,7 +438,17 @@ void test_big_num() {
 	log(s);
 }
 
+void testParseInt() {
+	var a = "123";
+	log(var::parseInt(a));
+	a = 230;
+	log(var::parseInt(a));
+	a = undefined;
+	log(var::parseInt(a));
+}
+
 int main(int argc, char* argv[]) {
+	testParseInt();
 	test_big_num();
 	return 0;
 	test_charp();
