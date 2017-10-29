@@ -42,11 +42,12 @@ int fileSize(char *n) {
 	else return -1;
 }
 
-char* load(char *fileName) { // you must 'delete' returned pointer
+char* load(char *fileName, int *filesize=0) { // you must 'delete' returned pointer
 //TODO: rewrite to use size and set into var immediately
 	FILE *f = fopen(fileName, "r");
 	if (f >= 0) {
 		int size = fileSize(fileName);
+		if (filesize) *filesize = size;
 		if (size < 0) {
 			return 0;
 		}
@@ -63,10 +64,14 @@ char* load(char *fileName) { // you must 'delete' returned pointer
 var readFile(var fileName, var encoding = "utf8") {
 	var t = fileName;
 	char *fn = t.getStringAllocUtf();
-	char *c = jsfile::load(fn);
+	int size;
+	char *c = jsfile::load(fn, &size);
 	if (c == 0) return undefined;
 	var R;
-	if (encoding == "binary") R.setAscii(c);
+	if (encoding == "binary") 
+		R.setAscii(c);
+	else if (encoding == "utf16")
+		R.set_jschar((jschar*)c, size/2);
 	else R = c;
 	delete[] fn;
 	delete[] c;

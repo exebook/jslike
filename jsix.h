@@ -1,4 +1,4 @@
-//--on [] eef
+//--on [] 559
 var &var::operator [] (var a) {
 	if (type == varNull || type == varNum) { 
 		log((var)"FATAL ERROR: Cannot access property \""

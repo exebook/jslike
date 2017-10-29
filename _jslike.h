@@ -6,7 +6,6 @@
 
 namespace jslike {
 typedef __uint16_t jschar;
-
 #define self (*this)
 
 int len(char *c) {
@@ -17,6 +16,13 @@ int len(char *c) {
 }
 
 int len(jschar *c) {
+	int R = 0;
+	if (c == 0) return 0;
+	while (*c++) R++;
+	return R;
+}
+
+int len(wchar_t *c) {
 	int R = 0;
 	if (c == 0) return 0;
 	while (*c++) R++;
@@ -123,7 +129,14 @@ chr () {
 	size = 0;
 }
 
-void set(jschar *a, int length = -1) { // can be used as resize if a≟0
+void set(jschar *a, int length = -1) { // can be used as alloc if a=0
+	if (length == -1) length = len(a);
+	s = new jschar[length];
+	size = length;
+	if (a) for (int x = 0; x < size; x++) s[x] = *a++;
+}
+
+void set_wchar(wchar_t *a, int length = -1) {
 	if (length == -1) length = len(a);
 	s = new jschar[length];
 	size = length;
@@ -196,7 +209,7 @@ void set(double i) {
 }
 
 double toNumber () {
-	bool minus;
+	bool minus = false;
 	jschar *s = this->s;
 	if (*s == '-') { s++; minus = true; };
 	char *p = getAscii();
@@ -752,6 +765,18 @@ void setAscii (char* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().setAscii(a);
+}
+
+void set_wchar (wchar_t* a) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().set_wchar(a);
+}
+
+void set_jschar (jschar* a, int size = -1) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().set(a, size);
 }
 
 	// decls:
@@ -1329,11 +1354,18 @@ bool operator <= (var a, var b) {
 //#include "keyval.h"
 //#include "trie4d.h"
 //#include "trie5d.h"
-#include "string.h" // memcpy/memcmp
+#ifdef _WIN32
 
+typedef char i8;
+typedef unsigned char u8;
+typedef unsigned int u32;
+
+#else
+#include "string.h" // memcpy/memcmp
 typedef __uint32_t u32;
 typedef __int8_t i8;
 typedef __uint8_t u8;
+#endif
 
 u32 MurMur(const char* key, int count) {
 	#define muR(x, r) (((x) << r) | ((x) >> (32 - r)))
@@ -1460,6 +1492,10 @@ template <typename value_t> struct jshash {
 	}
 	
 	bool add(void *key, int keyn) {
+	
+		// return true if key was already found in the dict, nasically it means find()
+		// returns false otherwise, (added the new key)
+		
 		int n = hash((const char*)key, keyn) % length;
 		if (table[n] == 0) {
 			slots++;
@@ -2049,11 +2085,12 @@ int fileSize(char *n) {
 	else return -1;
 }
 
-char* load(char *fileName) { // you must 'delete' returned pointer
+char* load(char *fileName, int *filesize=0) { // you must 'delete' returned pointer
 //TODO: rewrite to use size and set into var immediately
 	FILE *f = fopen(fileName, "r");
 	if (f >= 0) {
 		int size = fileSize(fileName);
+		if (filesize) *filesize = size;
 		if (size < 0) {
 			return 0;
 		}
@@ -2070,10 +2107,14 @@ char* load(char *fileName) { // you must 'delete' returned pointer
 var readFile(var fileName, var encoding = "utf8") {
 	var t = fileName;
 	char *fn = t.getStringAllocUtf();
-	char *c = jsfile::load(fn);
+	int size;
+	char *c = jsfile::load(fn, &size);
 	if (c == 0) return undefined;
 	var R;
-	if (encoding == "binary") R.setAscii(c);
+	if (encoding == "binary") 
+		R.setAscii(c);
+	else if (encoding == "utf16")
+		R.set_jschar((jschar*)c, size/2);
 	else R = c;
 	delete[] fn;
 	delete[] c;

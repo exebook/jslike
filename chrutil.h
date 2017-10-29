@@ -14,6 +14,13 @@ int len(jschar *c) {
 	return R;
 }
 
+int len(wchar_t *c) {
+	int R = 0;
+	if (c == 0) return 0;
+	while (*c++) R++;
+	return R;
+}
+
 jschar UTF = 0xFEFF;
 
 int utf_offsets[6] = { 0x0UL, 0x3080UL, 0xE2080UL, 0x3C82080UL, 0xFA082080UL, 0x82082080UL };

@@ -3,7 +3,6 @@
 
 namespace jslike {
 typedef __uint16_t jschar;
-
 #include "chrutil.h"
 #include "chr.h"
 #include "stk.h"
@@ -172,6 +171,18 @@ void setAscii (char* a) {
 	if (ref) unref();
 	makeStringToSet();
 	_chr().setAscii(a);
+}
+
+void set_wchar (wchar_t* a) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().set_wchar(a);
+}
+
+void set_jschar (jschar* a, int size = -1) {
+	if (ref) unref();
+	makeStringToSet();
+	_chr().set(a, size);
 }
 
 	// decls:

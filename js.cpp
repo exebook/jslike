@@ -1,7 +1,18 @@
 #include "stdio.h"
+
+#ifdef _WIN32
+//#include "win.h"
+extern "C" int __stdcall GetTickCount(); 
+int time1000()
+{
+   return GetTickCount();
+   //return fast_tick() / 1000;
+}
+#endif
+
 #ifdef linux
 #	include "wchar.h"
-#	define ロ(...) printf(__VA_ARGS__); fflush(0);
+//#	define ロ(...) printf(__VA_ARGS__); fflush(0);
 #endif
 
 #include "jstime.h"
@@ -18,6 +29,11 @@ void testReadFile() {
 	log("existing file: ", s.length());
 	s = readFile("js_non_existing__.cpp");
 	log("non-existing file: ", s.length());
+//	s = readFile("ucs2sample.txt", "utf16");
+//	log("UCS2/UTF-16 file: ", s.length(), s);
+	s = readFile("indexof.config", "utf16");
+	log("UCS2/UTF-16 file: ", s.length());
+	log((var)"{" + s + "}")
 }
 
 void testArrayLiteral() {
@@ -447,18 +463,34 @@ void testParseInt() {
 	log(var::parseInt(a));
 }
 
+void testSubArray() {
+	var R = Array;
+	R.push((Arr 1,2,3));
+	R.push((Arr 4,5,6));
+	log(R);
+	log(JSON.stringify(R));
+}
+
+void testManyStringIndexes() {
+	var a = "AB";
+	log(a[0], a[1]);
+}
+
 int main(int argc, char* argv[]) {
+	testReadFile();
+	testManyStringIndexes();
+	return 0;
+	testSubArray();
 	testParseInt();
 	test_big_num();
-	return 0;
+//	return 0;
 	test_charp();
 	testFileExists();
-	testReadFile();
 //	testUndefined();
 	var O = Object;
 	O["a"] = "aaa";
 //	O["b"] = "bbb";
-//	log(O["a"], O["b"]);
+	log(O["a"], O["b"]);
 //	O.del("a");
 //	log(O["a"], O["b"]);
 //	keyval *u = (keyval*) O.ref->data;
@@ -494,3 +526,9 @@ int main(int argc, char* argv[]) {
 //	log("k",k, k[0].length());
 }
 
+/*
+BUG!!!
+	s = "ABC";
+	log(s[0],s[1],s[2]);
+	--> C C C
+*/

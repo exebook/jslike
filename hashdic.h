@@ -1,8 +1,15 @@
-#include "string.h" // memcpy/memcmp
+#ifdef _WIN32
 
+typedef char i8;
+typedef unsigned char u8;
+typedef unsigned int u32;
+
+#else
+#include "string.h" // memcpy/memcmp
 typedef __uint32_t u32;
 typedef __int8_t i8;
 typedef __uint8_t u8;
+#endif
 
 u32 MurMur(const char* key, int count) {
 	#define muR(x, r) (((x) << r) | ((x) >> (32 - r)))
@@ -129,19 +136,24 @@ template <typename value_t> struct jshash {
 	}
 	
 	bool add(void *key, int keyn) {
+	
+		// return true if key was already found in the dict, basically it means find()
+		// returns false otherwise, (added the new key)
+		
 		int n = hash((const char*)key, keyn) % length;
 		if (table[n] == 0) {
 			slots++;
+			table[n] = new keynode((char*)key, keyn);
+			result = &table[n]->value;
+			count++;
+			return false;
+		}
+		else {
 			double f = (double)count / (double)length;
 			if (f > growth_threshold) {
 				resize(length * growth_factor);
 				return add(key, keyn);
 			}
-			
-			table[n] = new keynode((char*)key, keyn);
-			result = &table[n]->value;
-			count++;
-			return false;
 		}
 		keynode *k = table[n];
 		while (k) {

@@ -12,7 +12,14 @@ chr () {
 	size = 0;
 }
 
-void set(jschar *a, int length = -1) { // can be used as resize if a≟0
+void set(jschar *a, int length = -1) { // can be used as alloc if a=0
+	if (length == -1) length = len(a);
+	s = new jschar[length];
+	size = length;
+	if (a) for (int x = 0; x < size; x++) s[x] = *a++;
+}
+
+void set_wchar(wchar_t *a, int length = -1) {
 	if (length == -1) length = len(a);
 	s = new jschar[length];
 	size = length;
@@ -85,7 +92,7 @@ void set(double i) {
 }
 
 double toNumber () {
-	bool minus;
+	bool minus = false;
 	jschar *s = this->s;
 	if (*s == '-') { s++; minus = true; };
 	char *p = getAscii();
